@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "BookFlow — Online Booking by Nordklip",
-  description: "Book your appointment at Nordklip barbershop. Powered by BookFlow.",
+  title: "BookFlow — Online Booking System Demo",
+  description: "A fully interactive booking system demo. Built by Sloth Studio.",
 };
 
 export default function RootLayout({

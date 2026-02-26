@@ -29,8 +29,9 @@ html {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 input, select, textarea {
@@ -56,4 +57,57 @@ input::placeholder, textarea::placeholder {
 
 select option {
   background: var(--surface-2);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Minimal top bar used on login + how-it-works pages */
+.topbar {
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 100;
+}
+
+.topbar-logo {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.topbar-logo span {
+  color: var(--accent);
+}
+
+.topbar-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  list-style: none;
+}
+
+.topbar-links a {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.topbar-links a:hover {
+  color: var(--text);
 }
