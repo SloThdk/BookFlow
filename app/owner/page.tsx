@@ -3,72 +3,192 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-// ─── Demo Data ─────────────────────────────────────────────────────────────────
-const WEEK_REVENUE = [
-  { day: "Man", date: "17 mar", revenue: 7840,  today: false },
-  { day: "Tir", date: "18 mar", revenue: 9120,  today: false },
-  { day: "Ons", date: "19 mar", revenue: 6580,  today: false },
-  { day: "Tor", date: "20 mar", revenue: 11200, today: false },
-  { day: "Fre", date: "21 mar", revenue: 13440, today: false },
-  { day: "Lør", date: "22 mar", revenue: 9680,  today: false },
-  { day: "I dag", date: "23 mar", revenue: 8760, today: true  },
+// ─── Data ──────────────────────────────────────────────────────────────────────
+const WEEK = [
+  { day: "Man", revenue: 7840 },
+  { day: "Tir", revenue: 9120 },
+  { day: "Ons", revenue: 6580 },
+  { day: "Tor", revenue: 11200 },
+  { day: "Fre", revenue: 13440 },
+  { day: "Lør", revenue: 9680 },
+  { day: "I dag", revenue: 8760 },
 ];
 
 const TODAY_APTS = [
-  { time: "09:00", client: "Henrik Bruun",      service: "Hot Towel Shave", barber: "Marcus", dur: 40,  price: 220 },
-  { time: "10:00", client: "Maja Lindström",    service: "Farve & Stil",    barber: "Sofia",  dur: 90,  price: 550 },
-  { time: "11:30", client: "Lars Thomsen",      service: "Classic Cut",     barber: "Emil",   dur: 45,  price: 260 },
-  { time: "13:00", client: "Oliver Brink",      service: "Cut & Beard",     barber: "Marcus", dur: 70,  price: 390 },
-  { time: "14:30", client: "Stine Krogh",       service: "Farve & Stil",    barber: "Sofia",  dur: 90,  price: 550 },
-  { time: "15:30", client: "Adam Schäfer",      service: "Cut & Beard",     barber: "Emil",   dur: 70,  price: 390 },
-  { time: "17:00", client: "Jesper Winther",    service: "Classic Cut",     barber: "Marcus", dur: 45,  price: 260 },
+  { time: "09:00", client: "Henrik Bruun",    service: "Hot Towel Shave", barber: "Marcus", dur: 40, price: 220, done: true },
+  { time: "10:00", client: "Maja Lindström",  service: "Farve & Stil",    barber: "Sofia",  dur: 90, price: 550, done: true },
+  { time: "11:30", client: "Lars Thomsen",    service: "Classic Cut",     barber: "Emil",   dur: 45, price: 260, done: true },
+  { time: "13:00", client: "Oliver Brink",    service: "Cut & Beard",     barber: "Marcus", dur: 70, price: 390, done: false },
+  { time: "14:30", client: "Stine Krogh",     service: "Farve & Stil",    barber: "Sofia",  dur: 90, price: 550, done: false },
+  { time: "15:30", client: "Adam Schäfer",    service: "Cut & Beard",     barber: "Emil",   dur: 70, price: 390, done: false },
+  { time: "17:00", client: "Jesper Winther",  service: "Classic Cut",     barber: "Marcus", dur: 45, price: 260, done: false },
 ];
 
 const STAFF = [
-  {
-    name: "Marcus Holst", role: "Senior Barber",
+  { name: "Marcus Holst", role: "Senior Barber", initials: "MH",
     photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&crop=face",
-    bookings: 38, revenue: 10140, fillRate: 92, topService: "Classic Cut",
-  },
-  {
-    name: "Emil Strand", role: "Barber",
+    bookings: 38, revenue: 10140, fill: 92, change: +4 },
+  { name: "Emil Strand", role: "Barber", initials: "ES",
     photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face",
-    bookings: 31, revenue: 7890, fillRate: 84, topService: "Beard Sculpt",
-  },
-  {
-    name: "Sofia Krag", role: "Barber & Farvespecialist",
+    bookings: 31, revenue: 7890, fill: 84, change: -2 },
+  { name: "Sofia Krag", role: "Farvespecialist", initials: "SK",
     photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face",
-    bookings: 22, revenue: 12100, fillRate: 96, topService: "Farve & Stil",
-  },
+    bookings: 22, revenue: 12100, fill: 96, change: +8 },
 ];
 
 const TOP_SERVICES = [
-  { name: "Farve & Stil",    revenue: 12100, bookings: 22, color: "#C49BBF" },
-  { name: "Classic Cut",     revenue: 9880,  bookings: 38, color: "#B8985A" },
-  { name: "Cut & Beard",     revenue: 7020,  bookings: 18, color: "#C4977A" },
-  { name: "Beard Sculpt",    revenue: 4680,  bookings: 26, color: "#7BA3C4" },
-  { name: "Hot Towel Shave", revenue: 3080,  bookings: 14, color: "#7BBFA5" },
+  { name: "Farve & Stil",    rev: 12100, pct: 80, color: "#C49BBF" },
+  { name: "Classic Cut",     rev: 9880,  pct: 65, color: "#B8985A" },
+  { name: "Cut & Beard",     rev: 7020,  pct: 46, color: "#C4977A" },
+  { name: "Beard Sculpt",    rev: 4680,  pct: 31, color: "#7BA3C4" },
+  { name: "Hot Towel Shave", rev: 3080,  pct: 20, color: "#7BBFA5" },
 ];
 
-const SERVICE_COLOR: Record<string, string> = {
+const SVC_COLOR: Record<string, string> = {
   "Classic Cut": "#B8985A", "Beard Sculpt": "#7BA3C4",
   "Cut & Beard": "#C4977A", "Hot Towel Shave": "#7BBFA5",
   "Junior Cut": "#A0B89A",  "Farve & Stil": "#C49BBF",
 };
 
-const MONTH_REVENUE = 86440;
+function fmtDKK(n: number) { return n.toLocaleString("da-DK") + " kr."; }
 
-function fmtDKK(n: number) {
-  return n.toLocaleString("da-DK") + " kr.";
+// ─── SVG Area Chart ────────────────────────────────────────────────────────────
+function AreaChart({ data }: { data: typeof WEEK }) {
+  const W = 580, H = 130, pad = { l: 8, r: 8, t: 20, b: 0 };
+  const max = Math.max(...data.map(d => d.revenue)) * 1.12;
+  const pts = data.map((d, i) => ({
+    x: pad.l + (i / (data.length - 1)) * (W - pad.l - pad.r),
+    y: pad.t + (1 - d.revenue / max) * (H - pad.t - pad.b),
+  }));
+  const linePath = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  const areaPath = `${linePath} L${pts[pts.length - 1].x},${H} L${pts[0].x},${H} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "130px", overflow: "visible" }}>
+      <defs>
+        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(184,152,90,0.28)"/>
+          <stop offset="100%" stopColor="rgba(184,152,90,0)"/>
+        </linearGradient>
+      </defs>
+      {/* Horizontal grid lines */}
+      {[0.25, 0.5, 0.75].map(f => {
+        const y = pad.t + (1 - f) * (H - pad.t - pad.b);
+        return <line key={f} x1={pad.l} y1={y} x2={W - pad.r} y2={y} stroke="rgba(245,239,228,0.05)" strokeWidth="1"/>;
+      })}
+      {/* Area fill */}
+      <path d={areaPath} fill="url(#areaGrad)"/>
+      {/* Line */}
+      <path d={linePath} fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Dots */}
+      {pts.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={data[i].day === "I dag" ? 5 : 3}
+          fill={data[i].day === "I dag" ? "var(--gold)" : "var(--bg)"}
+          stroke="var(--gold)" strokeWidth="1.5"/>
+      ))}
+      {/* Today label */}
+      {(() => { const p = pts[pts.length - 1]; return (
+        <text x={p.x} y={p.y - 10} textAnchor="middle" fill="var(--gold)" fontSize="9" fontWeight="700" fontFamily="Inter,sans-serif">
+          {fmtDKK(WEEK[WEEK.length - 1].revenue)}
+        </text>
+      ); })()}
+    </svg>
+  );
 }
 
-function isPast(time: string) {
-  const [h, m] = time.split(":").map(Number);
-  const now = new Date();
-  return h < now.getHours() || (h === now.getHours() && m <= now.getMinutes());
+// ─── Sidebar ───────────────────────────────────────────────────────────────────
+function Sidebar({ onLogout }: { onLogout: () => void }) {
+  const nav = [
+    { label: "Oversigt", href: "/owner", active: true, icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg>
+    )},
+    { label: "Holdplan", href: "/admin", active: false, icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.3"/><path d="M1 6h14M5 2v4M11 2v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+    )},
+    { label: "Kundevisning", href: "/bookings", active: false, icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+    )},
+    { label: "Ny booking", href: "/book", active: false, icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+    )},
+  ];
+
+  return (
+    <aside style={{
+      width: "220px", flexShrink: 0, minHeight: "100vh",
+      background: "var(--surface)", borderRight: "1px solid var(--border)",
+      display: "flex", flexDirection: "column",
+      position: "sticky", top: 0, height: "100vh", overflow: "hidden",
+    }}>
+      {/* Logo */}
+      <div style={{ padding: "28px 20px 20px", borderBottom: "1px solid var(--border)" }}>
+        <a href="https://nordklip.pages.dev" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+          <span className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
+        </a>
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: "5px",
+          marginTop: "6px",
+          background: "rgba(184,152,90,0.08)", border: "1px solid var(--gold-border)",
+          borderRadius: "4px", padding: "3px 8px",
+        }}>
+          <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+            <rect x="1" y="5" width="10" height="6.5" rx="1.5" stroke="var(--gold)" strokeWidth="1.2"/>
+            <path d="M3.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="var(--gold)" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold)" }}>Ejersystem</span>
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav style={{ padding: "16px 12px", flex: 1, display: "flex", flexDirection: "column", gap: "2px" }}>
+        <div style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", padding: "0 8px", marginBottom: "8px" }}>Navigation</div>
+        {nav.map(item => (
+          <Link key={item.label} href={item.href} style={{
+            display: "flex", alignItems: "center", gap: "10px",
+            padding: "9px 10px", borderRadius: "7px", textDecoration: "none",
+            background: item.active ? "rgba(184,152,90,0.1)" : "transparent",
+            border: item.active ? "1px solid rgba(184,152,90,0.2)" : "1px solid transparent",
+            color: item.active ? "var(--gold)" : "var(--text-muted)",
+            fontSize: "13px", fontWeight: item.active ? 600 : 400,
+            transition: "all 0.15s",
+          }}>
+            {item.icon}
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* Bottom */}
+      <div style={{ padding: "16px 12px", borderTop: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "0 8px", marginBottom: "12px" }}>
+          <div style={{
+            width: "32px", height: "32px", borderRadius: "50%", flexShrink: 0,
+            background: "var(--gold-dim)", border: "1px solid var(--gold-border)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="3" stroke="var(--gold)" strokeWidth="1.3"/><path d="M2 15c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="var(--gold)" strokeWidth="1.3" strokeLinecap="round"/></svg>
+          </div>
+          <div>
+            <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text)" }}>Ejer</div>
+            <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>owner@nordklip.dk</div>
+          </div>
+        </div>
+        <button onClick={onLogout} style={{
+          width: "100%", background: "transparent",
+          border: "1px solid var(--border-strong)", borderRadius: "7px",
+          color: "var(--text-muted)", fontSize: "12px", fontWeight: 500,
+          padding: "8px 12px", cursor: "pointer", textAlign: "left",
+          display: "flex", alignItems: "center", gap: "8px",
+        }}>
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M5 7h8M10 4.5L12.5 7 10 9.5M5.5 3H2V11h3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Log ud
+        </button>
+      </div>
+    </aside>
+  );
 }
 
-// ─── Login gate ────────────────────────────────────────────────────────────────
+// ─── Login ─────────────────────────────────────────────────────────────────────
 function OwnerLogin({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState("owner@nordklip.dk");
   const [password, setPassword] = useState("");
@@ -79,71 +199,73 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
     e.preventDefault();
     if (!password.trim()) { setError("Indtast en adgangskode."); return; }
     setLoading(true);
-    setTimeout(() => { setLoading(false); onLogin(); }, 800);
+    setTimeout(() => { setLoading(false); onLogin(); }, 900);
   }
 
   return (
     <div style={{
       minHeight: "100vh", background: "var(--bg)",
       display: "flex", alignItems: "center", justifyContent: "center",
-      padding: "24px",
+      padding: "24px", position: "relative", overflow: "hidden",
     }}>
-      <div style={{ width: "100%", maxWidth: "420px" }}>
+      {/* Background glow */}
+      <div style={{
+        position: "absolute", top: "30%", left: "50%", transform: "translateX(-50%)",
+        width: "500px", height: "400px",
+        background: "radial-gradient(ellipse, rgba(184,152,90,0.06) 0%, transparent 70%)",
+        pointerEvents: "none",
+      }}/>
 
+      <div style={{ width: "100%", maxWidth: "400px", position: "relative" }}>
         {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: "36px" }}>
-          <div style={{ marginBottom: "14px" }}>
-            <span className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.01em" }}>Nordklip</span>
-          </div>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: "6px",
-            background: "rgba(184,152,90,0.08)", border: "1px solid var(--gold-border)",
-            borderRadius: "6px", padding: "5px 14px",
-          }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <span className="serif" style={{ fontSize: "32px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.01em" }}>Nordklip</span>
+          <div style={{ marginTop: "10px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
             <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
               <rect x="1" y="5" width="10" height="6.5" rx="1.5" stroke="var(--gold)" strokeWidth="1.2"/>
               <path d="M3.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="var(--gold)" strokeWidth="1.2" strokeLinecap="round"/>
             </svg>
-            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gold)" }}>Ejersystem</span>
+            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold)" }}>Ejersystem</span>
           </div>
         </div>
 
-        {/* Card */}
+        {/* Form card */}
         <div style={{
           background: "var(--surface)", border: "1px solid var(--border-strong)",
-          borderRadius: "12px", padding: "36px 32px",
+          borderRadius: "14px", padding: "36px 32px",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.4)",
         }}>
-          <h1 style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Log ind som ejer</h1>
-          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "28px" }}>
-            Adgang til din forretningsoversigt, omsætning og teamperformance.
+          <h1 style={{ fontSize: "18px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Adgang til ejeroversigt</h1>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "28px", lineHeight: 1.5 }}>
+            Omsætning, teamperformance og bookingdata.
           </p>
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div>
               <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Email</label>
-              <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }}
-                style={{ background: "var(--surface-2)" }}/>
+              <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }}/>
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Adgangskode</label>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "7px" }}>
+                <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Adgangskode</label>
+                <span style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", cursor: "default", textUnderlineOffset: "2px" }}>Glemt?</span>
+              </div>
               <input type="password" placeholder="••••••••" value={password}
                 onChange={e => { setPassword(e.target.value); setError(""); }}/>
-              {error && <p style={{ fontSize: "12px", color: "var(--red, #ef4444)", marginTop: "5px" }}>{error}</p>}
+              {error && <p style={{ fontSize: "12px", color: "#ef4444", marginTop: "5px" }}>{error}</p>}
             </div>
 
             <button type="submit" disabled={loading} style={{
-              marginTop: "8px",
-              background: loading ? "var(--surface-2)" : "var(--gold)",
+              marginTop: "6px", background: loading ? "var(--surface-2)" : "var(--gold)",
               color: loading ? "var(--text-muted)" : "#0E0C09",
-              border: "none", borderRadius: "7px",
-              padding: "13px 24px", fontSize: "14px", fontWeight: 700,
-              cursor: loading ? "default" : "pointer",
-              transition: "all 0.15s",
+              border: "none", borderRadius: "8px",
+              padding: "14px 24px", fontSize: "14px", fontWeight: 700,
+              cursor: loading ? "default" : "pointer", transition: "all 0.15s",
               display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
             }}>
               {loading ? (
                 <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ animation: "spin 0.8s linear infinite" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ animation: "spin 0.7s linear infinite" }}>
                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeDasharray="32" strokeDashoffset="12" strokeLinecap="round"/>
                   </svg>
                   Logger ind...
@@ -154,51 +276,49 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
 
           {/* Demo hint */}
           <div style={{
-            marginTop: "20px", padding: "12px 14px",
-            background: "var(--surface-2)", border: "1px solid var(--border)",
-            borderRadius: "7px", display: "flex", gap: "8px", alignItems: "flex-start",
+            marginTop: "18px", padding: "11px 14px",
+            background: "rgba(184,152,90,0.05)", border: "1px solid rgba(184,152,90,0.15)",
+            borderRadius: "8px", display: "flex", gap: "9px", alignItems: "flex-start",
           }}>
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: "1px" }}>
-              <circle cx="8" cy="8" r="6.5" stroke="var(--text-muted)" strokeWidth="1.2"/>
-              <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: "1px", color: "var(--gold)" }}>
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
+              <path d="M8 5.5v3.5M8 11v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
             </svg>
             <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.55, margin: 0 }}>
-              <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Demo — </span>
-              e-mail er udfyldt på forhånd. Skriv en vilkårlig adgangskode for at komme ind.
+              <span style={{ color: "var(--gold)", fontWeight: 600 }}>Demo — </span>
+              e-mail er udfyldt. Skriv en vilkårlig adgangskode og tryk log ind.
             </p>
           </div>
         </div>
 
-        {/* Back link */}
         <div style={{ textAlign: "center", marginTop: "20px" }}>
           <Link href="/" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>
-            Ikke ejer? Book en tid i stedet
+            Ikke ejer? Book en tid i stedet →
           </Link>
         </div>
-
-        <style>{`
-          @keyframes spin { to { transform: rotate(360deg); } }
-        `}</style>
       </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────────
+// ─── Dashboard ─────────────────────────────────────────────────────────────────
 export default function OwnerPage() {
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    try {
-      const s = sessionStorage.getItem("bf_owner");
-      if (s) setAuthed(true);
-    } catch {}
+    try { if (sessionStorage.getItem("bf_owner")) setAuthed(true); } catch {}
     setChecking(false);
   }, []);
 
   function handleLogin() {
-    try { sessionStorage.setItem("bf_owner", "1"); } catch {}
+    try {
+      sessionStorage.setItem("bf_owner", "1");
+      if (!sessionStorage.getItem("bf_session"))
+        sessionStorage.setItem("bf_session", JSON.stringify({ name: "Ejer", email: "owner@nordklip.dk" }));
+    } catch {}
     setAuthed(true);
   }
 
@@ -210,307 +330,273 @@ export default function OwnerPage() {
   if (checking) return null;
   if (!authed) return <OwnerLogin onLogin={handleLogin}/>;
 
-  const todayRevenue = TODAY_APTS.reduce((s, a) => s + a.price, 0);
-  const weekRevenue  = WEEK_REVENUE.reduce((s, d) => s + d.revenue, 0);
-  const maxBar       = Math.max(...WEEK_REVENUE.map(d => d.revenue));
-  const maxSvc       = TOP_SERVICES[0].revenue;
-  const totalSvcRev  = TOP_SERVICES.reduce((s, s2) => s + s2.revenue, 0);
+  const todayDone  = TODAY_APTS.filter(a => a.done);
+  const todayRem   = TODAY_APTS.filter(a => !a.done);
+  const todayRev   = todayDone.reduce((s, a) => s + a.price, 0);
+  const totalRev   = TODAY_APTS.reduce((s, a) => s + a.price, 0);
+  const weekRev    = WEEK.reduce((s, d) => s + d.revenue, 0);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", fontFamily: "var(--font-inter)" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
+      <Sidebar onLogout={handleLogout}/>
 
-      {/* ── Nav ─────────────────────────────────────────────────────── */}
-      <nav style={{
-        position: "sticky", top: 0, height: "60px", zIndex: 100,
-        background: "rgba(14,12,9,0.97)", backdropFilter: "blur(14px)",
-        borderBottom: "1px solid var(--border)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          <a href="https://nordklip.pages.dev" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-            <span className="serif" style={{ fontSize: "18px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
-          </a>
-          <span style={{
-            fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
-            background: "rgba(184,152,90,0.1)", border: "1px solid var(--gold-border)",
-            color: "var(--gold)", borderRadius: "4px", padding: "3px 8px",
-          }}>Ejer</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-          <Link href="/admin" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}>Holdplan</Link>
-          <Link href="/bookings" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}>Kundevisning</Link>
-          <Link href="/book" style={{ fontSize: "12px", color: "var(--gold)", textDecoration: "none", fontWeight: 600 }}>Ny booking</Link>
-          <button onClick={handleLogout} style={{
-            background: "transparent", border: "1px solid var(--border-strong)",
-            color: "var(--text-muted)", borderRadius: "5px", padding: "5px 12px",
-            fontSize: "12px", fontWeight: 600, cursor: "pointer",
-          }}>Log ud</button>
-        </div>
-      </nav>
+      {/* Main */}
+      <div style={{ flex: 1, overflow: "auto" }}>
 
-      <div style={{ padding: "32px 40px 80px", maxWidth: "1280px", margin: "0 auto" }}>
-
-        {/* ── Page title ─────────────────────────────────────────── */}
-        <div style={{ marginBottom: "28px" }}>
-          <h1 className="serif" style={{ fontSize: "26px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>
-            Ejeroversigt
-          </h1>
-          <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
-            Nordklip Barbershop &mdash; Kongensgade 14, K&oslash;benhavn
-          </p>
-        </div>
-
-        {/* ── KPI strip ──────────────────────────────────────────── */}
+        {/* Top header */}
         <div style={{
-          display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px",
-          marginBottom: "28px",
+          padding: "24px 32px", borderBottom: "1px solid var(--border)",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          background: "rgba(14,12,9,0.8)", backdropFilter: "blur(12px)",
+          position: "sticky", top: 0, zIndex: 50,
         }}>
-          {[
-            { label: "Omsætning i dag",   value: fmtDKK(todayRevenue),  sub: `${TODAY_APTS.filter(a => isPast(a.time)).length} af ${TODAY_APTS.length} gennemført`,    accent: "var(--gold)" },
-            { label: "Aftaler i dag",     value: `${TODAY_APTS.length}`, sub: `${TODAY_APTS.filter(a => !isPast(a.time)).length} resterende i dag`,                     accent: "var(--text)" },
-            { label: "Omsætning — uge",   value: fmtDKK(weekRevenue),   sub: "Man 17 — I dag",                                                                          accent: "var(--gold)" },
-            { label: "Omsætning — måned", value: fmtDKK(MONTH_REVENUE), sub: "Marts 2026",                                                                              accent: "var(--gold)" },
-          ].map(({ label, value, sub, accent }) => (
-            <div key={label} style={{
-              background: "var(--surface)", border: "1px solid var(--border-strong)",
-              borderRadius: "10px", padding: "20px 22px",
-            }}>
-              <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "10px" }}>{label}</div>
-              <div className="serif" style={{ fontSize: "22px", fontWeight: 700, color: accent, lineHeight: 1, marginBottom: "6px" }}>{value}</div>
-              <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{sub}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Main grid ──────────────────────────────────────────── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "16px", alignItems: "start", marginBottom: "16px" }}>
-
-          {/* ── Revenue chart ─────────────────────────────────── */}
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border-strong)",
-            borderRadius: "10px", overflow: "hidden",
-          }}>
-            <div style={{
-              padding: "18px 22px", borderBottom: "1px solid var(--border)",
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-            }}>
-              <div>
-                <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Omsætning — denne uge</div>
-                <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{fmtDKK(weekRevenue)} i alt</div>
-              </div>
-              <div style={{
-                fontSize: "11px", fontWeight: 600, color: "var(--gold)",
-                background: "var(--gold-dim)", border: "1px solid var(--gold-border)",
-                borderRadius: "5px", padding: "4px 10px",
-              }}>Marts 2026</div>
-            </div>
-            <div style={{ padding: "24px 22px" }}>
-              {/* Bar chart */}
-              <div style={{ display: "flex", alignItems: "flex-end", gap: "8px", height: "140px" }}>
-                {WEEK_REVENUE.map((d, i) => {
-                  const pct = (d.revenue / maxBar) * 100;
-                  return (
-                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", height: "100%" }}>
-                      <div style={{ flex: 1, display: "flex", alignItems: "flex-end", width: "100%" }}>
-                        <div style={{
-                          width: "100%", height: `${pct}%`,
-                          background: d.today
-                            ? "linear-gradient(180deg, var(--gold) 0%, rgba(184,152,90,0.4) 100%)"
-                            : "rgba(184,152,90,0.2)",
-                          border: `1px solid ${d.today ? "var(--gold)" : "var(--gold-border)"}`,
-                          borderRadius: "4px 4px 0 0",
-                          minHeight: "4px",
-                          transition: "height 0.3s",
-                          position: "relative",
-                        }}>
-                          {d.today && (
-                            <div style={{
-                              position: "absolute", top: "-20px", left: "50%", transform: "translateX(-50%)",
-                              fontSize: "9px", fontWeight: 700, color: "var(--gold)", whiteSpace: "nowrap",
-                            }}>{fmtDKK(d.revenue)}</div>
-                          )}
-                        </div>
-                      </div>
-                      <div style={{ fontSize: "10px", fontWeight: d.today ? 700 : 500, color: d.today ? "var(--gold)" : "var(--text-muted)", whiteSpace: "nowrap" }}>{d.day}</div>
-                    </div>
-                  );
-                })}
-              </div>
-              {/* X axis line */}
-              <div style={{ height: "1px", background: "var(--border)", marginTop: "4px" }}/>
-            </div>
+          <div>
+            <h1 className="serif" style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ejeroversigt</h1>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Søndag, 23. marts 2026</p>
           </div>
-
-          {/* ── Top services ──────────────────────────────────── */}
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border-strong)",
-            borderRadius: "10px", overflow: "hidden",
-          }}>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
             <div style={{
-              padding: "18px 22px", borderBottom: "1px solid var(--border)",
-              display: "flex", justifyContent: "space-between", alignItems: "center",
+              display: "flex", alignItems: "center", gap: "6px",
+              background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)",
+              borderRadius: "6px", padding: "6px 12px",
             }}>
-              <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>Ydelser — omsætning</div>
-              <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Denne måned</div>
-            </div>
-            <div style={{ padding: "16px 22px", display: "flex", flexDirection: "column", gap: "16px" }}>
-              {TOP_SERVICES.map((s, i) => {
-                const pct = Math.round((s.revenue / totalSvcRev) * 100);
-                const barPct = (s.revenue / maxSvc) * 100;
-                return (
-                  <div key={i}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: s.color, flexShrink: 0 }}/>
-                        <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text)" }}>{s.name}</span>
-                      </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{fmtDKK(s.revenue)}</div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>{s.bookings} aftaler · {pct}%</div>
-                      </div>
-                    </div>
-                    <div style={{ height: "4px", background: "var(--surface-2)", borderRadius: "2px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${barPct}%`, background: s.color, borderRadius: "2px", opacity: 0.7 }}/>
-                    </div>
-                  </div>
-                );
-              })}
+              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80", boxShadow: "0 0 6px rgba(74,222,128,0.8)" }}/>
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "#4ade80" }}>Live data</span>
             </div>
           </div>
         </div>
 
-        {/* ── Today's schedule ───────────────────────────────────── */}
-        <div style={{
-          background: "var(--surface)", border: "1px solid var(--border-strong)",
-          borderRadius: "10px", overflow: "hidden", marginBottom: "16px",
-        }}>
-          <div style={{
-            padding: "18px 22px", borderBottom: "1px solid var(--border)",
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-          }}>
-            <div>
-              <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Dagens program</div>
-              <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Søndag 23. marts · {TODAY_APTS.length} aftaler · {fmtDKK(todayRevenue)}</div>
-            </div>
-            <Link href="/admin" style={{
-              fontSize: "12px", color: "var(--gold)", fontWeight: 600, textDecoration: "none",
-              background: "var(--gold-dim)", border: "1px solid var(--gold-border)",
-              borderRadius: "5px", padding: "6px 14px",
-            }}>Vis holdplan</Link>
-          </div>
-          {/* Table header */}
-          <div style={{
-            display: "grid", gridTemplateColumns: "80px 1fr 160px 120px 100px 90px",
-            padding: "10px 22px", background: "var(--surface-2)",
-            borderBottom: "1px solid var(--border)",
-          }}>
-            {["Tid", "Kunde", "Ydelse", "Barber", "Varighed", "Pris"].map(h => (
-              <div key={h} style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>{h}</div>
+        <div style={{ padding: "28px 32px" }}>
+
+          {/* KPI strip */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "24px" }}>
+            {[
+              { label: "Omsætning i dag", value: fmtDKK(todayRev), sub: `af ${fmtDKK(totalRev)} muligt`, change: "+12%", up: true },
+              { label: "Gennemførte aftaler", value: `${todayDone.length}/${TODAY_APTS.length}`, sub: `${todayRem.length} resterende`, change: "I dag", up: null },
+              { label: "Uge — omsætning", value: fmtDKK(weekRev), sub: "Man 17 — I dag", change: "+8%", up: true },
+              { label: "Måned — total", value: fmtDKK(86440), sub: "Marts 2026", change: "+23%", up: true },
+            ].map(({ label, value, sub, change, up }) => (
+              <div key={label} style={{
+                background: "var(--surface)", border: "1px solid var(--border-strong)",
+                borderRadius: "10px", padding: "18px 20px",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                  <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</span>
+                  {up !== null && (
+                    <span style={{
+                      fontSize: "10px", fontWeight: 700,
+                      color: up ? "#4ade80" : "#f87171",
+                      background: up ? "rgba(74,222,128,0.08)" : "rgba(248,113,113,0.08)",
+                      border: `1px solid ${up ? "rgba(74,222,128,0.2)" : "rgba(248,113,113,0.2)"}`,
+                      borderRadius: "4px", padding: "2px 7px",
+                      display: "flex", alignItems: "center", gap: "3px",
+                    }}>
+                      {up ? "↑" : "↓"} {change}
+                    </span>
+                  )}
+                </div>
+                <div className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--gold)", lineHeight: 1, marginBottom: "5px" }}>{value}</div>
+                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{sub}</div>
+              </div>
             ))}
           </div>
-          {TODAY_APTS.map((a, i) => {
-            const done = isPast(a.time);
-            const color = SERVICE_COLOR[a.service] || "var(--gold)";
-            return (
-              <div key={i} style={{
-                display: "grid", gridTemplateColumns: "80px 1fr 160px 120px 100px 90px",
-                padding: "14px 22px", alignItems: "center",
-                borderBottom: i < TODAY_APTS.length - 1 ? "1px solid var(--border)" : "none",
-                opacity: done ? 0.5 : 1,
-                transition: "opacity 0.15s",
-              }}>
-                <div style={{ fontSize: "14px", fontWeight: 700, color: done ? "var(--text-muted)" : "var(--text)" }}>{a.time}</div>
-                <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text)" }}>{a.client}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                  <div style={{ width: "7px", height: "7px", borderRadius: "2px", background: color, flexShrink: 0 }}/>
-                  <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{a.service}</span>
-                </div>
-                <div style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{a.barber}</div>
-                <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{a.dur} min</div>
-                <div style={{ fontSize: "13px", fontWeight: 600, color: done ? "var(--text-muted)" : "var(--gold)" }}>{a.price} kr.</div>
-              </div>
-            );
-          })}
-        </div>
 
-        {/* ── Staff performance ──────────────────────────────────── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
-          {STAFF.map((s, i) => (
-            <div key={i} style={{
-              background: "var(--surface)", border: "1px solid var(--border-strong)",
-              borderRadius: "10px", overflow: "hidden",
-            }}>
-              <div style={{ padding: "20px 22px", borderBottom: "1px solid var(--border)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "16px" }}>
-                  <img src={s.photo} alt={s.name} style={{
-                    width: "48px", height: "48px", borderRadius: "50%", objectFit: "cover",
-                    border: "1px solid var(--border-strong)", display: "block",
-                  }}/>
-                  <div>
-                    <div className="serif" style={{ fontSize: "15px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{s.name}</div>
-                    <div style={{ fontSize: "11px", color: "var(--gold)" }}>{s.role}</div>
-                  </div>
+          {/* Revenue chart + top services */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "14px", marginBottom: "14px" }}>
+
+            {/* Chart */}
+            <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden" }}>
+              <div style={{ padding: "18px 22px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Omsætning — denne uge</div>
+                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Daglig omsætning i DKK</div>
                 </div>
-                {/* Fill rate bar */}
-                <div style={{ marginBottom: "6px", display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: "11px", color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>Belægning</span>
-                  <span style={{ fontSize: "12px", fontWeight: 700, color: s.fillRate >= 90 ? "#4ade80" : "var(--gold)" }}>{s.fillRate}%</span>
-                </div>
-                <div style={{ height: "5px", background: "var(--surface-2)", borderRadius: "3px", overflow: "hidden", marginBottom: "16px" }}>
-                  <div style={{
-                    height: "100%", width: `${s.fillRate}%`,
-                    background: s.fillRate >= 90
-                      ? "linear-gradient(90deg, #4ade80, #22c55e)"
-                      : "linear-gradient(90deg, var(--gold), rgba(184,152,90,0.5))",
-                    borderRadius: "3px",
-                  }}/>
+                <div style={{ display: "flex", gap: "6px" }}>
+                  {["Uge", "Måned", "År"].map((t, i) => (
+                    <button key={t} style={{
+                      background: i === 0 ? "var(--gold-dim)" : "transparent",
+                      border: `1px solid ${i === 0 ? "var(--gold-border)" : "var(--border)"}`,
+                      borderRadius: "5px", padding: "4px 10px",
+                      fontSize: "11px", fontWeight: i === 0 ? 700 : 400,
+                      color: i === 0 ? "var(--gold)" : "var(--text-muted)",
+                      cursor: "pointer",
+                    }}>{t}</button>
+                  ))}
                 </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "14px 22px", gap: "8px" }}>
-                {[
-                  { label: "Aftaler", value: `${s.bookings}` },
-                  { label: "Omsætning", value: `${(s.revenue / 1000).toFixed(1)}k` },
-                  { label: "Top ydelse", value: s.topService.split(" ")[0] },
-                ].map(({ label, value }) => (
-                  <div key={label} style={{ textAlign: "center" }}>
-                    <div className="serif" style={{ fontSize: "18px", fontWeight: 700, color: "var(--text)", lineHeight: 1 }}>{value}</div>
-                    <div style={{ fontSize: "9px", color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginTop: "3px" }}>{label}</div>
+              <div style={{ padding: "20px 22px 14px" }}>
+                <AreaChart data={WEEK}/>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
+                  {WEEK.map(d => (
+                    <span key={d.day} style={{ fontSize: "10px", color: d.day === "I dag" ? "var(--gold)" : "var(--text-muted)", fontWeight: d.day === "I dag" ? 700 : 400, flex: 1, textAlign: "center" }}>{d.day}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Top services */}
+            <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden" }}>
+              <div style={{ padding: "18px 20px", borderBottom: "1px solid var(--border)" }}>
+                <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ydelser</div>
+                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Omsætning denne måned</div>
+              </div>
+              <div style={{ padding: "14px 20px", display: "flex", flexDirection: "column", gap: "14px" }}>
+                {TOP_SERVICES.map(s => (
+                  <div key={s.name}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                        <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: s.color, flexShrink: 0 }}/>
+                        <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{s.name}</span>
+                      </div>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--text)" }}>{s.rev.toLocaleString("da-DK")}</span>
+                    </div>
+                    <div style={{ height: "3px", background: "var(--surface-2)", borderRadius: "2px" }}>
+                      <div style={{ height: "100%", width: `${s.pct}%`, background: s.color, borderRadius: "2px", opacity: 0.65 }}/>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-      </div>
+          {/* Today's schedule */}
+          <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden", marginBottom: "14px" }}>
+            <div style={{
+              padding: "16px 22px", borderBottom: "1px solid var(--border)",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}>
+              <div>
+                <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Dagens program</div>
+                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{TODAY_APTS.length} aftaler · {fmtDKK(totalRev)}</div>
+              </div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <span style={{ fontSize: "11px", color: "#4ade80", background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: "4px", padding: "3px 10px", fontWeight: 600 }}>
+                  {todayDone.length} gennemført
+                </span>
+                <span style={{ fontSize: "11px", color: "var(--gold)", background: "var(--gold-dim)", border: "1px solid var(--gold-border)", borderRadius: "4px", padding: "3px 10px", fontWeight: 600 }}>
+                  {todayRem.length} kommende
+                </span>
+              </div>
+            </div>
+            <div style={{ overflowX: "auto" }}>
+              {/* Header */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "72px 1fr 180px 110px 80px 90px 100px",
+                padding: "10px 22px", background: "var(--surface-2)", borderBottom: "1px solid var(--border)",
+                minWidth: "700px",
+              }}>
+                {["Tid", "Kunde", "Ydelse", "Barber", "Varighed", "Pris", "Status"].map(h => (
+                  <div key={h} style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>{h}</div>
+                ))}
+              </div>
+              {TODAY_APTS.map((a, i) => (
+                <div key={i} style={{
+                  display: "grid", gridTemplateColumns: "72px 1fr 180px 110px 80px 90px 100px",
+                  padding: "14px 22px", alignItems: "center", minWidth: "700px",
+                  borderBottom: i < TODAY_APTS.length - 1 ? "1px solid var(--border)" : "none",
+                  background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.012)",
+                  opacity: a.done ? 0.55 : 1, transition: "opacity 0.15s",
+                }}>
+                  <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)", fontVariantNumeric: "tabular-nums" }}>{a.time}</div>
+                  <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text)" }}>{a.client}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                    <div style={{ width: "6px", height: "6px", borderRadius: "2px", background: SVC_COLOR[a.service] || "var(--gold)", flexShrink: 0 }}/>
+                    <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{a.service}</span>
+                  </div>
+                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{a.barber}</div>
+                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{a.dur} min</div>
+                  <div style={{ fontSize: "13px", fontWeight: 600, color: a.done ? "var(--text-muted)" : "var(--gold)" }}>{a.price} kr.</div>
+                  <div>
+                    <span style={{
+                      fontSize: "10px", fontWeight: 700, borderRadius: "4px", padding: "3px 9px",
+                      color: a.done ? "#4ade80" : "var(--gold)",
+                      background: a.done ? "rgba(74,222,128,0.08)" : "var(--gold-dim)",
+                      border: `1px solid ${a.done ? "rgba(74,222,128,0.2)" : "var(--gold-border)"}`,
+                    }}>{a.done ? "Færdig" : "Kommende"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      {/* Demo note */}
-      <div style={{
-        paddingBottom: "40px", display: "flex", justifyContent: "center",
-        alignItems: "center", flexDirection: "column", gap: "10px",
-      }}>
-        <div style={{
-          display: "flex", gap: "8px", alignItems: "center",
-          background: "var(--surface)", border: "1px solid var(--border-strong)",
-          borderRadius: "8px", padding: "10px 18px",
-          fontSize: "11px", color: "var(--text-muted)", maxWidth: "520px", textAlign: "center",
-        }}>
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-            <circle cx="8" cy="8" r="6.5" stroke="var(--text-muted)" strokeWidth="1.2"/>
-            <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
-          </svg>
-          <span><span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Ejerdemo — </span>
-          dette er hvad butiksejeren ser. I produktion opdateres alle tal i realtid fra det aktive bookingsystem.</span>
-        </div>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Drevet af</span>
-          <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-          <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
-          <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
-            style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
-            Bygget af Sloth Studio
-          </a>
+          {/* Staff */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
+            {STAFF.map((s, i) => (
+              <div key={i} style={{
+                background: "var(--surface)", border: "1px solid var(--border-strong)",
+                borderRadius: "10px", padding: "20px 22px",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "18px" }}>
+                  <img src={s.photo} alt={s.name} style={{
+                    width: "44px", height: "44px", borderRadius: "50%",
+                    objectFit: "cover", border: "1px solid var(--border-strong)", display: "block", flexShrink: 0,
+                  }}/>
+                  <div style={{ minWidth: 0 }}>
+                    <div className="serif" style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{s.name}</div>
+                    <div style={{ fontSize: "11px", color: "var(--gold)" }}>{s.role}</div>
+                  </div>
+                  <span style={{
+                    marginLeft: "auto", flexShrink: 0,
+                    fontSize: "10px", fontWeight: 700,
+                    color: s.change > 0 ? "#4ade80" : "#f87171",
+                    background: s.change > 0 ? "rgba(74,222,128,0.08)" : "rgba(248,113,113,0.08)",
+                    border: `1px solid ${s.change > 0 ? "rgba(74,222,128,0.2)" : "rgba(248,113,113,0.2)"}`,
+                    borderRadius: "4px", padding: "2px 7px",
+                  }}>{s.change > 0 ? "↑" : "↓"} {Math.abs(s.change)}%</span>
+                </div>
+
+                {/* Fill rate */}
+                <div style={{ marginBottom: "16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Belægning</span>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: s.fill >= 90 ? "#4ade80" : "var(--gold)" }}>{s.fill}%</span>
+                  </div>
+                  <div style={{ height: "4px", background: "var(--surface-2)", borderRadius: "3px", overflow: "hidden" }}>
+                    <div style={{
+                      height: "100%", width: `${s.fill}%`, borderRadius: "3px",
+                      background: s.fill >= 90
+                        ? "linear-gradient(90deg, #4ade80, #22c55e)"
+                        : "linear-gradient(90deg, var(--gold), rgba(184,152,90,0.5))",
+                    }}/>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                  {[
+                    { label: "Aftaler (mnd.)", value: `${s.bookings}` },
+                    { label: "Omsætning", value: `${(s.revenue / 1000).toFixed(1)}k kr.` },
+                  ].map(({ label, value }) => (
+                    <div key={label} style={{
+                      background: "var(--surface-2)", borderRadius: "7px",
+                      padding: "10px 12px",
+                    }}>
+                      <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", lineHeight: 1, marginBottom: "4px" }}>{value}</div>
+                      <div style={{ fontSize: "9px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Demo note */}
+          <div style={{ marginTop: "24px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+            <div style={{
+              display: "flex", gap: "8px", alignItems: "center",
+              background: "var(--surface)", border: "1px solid var(--border-strong)",
+              borderRadius: "7px", padding: "9px 16px",
+              fontSize: "11px", color: "var(--text-muted)",
+            }}>
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="8" cy="8" r="6.5" stroke="var(--text-muted)" strokeWidth="1.2"/>
+                <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+              <span><span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Ejerdemo — </span>I produktion opdateres alt i realtid.</span>
+              <span style={{ color: "var(--border-strong)" }}>·</span>
+              <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>Bygget af Sloth Studio</a>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
