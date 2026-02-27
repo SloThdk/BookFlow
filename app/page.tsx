@@ -54,12 +54,7 @@ export default function LoginPage() {
         padding: "40px 48px",
         position: "relative", overflow: "hidden",
       }}>
-        {/* Grid texture */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: "linear-gradient(rgba(184,152,90,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(184,152,90,0.04) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}/>
+        {/* subtle radial accent only — no grid */}
         <div style={{
           position: "absolute", bottom: 0, left: 0, width: "70%", height: "60%",
           background: "radial-gradient(ellipse at 0% 100%, rgba(184,152,90,0.1) 0%, transparent 65%)",

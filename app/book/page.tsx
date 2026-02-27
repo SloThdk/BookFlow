@@ -683,7 +683,9 @@ export default function BookPage() {
                       <>
                         <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Vælg en dato</h2>
                         <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "20px" }}>De næste to ugers ledige tider.</p>
-                        <CalendarPicker selected={date} onSelect={d => { setDate(d); setTime(null); }}/>
+                        <div style={{ maxWidth: "560px" }}>
+                          <CalendarPicker selected={date} onSelect={d => { setDate(d); setTime(null); }}/>
+                        </div>
                       </>
                     )}
 
