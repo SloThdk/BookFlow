@@ -190,7 +190,7 @@ export default function LoginPage() {
               transition: "opacity 0.15s, box-shadow 0.15s",
               boxShadow: loading ? "none" : "0 4px 24px rgba(184,152,90,0.28)",
             }}>
-              {loading ? "Et ojeblik..." : mode === "signup" ? "Opret konto & fortsaet" : "Log ind & fortsaet"}
+              {loading ? "Et øjeblik..." : mode === "signup" ? "Opret konto & fortsæt" : "Log ind & fortsæt"}
             </button>
           </form>
 
