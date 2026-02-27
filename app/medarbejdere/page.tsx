@@ -123,6 +123,83 @@ const EMPLOYEES: Employee[] = [
 ];
 
 function fmtDKK(n: number) { return n.toLocaleString("da-DK") + " kr."; }
+
+function downloadContract(emp: Employee) {
+  const lines = [
+    "══════════════════════════════════════════════",
+    "             ANSÆTTELSESKONTRAKT",
+    "══════════════════════════════════════════════",
+    "",
+    "Arbejdsgiver:",
+    "  Nordklip Barber ApS",
+    "  CVR: 38 47 21 09",
+    "  Blågårdsgade 17, st.",
+    "  2200 København N",
+    "  Tlf: +45 32 15 67 89",
+    "",
+    "Medarbejder:",
+    `  Fulde navn:     ${emp.name}`,
+    `  Stilling:       ${emp.role}`,
+    `  Fødselsdato:    ${emp.birthDate}`,
+    `  Adresse:        ${emp.address}`,
+    `  Telefon:        ${emp.phone}`,
+    `  E-mail:         ${emp.email}`,
+    "",
+    "──────────────────────────────────────────────",
+    "Ansættelsesforhold",
+    "──────────────────────────────────────────────",
+    "",
+    `  Startdato:           ${emp.startDate}`,
+    `  Ansættelsestype:     ${emp.contractType}`,
+    `  Ugentlige timer:     ${emp.hoursPerWeek} timer`,
+    "",
+    "Arbejdstider:",
+    ...Object.entries(emp.schedule).map(([day, hrs]) => `  ${day.padEnd(6)}  ${hrs}`),
+    "",
+    "──────────────────────────────────────────────",
+    "Løn og vilkår",
+    "──────────────────────────────────────────────",
+    "",
+    "  Løn udbetales den 1. i hver måned til",
+    `  bankkonto: ${emp.bankAccount}`,
+    "",
+    "  Ferie: Afholdes i henhold til ferieloven.",
+    "  Opsigelsesvarsel: 1 måned (prøvetid 3 mdr.)",
+    "  Overenskomst: Frisørfagets Overenskomst 2024",
+    "",
+    "──────────────────────────────────────────────",
+    "Særlige kompetencer",
+    "──────────────────────────────────────────────",
+    "",
+    `  ${emp.specialties.join(", ")}`,
+    "",
+    "──────────────────────────────────────────────",
+    "Underskrifter",
+    "──────────────────────────────────────────────",
+    "",
+    "  Arbejdsgiver:                 Medarbejder:",
+    "",
+    "",
+    "  _______________________       _______________________",
+    "  Nordklip Barber ApS           " + emp.name,
+    `  Dato: _______________          Dato: _______________`,
+    "",
+    "══════════════════════════════════════════════",
+    "  Dokument genereret: " + new Date().toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" }),
+    "  BookFlow — Drevet af Sloth Studio",
+    "══════════════════════════════════════════════",
+  ];
+  const text = lines.join("\n");
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `kontrakt-${emp.name.toLowerCase().replace(/\s+/g, "-")}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 function yearsFrom(dateStr: string) {
   const parts = dateStr.split(". ");
   const months: Record<string, number> = { januar: 0, februar: 1, marts: 2, april: 3, maj: 4, juni: 5, juli: 6, august: 7, september: 8, oktober: 9, november: 10, december: 11 };
@@ -173,16 +250,31 @@ function EmployeeCard({ emp }: { emp: Employee }) {
           </div>
         </div>
 
-        {/* Years badge */}
-        <div style={{
-          flexShrink: 0, textAlign: "center",
-          background: "var(--gold-dim)", border: "1px solid var(--gold-border)",
-          borderRadius: "8px", padding: "8px 14px",
-        }}>
-          <div style={{ fontFamily: "var(--font-playfair)", fontSize: "22px", fontWeight: 700, color: "var(--gold)", lineHeight: 1 }}>{yearsEmployed}</div>
-          <div style={{ fontSize: "9px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginTop: "3px" }}>
-            {yearsEmployed === 1 ? "år" : "år"}
+        {/* Right column: years badge + download */}
+        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
+          <div style={{
+            textAlign: "center",
+            background: "var(--gold-dim)", border: "1px solid var(--gold-border)",
+            borderRadius: "8px", padding: "8px 14px",
+          }}>
+            <div style={{ fontFamily: "var(--font-playfair)", fontSize: "22px", fontWeight: 700, color: "var(--gold)", lineHeight: 1 }}>{yearsEmployed}</div>
+            <div style={{ fontSize: "9px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginTop: "3px" }}>
+              {yearsEmployed === 1 ? "år" : "år"}
+            </div>
           </div>
+          <button onClick={() => downloadContract(emp)} style={{
+            display: "flex", alignItems: "center", gap: "5px",
+            background: "var(--surface-2)", border: "1px solid var(--border-strong)",
+            borderRadius: "6px", padding: "6px 11px", cursor: "pointer",
+            fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)",
+            transition: "all 0.12s", whiteSpace: "nowrap",
+          }}>
+            <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+              <path d="M7 1v8M4 6l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M1 10v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            Download kontrakt
+          </button>
         </div>
       </div>
 
@@ -390,17 +482,8 @@ export default function MedarbejderePage() {
             <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Medarbejdere</h1>
             <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>{EMPLOYEES.length} ansatte · Nordklip Barber</p>
           </div>
-          <div style={{ display: "flex", gap: "24px" }}>
-            {[
-              { label: "Fastansatte",  val: EMPLOYEES.filter(e => e.contractType.includes("Fuld")).length },
-              { label: "Timer/uge i alt", val: EMPLOYEES.reduce((s, e) => s + e.hoursPerWeek, 0) },
-              { label: "Snit belægning", val: Math.round(EMPLOYEES.reduce((s, e) => s + e.monthlyStats.fill, 0) / EMPLOYEES.length) + "%" },
-            ].map(({ label, val }) => (
-              <div key={label} style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "var(--font-playfair)", fontSize: "18px", fontWeight: 700, color: "var(--gold)", lineHeight: 1 }}>{val}</div>
-                <div style={{ fontSize: "9px", color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", marginTop: "2px" }}>{label}</div>
-              </div>
-            ))}
+          <div style={{ fontSize: "11px", color: "var(--text-muted)", background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "6px", padding: "5px 12px" }}>
+            {EMPLOYEES.length} medarbejdere
           </div>
         </div>
 
