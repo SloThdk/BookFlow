@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -10,10 +10,10 @@ interface Booking {
 }
 
 const INITIAL_DEMO: Booking[] = [
-  { service: "Classic Cut",     staff: "Marcus Holst", date: "Tomorrow",   time: "11:00", name: "", price: 35, createdAt: 0 },
-  { service: "Beard Sculpt",    staff: "Emil Strand",  date: "Thu 20 Mar", time: "14:00", name: "", price: 24, createdAt: 0 },
-  { service: "Color & Style",   staff: "Sofia Krag",   date: "Fri 21 Mar", time: "11:00", name: "", price: 75, createdAt: 0 },
-  { service: "Hot Towel Shave", staff: "Marcus Holst", date: "Sat 22 Mar", time: "13:30", name: "", price: 30, createdAt: 0 },
+  { service: "Classic Cut",     staff: "Marcus Holst", date: "I morgen",   time: "11:00", name: "", price: 260, createdAt: 0 },
+  { service: "Beard Sculpt",    staff: "Emil Strand",  date: "Tor 20 mar", time: "14:00", name: "", price: 180, createdAt: 0 },
+  { service: "Farve & Stil",   staff: "Sofia Krag",   date: "Fre 21 mar", time: "11:00", name: "", price: 550, createdAt: 0 },
+  { service: "Hot Towel Shave", staff: "Marcus Holst", date: "Lør 22 mar", time: "13:30", name: "", price: 220, createdAt: 0 },
 ];
 
 const STAFF_PHOTOS: Record<string, string> = {
@@ -28,7 +28,7 @@ function BookingCard({ booking, isNew = false, onCancel }: {
   const [confirming, setConfirming] = useState(false);
   const photo = STAFF_PHOTOS[booking.staff];
   const initials = booking.staff.split(" ").map((n: string) => n[0]).join("");
-  const isSpecialDate = booking.date === "Tomorrow" || booking.date === "Today";
+  const isSpecialDate = booking.date === "I morgen" || booking.date === "I dag";
   const parts = booking.date.split(" ");
 
   return (
@@ -119,14 +119,14 @@ function BookingCard({ booking, isNew = false, onCancel }: {
           </div>
         ) : (
           <>
-            <span className="serif" style={{ fontSize: "24px", fontWeight: 700, color: "var(--text)" }}>€{booking.price}</span>
+            <span className="serif" style={{ fontSize: "24px", fontWeight: 700, color: "var(--text)" }}>â‚¬{booking.price}</span>
             <span style={{
               fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
               color: isNew ? "var(--text)" : "var(--gold)",
               background: isNew ? "rgba(245,239,228,0.08)" : "var(--gold-dim)",
               border: `1px solid ${isNew ? "rgba(245,239,228,0.18)" : "var(--gold-border)"}`,
               borderRadius: "4px", padding: "3px 9px",
-            }}>{isNew ? "New" : "Confirmed"}</span>
+            }}>{isNew ? "Ny" : "Bekræftet"}</span>
             {onCancel && (
               <button onClick={() => setConfirming(true)}
                 onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)"; }}
@@ -256,7 +256,7 @@ export default function BookingsPage() {
       <div style={{ paddingBottom: "40px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
         <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Powered by</span>
         <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
+        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>Â·</span>
         <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
           style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
           Built by Sloth Studio

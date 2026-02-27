@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Service {
   id: string; name: string; duration: number; price: number;
   desc: string; category: string; badge?: string; popular?: boolean; photo?: string;
@@ -14,68 +14,68 @@ interface StaffMember {
   story: string; tags: string[]; initials: string; photo?: string;
 }
 
-// ─── Real Nordklip Services ───────────────────────────────────────────────────
+// â”€â”€â”€ Real Nordklip Services â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SERVICES: Service[] = [
   {
     id: "classic-cut",
     name: "Classic Cut",
-    category: "Haircut",
-    duration: 45, price: 35, popular: true,
-    desc: "Our signature scissor and clipper cut, styled and finished to perfection.",
+    category: "Klipning",
+    duration: 45, price: 260, popular: true,
+    desc: "Vores signaturklip med saks og maskine, stylet og efterbehandlet til perfektion.",
     photo: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "beard-sculpt",
     name: "Beard Sculpt",
-    category: "Beard",
-    duration: 30, price: 24,
-    desc: "Full shaping with straight razor edges and a warm towel finish.",
+    category: "SkÃ¦g",
+    duration: 30, price: 180,
+    desc: "Fuld formgivning med barberbladskanter og varm hÃ¥ndklÃ¦definish.",
     photo: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "cut-beard",
     name: "Cut & Beard",
-    category: "Haircut + Beard",
-    duration: 70, price: 52, popular: true,
-    desc: "The full Nordklip experience. Precision cut followed by a complete beard service.",
+    category: "Klipning + SkÃ¦g",
+    duration: 70, price: 390, popular: true,
+    desc: "Den fulde Nordklip-oplevelse. PrÃ¦cisionsklip efterfulgt af komplet skÃ¦gstyling.",
     photo: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "hot-towel",
     name: "Hot Towel Shave",
-    category: "Shave",
-    duration: 40, price: 30,
-    desc: "Traditional straight razor shave with hot towel preparation and aftercare balm.",
+    category: "Barbering",
+    duration: 40, price: 220,
+    desc: "Traditionel barbering med varmt hÃ¥ndklÃ¦de, lige barberblad og plejebalsam.",
     photo: "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "junior-cut",
     name: "Junior Cut",
-    category: "Haircut",
-    duration: 30, price: 24,
+    category: "Klipning",
+    duration: 30, price: 180,
     badge: "Under 16",
-    desc: "The same precision and care, adapted and priced for our younger clients.",
+    desc: "Samme prÃ¦cision og omhu â€” tilpasset og prissat til vores yngre kunder.",
     photo: "https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "color-style",
-    name: "Color & Style",
-    category: "Colour",
-    duration: 90, price: 75,
-    desc: "Root coverage, highlights, or a full colour refresh finished with styling.",
+    name: "Farve & Stil",
+    category: "Farve",
+    duration: 90, price: 550,
+    desc: "Rodfarve, highlights eller en fuld farvefornyelse afsluttet med styling.",
     photo: "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=160&h=160&fit=crop&crop=center",
   },
 ];
 
-// ─── Real Nordklip Barbers ────────────────────────────────────────────────────
+// â”€â”€â”€ Real Nordklip Barbers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const STAFF: StaffMember[] = [
   {
     id: "marcus",
     name: "Marcus Holst",
     role: "Senior Barber",
-    experience: "8 years",
-    story: "Marcus grew up watching his father get a proper Saturday shave at the local barbershop. That ritual stuck with him. He started sweeping floors at 18 and never left. His thing is the classics — clean lines, tight fades, cuts that still look right after two weeks.",
-    tags: ["Taper Fades", "Classic Cuts", "Straight Razor"],
+    experience: "8 Ã¥r",
+    story: "Marcus voksede op med at se sin far fÃ¥ sin ugentlige barbering pÃ¥ den lokale barberforretning. Det ritual satte sig fast i ham. Han begyndte at feje gulv som 18-Ã¥rig og forlod aldrig branchen. Hans specialitet er det klassiske â€” rene linjer, tÃ¦tte fadere, klip der stadig sidder rigtigt efter to uger.",
+    tags: ["Taper Fades", "Classic Cuts", "Lige barberblad"],
     initials: "MH",
     photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=320&h=320&fit=crop&crop=face",
   },
@@ -83,34 +83,34 @@ const STAFF: StaffMember[] = [
     id: "emil",
     name: "Emil Strand",
     role: "Barber",
-    experience: "4 years",
-    story: "Emil came to barbering from the creative side — spent years in Copenhagen's design scene before deciding he wanted to make things with his hands. Trained in the city, drawn to modern structure and texture. His cuts have an edge without trying too hard.",
-    tags: ["Textured Cuts", "Nordic Blends", "Skin Fades"],
+    experience: "4 Ã¥r",
+    story: "Emil kom til barberfaget fra den kreative side â€” han tilbragte Ã¥r i KÃ¸benhavns designverden, inden han besluttede sig for at lave noget med sine hÃ¦nder. Uddannet i byen, tiltrukket af moderne struktur og tekstur. Hans klip har en kant uden at prÃ¸ve for hÃ¥rdt.",
+    tags: ["Teksturerede klip", "Nordiske blends", "Skin fades"],
     initials: "ES",
     photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=320&h=320&fit=crop&crop=face",
   },
   {
     id: "sofia",
     name: "Sofia Krag",
-    role: "Barber & Colorist",
-    experience: "5 years",
-    story: "Sofia trained in women's styling before crossing over to barbering. That background gives her something most barbers don't have — she understands colour theory at a technical level. She's the only one at Nordklip qualified for full colour services, and her precision cuts are among the sharpest in the shop.",
-    tags: ["Precision Cuts", "Highlights", "Colour Services"],
+    role: "Barber & Farvespecialist",
+    experience: "5 Ã¥r",
+    story: "Sofia uddannede sig inden for damestyling, fÃ¸r hun gik over til barberfaget. Den baggrund giver hende noget de fleste barberer ikke har â€” hun forstÃ¥r farveteorien pÃ¥ et teknisk niveau. Hun er den eneste hos Nordklip der er kvalificeret til farvninger, og hendes prÃ¦cisionsklip er blandt de skarpeste i salonnen.",
+    tags: ["PrÃ¦cisionsklip", "Highlights", "Farvning"],
     initials: "SK",
     photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=320&h=320&fit=crop&crop=face",
   },
   {
     id: "any",
-    name: "No preference",
-    role: "First available",
+    name: "Ingen prÃ¦ference",
+    role: "FÃ¸rste ledige",
     experience: "",
-    story: "We'll assign the barber best matched to your chosen service and time slot. A good choice if you're flexible.",
-    tags: ["Best available", "Flexible timing"],
+    story: "Vi finder den barber der passer bedst til din valgte ydelse og dit tidspunkt. Et godt valg, hvis du er fleksibel.",
+    tags: ["Bedste ledige", "Fleksibel timing"],
     initials: "--",
   },
 ];
 
-// ─── Static data ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Static data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const TAKEN_BY_DAY: Record<number, number[]> = {
   1: [1, 4, 9], 2: [3, 6, 11], 3: [0, 5, 8], 4: [2, 7, 10], 5: [1, 5, 9], 6: [4, 6, 8],
 };
@@ -118,18 +118,18 @@ const TIME_SLOTS = ["10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:
 const MORNING_SLOTS  = TIME_SLOTS.slice(0, 6);
 const AFTERNOON_SLOTS = TIME_SLOTS.slice(6, 12);
 const EVENING_SLOTS  = TIME_SLOTS.slice(12);
-const STEP_LABELS = ["Service", "Staff", "Date", "Time", "Details"];
+const STEP_LABELS = ["Ydelse", "Barber", "Dato", "Tid", "Oplysninger"];
 
 const UPCOMING = [
-  { name: "Jakob Møller",  service: "Classic Cut",     date: "Tomorrow",   time: "11:00", barber: "Marcus Holst" },
-  { name: "Rasmus Berg",   service: "Beard Sculpt",    date: "Thu 20 Mar", time: "14:00", barber: "Emil Strand"  },
-  { name: "Laura Winther", service: "Color & Style",   date: "Fri 21 Mar", time: "11:00", barber: "Sofia Krag"   },
-  { name: "Daniel Westh",  service: "Hot Towel Shave", date: "Sat 22 Mar", time: "13:30", barber: "Marcus Holst" },
+  { name: "Jakob MÃ¸ller",  service: "Classic Cut",     date: "I morgen",   time: "11:00", barber: "Marcus Holst" },
+  { name: "Rasmus Berg",   service: "Beard Sculpt",    date: "Tor 20 mar", time: "14:00", barber: "Emil Strand"  },
+  { name: "Laura Winther", service: "Farve & Stil",    date: "Fre 21 mar", time: "11:00", barber: "Sofia Krag"   },
+  { name: "Daniel Westh",  service: "Hot Towel Shave", date: "LÃ¸r 22 mar", time: "13:30", barber: "Marcus Holst" },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function fmtDate(d: Date) {
-  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  return d.toLocaleDateString("da-DK", { weekday: "short", day: "numeric", month: "short" });
 }
 function getAvailDates() {
   const today = new Date(); today.setHours(0,0,0,0);
@@ -142,7 +142,7 @@ function getAvailDates() {
   return dates;
 }
 
-// ─── Service Icons ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Service Icons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ServiceIcon({ id, active }: { id: string; active: boolean }) {
   const col = active ? "var(--gold)" : "var(--text-muted)";
   const p = { width: 18, height: 18, viewBox: "0 0 24 24", fill: "none", stroke: col, strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
@@ -155,14 +155,14 @@ function ServiceIcon({ id, active }: { id: string; active: boolean }) {
   return <svg {...p}><path d="M12 2a2 2 0 0 1 2 2c0 1-1 2-1 3h-2c0-1-1-2-1-3a2 2 0 0 1 2-2z"/><path d="M8.5 8h7l1 12H7.5L8.5 8z"/><line x1="10" y1="12" x2="10" y2="17"/><line x1="14" y1="12" x2="14" y2="17"/></svg>;
 }
 
-// ─── Check Icon ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Check Icon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Check = ({ size = 14, color = "currentColor" }: { size?: number; color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
     <path d="M3 8L6.5 11.5L13 4.5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-// ─── Progress Steps ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Progress Steps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Steps({ current }: { current: number }) {
   return (
     <div style={{ display: "flex", alignItems: "flex-start", marginBottom: "32px" }}>
@@ -202,7 +202,7 @@ function Steps({ current }: { current: number }) {
   );
 }
 
-// ─── Calendar Picker ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Calendar Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelect: (d: Date) => void }) {
   const dates = useMemo(() => getAvailDates(), []);
 
@@ -226,7 +226,7 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
       weeksArr.push(week);
       cursor.setDate(cursor.getDate() + 7);
     }
-    return { weeks: weeksArr, monthLabel: first.toLocaleDateString("en", { month: "long", year: "numeric" }) };
+    return { weeks: weeksArr, monthLabel: first.toLocaleDateString("da-DK", { month: "long", year: "numeric" }) };
   }, [dates]);
 
   return (
@@ -236,7 +236,7 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
         <span style={{ fontSize: "11px", color: "var(--text-muted)", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "4px", padding: "3px 8px" }}>Closed Sundays</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "4px", marginBottom: "8px" }}>
-        {["Mon","Tue","Wed","Thu","Fri","Sat"].map(h => (
+        {["Man","Tir","Ons","Tor","Fre","Lør"].map(h => (
           <div key={h} style={{ textAlign: "center", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-muted)", padding: "4px 0" }}>{h}</div>
         ))}
       </div>
@@ -256,7 +256,7 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
                   boxShadow: isSel ? "0 0 14px var(--gold-glow)" : "none",
                 }}>
                   <span style={{ fontSize: "15px", fontWeight: isSel ? 700 : 500, lineHeight: 1.1, color: isSel ? "var(--gold)" : "var(--text)" }}>{d.getDate()}</span>
-                  <span style={{ fontSize: "9px", color: isSel ? "rgba(184,152,90,0.65)" : "var(--text-muted)", marginTop: "1px" }}>{d.toLocaleDateString("en", { month: "short" })}</span>
+                  <span style={{ fontSize: "9px", color: isSel ? "rgba(184,152,90,0.65)" : "var(--text-muted)", marginTop: "1px" }}>{d.toLocaleDateString("da-DK", { month: "short" })}</span>
                 </button>
               );
             })}
@@ -273,7 +273,7 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
   );
 }
 
-// ─── Time Slot Group ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Time Slot Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function TimeGroup({ label, slots, selected, onSelect }: {
   label: string; slots: { time: string; taken: boolean }[];
   selected: string | null; onSelect: (t: string) => void;
@@ -286,7 +286,7 @@ function TimeGroup({ label, slots, selected, onSelect }: {
         <span style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>{label}</span>
         <div style={{ flex: 1, height: "1px", background: "var(--border)" }}/>
         <span style={{ fontSize: "10px", color: openCount > 0 ? "var(--text-muted)" : "var(--red)", fontWeight: 600 }}>
-          {openCount > 0 ? `${openCount} open` : "Fully booked"}
+          {openCount > 0 ? `${openCount} ledige` : "Fuldt booket"}
         </span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(76px, 1fr))", gap: "6px" }}>
@@ -310,7 +310,7 @@ function TimeGroup({ label, slots, selected, onSelect }: {
   );
 }
 
-// ─── Confirmation ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Confirmation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ConfirmScreen({ service, staffMember, date, time, clientName, clientEmail, onBookAgain }: {
   service: Service; staffMember: StaffMember; date: Date; time: string;
   clientName: string; clientEmail: string; onBookAgain: () => void;
@@ -338,10 +338,10 @@ function ConfirmScreen({ service, staffMember, date, time, clientName, clientEma
           <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>Your appointment</span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", padding: "18px", gap: "16px" }}>
-          {[["Service", service.name], ["Price", `€${service.price}`], ["Barber", staffMember.name], ["Duration", `${service.duration} min`], ["Date", fmtDate(date)], ["Time", time]].map(([l, v]) => (
+          {[["Ydelse", service.name], ["Pris", `â‚¬${service.price}`], ["Barber", staffMember.name], ["Varighed", `${service.duration} min`], ["Dato", fmtDate(date)], ["Tidspunkt", time]].map(([l, v]) => (
             <div key={l}>
               <div style={{ fontSize: "10px", textTransform: "uppercase" as const, letterSpacing: "0.07em", color: "var(--text-muted)", marginBottom: "4px", fontWeight: 600 }}>{l}</div>
-              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text)", fontFamily: l === "Service" ? "var(--font-playfair)" : "inherit" }}>{v}</div>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text)", fontFamily: l === "Ydelse" ? "var(--font-playfair)" : "inherit" }}>{v}</div>
             </div>
           ))}
         </div>
@@ -367,7 +367,7 @@ function ConfirmScreen({ service, staffMember, date, time, clientName, clientEma
           </div>
         ))}
         <div style={{ padding: "10px 18px", background: "rgba(255,255,255,0.015)", borderTop: "1px solid var(--border)" }}>
-          <p style={{ fontSize: "11px", color: "var(--text-muted)" }}>Demo — simulated bookings. In production your real appointments appear here.</p>
+          <p style={{ fontSize: "11px", color: "var(--text-muted)" }}>Demo â€” simulated bookings. In production your real appointments appear here.</p>
         </div>
       </div>
 
@@ -384,7 +384,7 @@ function ConfirmScreen({ service, staffMember, date, time, clientName, clientEma
   );
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function BookPage() {
   const router = useRouter();
   const [session, setSession] = useState<{ name: string; email: string } | null>(null);
@@ -508,7 +508,7 @@ export default function BookPage() {
                   <Steps current={step}/>
                   <div style={{ minHeight: "280px" }}>
 
-                    {/* ── STEP 1 — Service ──────────────────────── */}
+                    {/* â”€â”€ STEP 1 â€” Service â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 1 && (
                       <>
                         <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Choose a service</h2>
@@ -549,7 +549,7 @@ export default function BookPage() {
 
                                 {/* Duration + Price */}
                                 <div style={{ flexShrink: 0, textAlign: "right" }}>
-                                  <div className="serif" style={{ fontSize: "17px", fontWeight: 700, color: sel ? "var(--gold)" : "var(--text)", marginBottom: "2px" }}>€{s.price}</div>
+                                  <div className="serif" style={{ fontSize: "17px", fontWeight: 700, color: sel ? "var(--gold)" : "var(--text)", marginBottom: "2px" }}>â‚¬{s.price}</div>
                                   <div style={{ fontSize: "11px", color: "var(--text-muted)", fontWeight: 500 }}>{s.duration} min</div>
                                 </div>
                               </button>
@@ -559,7 +559,7 @@ export default function BookPage() {
                       </>
                     )}
 
-                    {/* ── STEP 2 — Staff ────────────────────────── */}
+                    {/* â”€â”€ STEP 2 â€” Staff â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 2 && (
                       <>
                         <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Choose your barber</h2>
@@ -660,7 +660,7 @@ export default function BookPage() {
                       </>
                     )}
 
-                    {/* ── STEP 3 — Date ─────────────────────────── */}
+                    {/* â”€â”€ STEP 3 â€” Date â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 3 && (
                       <>
                         <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Choose a date</h2>
@@ -669,7 +669,7 @@ export default function BookPage() {
                       </>
                     )}
 
-                    {/* ── STEP 4 — Time ─────────────────────────── */}
+                    {/* â”€â”€ STEP 4 â€” Time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 4 && (
                       <>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
@@ -686,13 +686,13 @@ export default function BookPage() {
                             </span>
                           </div>
                         </div>
-                        <TimeGroup label="Morning"   slots={morningSlots}   selected={time} onSelect={setTime}/>
-                        <TimeGroup label="Afternoon" slots={afternoonSlots} selected={time} onSelect={setTime}/>
-                        <TimeGroup label="Evening"   slots={eveningSlots}   selected={time} onSelect={setTime}/>
+                        <TimeGroup label="Formiddag"   slots={morningSlots}   selected={time} onSelect={setTime}/>
+                        <TimeGroup label="Eftermiddag" slots={afternoonSlots} selected={time} onSelect={setTime}/>
+                        <TimeGroup label="Aften"   slots={eveningSlots}   selected={time} onSelect={setTime}/>
                       </>
                     )}
 
-                    {/* ── STEP 5 — Details ──────────────────────── */}
+                    {/* â”€â”€ STEP 5 â€” Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 5 && (
                       <>
                         <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Your details</h2>
@@ -725,10 +725,10 @@ export default function BookPage() {
                           <div style={{ padding: "11px 16px", borderBottom: "1px solid var(--border)", background: "rgba(184,152,90,0.04)" }}>
                             <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "var(--text-muted)" }}>Booking summary</span>
                           </div>
-                          {[["Service", service?.name ?? ""], ["Barber", staffMember?.name ?? ""], ["Date", date ? fmtDate(date) : ""], ["Time", time ?? ""], ["Price", `€${service?.price ?? ""}`]].map(([l, v], idx, arr) => (
+                          {[["Ydelse", service?.name ?? ""], ["Barber", staffMember?.name ?? ""], ["Dato", date ? fmtDate(date) : ""], ["Tidspunkt", time ?? ""], ["Pris", `â‚¬${service?.price ?? ""}`]].map(([l, v], idx, arr) => (
                             <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 16px", borderBottom: idx < arr.length - 1 ? "1px solid var(--border)" : "none" }}>
                               <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{l}</span>
-                              <span style={{ fontSize: "13px", fontWeight: 600, color: l === "Price" ? "var(--gold)" : "var(--text)", fontFamily: l === "Service" ? "var(--font-playfair)" : "inherit" }}>{v}</span>
+                              <span style={{ fontSize: "13px", fontWeight: 600, color: l === "Pris" ? "var(--gold)" : "var(--text)", fontFamily: l === "Ydelse" ? "var(--font-playfair)" : "inherit" }}>{v}</span>
                             </div>
                           ))}
                         </div>
@@ -751,7 +751,7 @@ export default function BookPage() {
                       cursor: canProceed() ? "pointer" : "default", transition: "all 0.15s",
                       boxShadow: canProceed() ? "0 4px 20px var(--gold-glow)" : "none",
                     }}>
-                      {step === 5 ? "Confirm booking" : "Continue"}
+                      {step === 5 ? "Bekræft booking" : "Fortsæt"}
                     </button>
                   </div>
                 </>
@@ -762,11 +762,11 @@ export default function BookPage() {
           <div style={{ textAlign: "center", marginTop: "20px", display: "flex", justifyContent: "center", alignItems: "center", gap: "6px" }}>
             <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Powered by</span>
             <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-            <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>·</span>
+            <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Â·</span>
             <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer" style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
               Built by Sloth Studio
             </a>
-            <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>·</span>
+            <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Â·</span>
             <span style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--text-muted)", background: "var(--surface-2)", border: "1px solid var(--border-strong)", borderRadius: "3px", padding: "1px 6px" }}>Demo</span>
           </div>
         </div>

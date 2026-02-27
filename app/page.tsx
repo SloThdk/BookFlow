@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -19,9 +19,9 @@ export default function LoginPage() {
   }, [router]);
 
   function validate() {
-    if (mode === "signup" && !name.trim()) return "Please enter your name.";
-    if (!email.includes("@")) return "Enter a valid email address.";
-    if (password.length < 6) return "Password must be at least 6 characters.";
+    if (mode === "signup" && !name.trim()) return "Angiv dit navn.";
+    if (!email.includes("@")) return "Angiv en gyldig e-mailadresse.";
+    if (password.length < 6) return "Adgangskoden skal være mindst 6 tegn.";
     return null;
   }
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", background: "var(--bg)" }}>
 
-      {/* ── Left: Brand panel ─────────────────────────────── */}
+      {/* â”€â”€ Left: Brand panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="brand-panel" style={{
         flex: "0 0 44%", maxWidth: "44%",
         background: "var(--surface)",
@@ -81,7 +81,7 @@ export default function LoginPage() {
           </a>
         </div>
 
-        {/* Main copy — vertically centered */}
+        {/* Main copy â€” vertically centered */}
         <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px 0 40px" }}>
 
           {/* Scissors mark */}
@@ -125,7 +125,7 @@ export default function LoginPage() {
               },
               {
                 path: "M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3v7l4.5 2.5",
-                text: "Mon–Fri 10:00–19:00 · Sat 09:00–17:00"
+                text: "Monâ€“Fri 10:00â€“19:00 Â· Sat 09:00â€“17:00"
               },
             ].map(({ path, text }) => (
               <div key={text} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -144,7 +144,7 @@ export default function LoginPage() {
         <div style={{ position: "relative", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
           <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>Booking by</span>
           <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-          <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
+          <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>Â·</span>
           <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
             style={{ fontSize: "10px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
             Sloth Studio
@@ -153,7 +153,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── Right: Form panel ─────────────────────────────── */}
+      {/* â”€â”€ Right: Form panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div style={{
         flex: 1, display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
@@ -173,16 +173,16 @@ export default function LoginPage() {
           {/* Mobile-only logo */}
           <div className="mobile-logo" style={{ textAlign: "center", marginBottom: "36px" }}>
             <div className="serif" style={{ fontSize: "26px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</div>
-            <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "3px" }}>Barbershop · Copenhagen</p>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "3px" }}>Barbershop Â· Copenhagen</p>
           </div>
 
           {/* Heading */}
           <div style={{ marginBottom: "28px" }}>
             <h2 style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>
-              {mode === "signup" ? "Create your account" : "Welcome back"}
+              {mode === "signup" ? "Opret din konto" : "Velkommen tilbage"}
             </h2>
             <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
-              {mode === "signup" ? "One account for all your Nordklip bookings." : "Sign in to manage your appointments."}
+              {mode === "signup" ? "Én konto til alle dine Nordklip bookinger." : "Log ind for at administrere dine aftaler."}
             </p>
           </div>
 
@@ -202,7 +202,7 @@ export default function LoginPage() {
                 color: mode === m ? "var(--text)" : "var(--text-muted)",
                 transition: "all 0.15s",
               }}>
-                {m === "signup" ? "Sign up" : "Sign in"}
+                {m === "signup" ? "Opret konto" : "Log ind"}
               </button>
             ))}
           </div>
@@ -214,20 +214,20 @@ export default function LoginPage() {
                 <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>
                   Full name
                 </label>
-                <input type="text" placeholder="Marcus Holst" value={name} onChange={e => setName(e.target.value)}/>
+                <input type="text" placeholder="Dit navn" value={name} onChange={e => setName(e.target.value)}/>
               </div>
             )}
             <div>
               <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>
                 Email
               </label>
-              <input type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)}/>
+              <input type="E-mail" placeholder="din@email\.dk" value={email} onChange={e => setEmail(e.target.value)}/>
             </div>
             <div>
               <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>
                 Password
               </label>
-              <input type="password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)}/>
+              <input type="Adgangskode" placeholder="Mindst 6 tegn" value={password} onChange={e => setPassword(e.target.value)}/>
             </div>
 
             {error && <p style={{ fontSize: "13px", color: "var(--red)", lineHeight: 1.5, margin: 0 }}>{error}</p>}
@@ -243,17 +243,17 @@ export default function LoginPage() {
               transition: "opacity 0.15s, box-shadow 0.15s",
               boxShadow: loading ? "none" : "0 4px 24px rgba(184,152,90,0.28)",
             }}>
-              {loading ? "Just a moment..." : mode === "signup" ? "Create account & continue" : "Sign in & continue"}
+              {loading ? "Et øjeblik..." : mode === "signup" ? "Opret konto & fortsæt" : "Log ind & fortsæt"}
             </button>
           </form>
 
           <p style={{ marginTop: "18px", textAlign: "center", fontSize: "13px", color: "var(--text-muted)" }}>
-            {mode === "signup" ? "Already have an account?" : "No account yet?"}{" "}
+            {mode === "signup" ? "Har du allerede en konto?" : "Ingen konto endnu?"}{" "}
             <button onClick={() => { setMode(mode === "signup" ? "login" : "signup"); setError(""); }} style={{
               background: "none", border: "none", color: "var(--gold)",
               fontSize: "13px", fontWeight: 600, padding: 0, cursor: "pointer",
             }}>
-              {mode === "signup" ? "Sign in" : "Create one"}
+              {mode === "signup" ? "Log ind" : "Opret én"}
             </button>
           </p>
 
@@ -264,7 +264,7 @@ export default function LoginPage() {
             borderRadius: "7px",
           }}>
             <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.65, margin: 0 }}>
-              <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>Demo — </span>
+              <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>Demo â€” </span>
               enter any name, email, and password. No data is stored. Session clears when you close this tab.
             </p>
           </div>

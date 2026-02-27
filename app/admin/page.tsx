@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
@@ -31,11 +31,11 @@ const SCHEDULE: Record<number, Appt[]> = {
     { time: "13:30", client: "Nanna Vestergaard",  service: "Color & Style",   barber: "Sofia",  duration: 90 },
     { time: "14:00", client: "Anders Nielsen",     service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "15:00", client: "Mikkel Dahl",        service: "Junior Cut",      barber: "Marcus", duration: 30 },
-    { time: "16:00", client: "Jonas Kjær",         service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
+    { time: "16:00", client: "Jonas KjÃ¦r",         service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
     { time: "17:00", client: "Thomas Bonde",       service: "Cut & Beard",     barber: "Marcus", duration: 70 },
   ],
   "0": [
-    { time: "09:00", client: "Casper Møller",      service: "Classic Cut",     barber: "Marcus", duration: 45 },
+    { time: "09:00", client: "Casper MÃ¸ller",      service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "10:00", client: "Erik Svendsen",      service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
     { time: "10:30", client: "Laura Winther",      service: "Color & Style",   barber: "Sofia",  duration: 90, notes: "Full highlights, patch test done" },
     { time: "11:00", client: "Viktor Hansen",      service: "Classic Cut",     barber: "Marcus", duration: 45 },
@@ -45,20 +45,20 @@ const SCHEDULE: Record<number, Appt[]> = {
     { time: "14:30", client: "Daniel Westh",       service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "15:30", client: "Sofie Andersen",     service: "Junior Cut",      barber: "Marcus", duration: 30 },
     { time: "16:00", client: "Magnus Brandt",      service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
-    { time: "17:00", client: "Jakob Møller",       service: "Cut & Beard",     barber: "Marcus", duration: 70, notes: "Prefers scissor-only, no clipper" },
+    { time: "17:00", client: "Jakob MÃ¸ller",       service: "Cut & Beard",     barber: "Marcus", duration: 70, notes: "Prefers scissor-only, no clipper" },
   ],
   "1": [
     { time: "09:30", client: "Mikkel Dahl",        service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "10:00", client: "Rasmus Holm",        service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
     { time: "11:00", client: "Camilla Voss",       service: "Color & Style",   barber: "Sofia",  duration: 90 },
-    { time: "12:00", client: "Tobias Nørgaard",    service: "Classic Cut",     barber: "Emil",   duration: 45 },
+    { time: "12:00", client: "Tobias NÃ¸rgaard",    service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "13:00", client: "Bjarne Kjeldsen",    service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
     { time: "14:00", client: "Lise Friis",         service: "Color & Style",   barber: "Sofia",  duration: 90 },
-    { time: "15:30", client: "Adam Schäfer",       service: "Cut & Beard",     barber: "Emil",   duration: 70 },
+    { time: "15:30", client: "Adam SchÃ¤fer",       service: "Cut & Beard",     barber: "Emil",   duration: 70 },
     { time: "17:00", client: "Jesper Winther",     service: "Classic Cut",     barber: "Marcus", duration: 45 },
   ],
   "2": [
-    { time: "10:00", client: "Søren Bang",         service: "Classic Cut",     barber: "Marcus", duration: 45 },
+    { time: "10:00", client: "SÃ¸ren Bang",         service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "10:30", client: "Ida Markussen",      service: "Color & Style",   barber: "Sofia",  duration: 90 },
     { time: "11:30", client: "Patrick Steen",      service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
     { time: "13:00", client: "Carl Henriksen",     service: "Junior Cut",      barber: "Marcus", duration: 30 },
@@ -67,7 +67,7 @@ const SCHEDULE: Record<number, Appt[]> = {
   ],
   "3": [
     { time: "09:00", client: "Henrik Bruun",       service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
-    { time: "10:00", client: "Maja Lindström",     service: "Color & Style",   barber: "Sofia",  duration: 90 },
+    { time: "10:00", client: "Maja LindstrÃ¶m",     service: "Color & Style",   barber: "Sofia",  duration: 90 },
     { time: "11:30", client: "Lars Thomsen",       service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "13:00", client: "Oliver Brink",       service: "Cut & Beard",     barber: "Marcus", duration: 70 },
     { time: "14:30", client: "Stine Krogh",        service: "Color & Style",   barber: "Sofia",  duration: 90 },
@@ -75,19 +75,19 @@ const SCHEDULE: Record<number, Appt[]> = {
   ],
 };
 
-const BARBERS = ["All", "Marcus", "Emil", "Sofia"];
+const BARBERS = ["Alle", "Marcus", "Emil", "Sofia"];
 
 function getDateLabel(offset: number): string {
-  if (offset === 0) return "Today";
-  if (offset === 1) return "Tomorrow";
-  if (offset === -1) return "Yesterday";
+  if (offset === 0) return "I dag";
+  if (offset === 1) return "I morgen";
+  if (offset === -1) return "I går";
   const d = new Date(); d.setDate(d.getDate() + offset);
-  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  return d.toLocaleDateString("da-DK", { weekday: "short", day: "numeric", month: "short" });
 }
 
 function getFullDate(offset: number): string {
   const d = new Date(); d.setDate(d.getDate() + offset);
-  return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return d.toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
 function ApptRow({ appt, isPast }: { appt: Appt; isPast: boolean }) {
@@ -154,7 +154,7 @@ function ApptRow({ appt, isPast }: { appt: Appt; isPast: boolean }) {
               fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em",
               color: isPast ? "var(--text-muted)" : "var(--gold)",
               marginTop: "2px",
-            }}>{isPast ? "Done" : "Confirmed"}</div>
+            }}>{isPast ? "Færdige" : "Bekræftet"}</div>
           </div>
         </div>
       </div>
@@ -176,10 +176,10 @@ function ApptRow({ appt, isPast }: { appt: Appt; isPast: boolean }) {
 
 export default function AdminPage() {
   const [dayOffset, setDayOffset] = useState(0);
-  const [barberFilter, setBarberFilter] = useState("All");
+  const [barberFilter, setBarberFilter] = useState("Alle");
 
   const rawAppts = useMemo(() => (SCHEDULE[dayOffset as keyof typeof SCHEDULE] ?? []).sort((a, b) => a.time.localeCompare(b.time)), [dayOffset]);
-  const filtered = useMemo(() => barberFilter === "All" ? rawAppts : rawAppts.filter(a => a.barber === barberFilter), [rawAppts, barberFilter]);
+  const filtered = useMemo(() => barberFilter === "Alle" ? rawAppts : rawAppts.filter(a => a.barber === barberFilter), [rawAppts, barberFilter]);
 
   const now = new Date();
   const nowStr = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
@@ -244,9 +244,9 @@ export default function AdminPage() {
           {/* Stats */}
           <div style={{ display: "flex", gap: "20px" }}>
             {[
-              { val: total,     label: "Total" },
-              { val: done,      label: "Done" },
-              { val: remaining, label: "Remaining" },
+              { val: total,     label: "I alt" },
+              { val: done,      label: "Færdige" },
+              { val: remaining, label: "Resterende" },
             ].map(({ val, label }) => (
               <div key={label} style={{ textAlign: "center" }}>
                 <div className="serif" style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)", lineHeight: 1 }}>{val}</div>
@@ -275,7 +275,7 @@ export default function AdminPage() {
             padding: "48px 24px", textAlign: "center",
             background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "8px",
           }}>
-            <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>No appointments {barberFilter !== "All" ? `for ${barberFilter}` : ""} {getDateLabel(dayOffset).toLowerCase()}.</p>
+            <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>No appointments {barberFilter !== "Alle" ? `for ${barberFilter}` : ""} {getDateLabel(dayOffset).toLowerCase()}.</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -297,7 +297,7 @@ export default function AdminPage() {
             <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
           </svg>
           <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.65, margin: 0 }}>
-            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Admin demo — </span>
+            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Admin demo â€” </span>
             this is what the barbershop team sees. In production, all bookings sync in real time. Staff can filter by barber and navigate days.
           </p>
         </div>
@@ -306,7 +306,7 @@ export default function AdminPage() {
       <div style={{ paddingBottom: "36px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
         <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Powered by</span>
         <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
+        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>Â·</span>
         <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
           style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
           Built by Sloth Studio
