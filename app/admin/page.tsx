@@ -206,7 +206,22 @@ export default function AdminPage() {
           </a>
           <span style={{ fontSize: "11px", color: "var(--text-muted)", borderLeft: "1px solid var(--border)", paddingLeft: "12px", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600 }}>Holdplan</span>
         </div>
-        <Link href="/bookings" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}>Kundevisning</Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          {[
+            { label: "Ejeroversigt", href: "/owner" },
+            { label: "Kundevisning", href: "/bookings" },
+            { label: "Book en tid", href: "/book" },
+          ].map(({ label, href }) => (
+            <Link key={href} href={href} style={{
+              fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500,
+              padding: "6px 12px", borderRadius: "6px", transition: "all 0.12s",
+              border: "1px solid transparent",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--text)"; (e.currentTarget as HTMLElement).style.borderColor = "var(--border-strong)"; (e.currentTarget as HTMLElement).style.background = "var(--surface)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; (e.currentTarget as HTMLElement).style.borderColor = "transparent"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            >{label}</Link>
+          ))}
+        </div>
       </nav>
 
       {/* Date bar */}

@@ -24,18 +24,6 @@ const TODAY_APTS = [
   { time: "17:00", client: "Jesper Winther",  service: "Classic Cut",     barber: "Marcus", dur: 45, price: 260, done: false },
 ];
 
-const STAFF = [
-  { name: "Marcus Holst", role: "Senior Barber", initials: "MH",
-    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&crop=face",
-    bookings: 38, revenue: 10140, fill: 92, change: +4 },
-  { name: "Emil Strand", role: "Barber", initials: "ES",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face",
-    bookings: 31, revenue: 7890, fill: 84, change: -2 },
-  { name: "Sofia Krag", role: "Farvespecialist", initials: "SK",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face",
-    bookings: 22, revenue: 12100, fill: 96, change: +8 },
-];
-
 const TOP_SERVICES = [
   { name: "Farve & Stil",    rev: 12100, pct: 80, color: "#C49BBF" },
   { name: "Classic Cut",     rev: 9880,  pct: 65, color: "#B8985A" },
@@ -517,66 +505,6 @@ export default function OwnerPage() {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Staff */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
-            {STAFF.map((s, i) => (
-              <div key={i} style={{
-                background: "var(--surface)", border: "1px solid var(--border-strong)",
-                borderRadius: "10px", padding: "20px 22px",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "18px" }}>
-                  <img src={s.photo} alt={s.name} style={{
-                    width: "44px", height: "44px", borderRadius: "50%",
-                    objectFit: "cover", border: "1px solid var(--border-strong)", display: "block", flexShrink: 0,
-                  }}/>
-                  <div style={{ minWidth: 0 }}>
-                    <div className="serif" style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{s.name}</div>
-                    <div style={{ fontSize: "11px", color: "var(--gold)" }}>{s.role}</div>
-                  </div>
-                  <span style={{
-                    marginLeft: "auto", flexShrink: 0,
-                    fontSize: "10px", fontWeight: 700,
-                    color: s.change > 0 ? "#4ade80" : "#f87171",
-                    background: s.change > 0 ? "rgba(74,222,128,0.08)" : "rgba(248,113,113,0.08)",
-                    border: `1px solid ${s.change > 0 ? "rgba(74,222,128,0.2)" : "rgba(248,113,113,0.2)"}`,
-                    borderRadius: "4px", padding: "2px 7px",
-                  }}>{s.change > 0 ? "↑" : "↓"} {Math.abs(s.change)}%</span>
-                </div>
-
-                {/* Fill rate */}
-                <div style={{ marginBottom: "16px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-                    <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Belægning</span>
-                    <span style={{ fontSize: "12px", fontWeight: 700, color: s.fill >= 90 ? "#4ade80" : "var(--gold)" }}>{s.fill}%</span>
-                  </div>
-                  <div style={{ height: "4px", background: "var(--surface-2)", borderRadius: "3px", overflow: "hidden" }}>
-                    <div style={{
-                      height: "100%", width: `${s.fill}%`, borderRadius: "3px",
-                      background: s.fill >= 90
-                        ? "linear-gradient(90deg, #4ade80, #22c55e)"
-                        : "linear-gradient(90deg, var(--gold), rgba(184,152,90,0.5))",
-                    }}/>
-                  </div>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                  {[
-                    { label: "Aftaler (mnd.)", value: `${s.bookings}` },
-                    { label: "Omsætning", value: `${(s.revenue / 1000).toFixed(1)}k kr.` },
-                  ].map(({ label, value }) => (
-                    <div key={label} style={{
-                      background: "var(--surface-2)", borderRadius: "7px",
-                      padding: "10px 12px",
-                    }}>
-                      <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", lineHeight: 1, marginBottom: "4px" }}>{value}</div>
-                      <div style={{ fontSize: "9px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
           </div>
 
           {/* Demo note */}
