@@ -563,9 +563,15 @@ export default function BookPage() {
                     {step === 2 && (
                       <>
                         <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Choose your barber</h2>
-                        <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "20px" }}>Each of our barbers has their own focus and style.</p>
+                        <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: service?.id === "color-style" ? "10px" : "20px" }}>Each of our barbers has their own focus and style.</p>
+                        {service?.id === "color-style" && (
+                          <div style={{ background: "rgba(196,155,191,0.06)", border: "1px solid rgba(196,155,191,0.22)", borderRadius: "7px", padding: "10px 14px", marginBottom: "16px", display: "flex", gap: "8px", alignItems: "center" }}>
+                            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}><circle cx="8" cy="8" r="6.5" stroke="rgba(196,155,191,0.7)" strokeWidth="1.2"/><path d="M8 5.5v3.5M8 11v.5" stroke="rgba(196,155,191,0.7)" strokeWidth="1.4" strokeLinecap="round"/></svg>
+                            <p style={{ fontSize: "12px", color: "rgba(196,155,191,0.85)", margin: 0, lineHeight: 1.5 }}>Sofia is our only qualified colorist. She&apos;ll handle your colour service.</p>
+                          </div>
+                        )}
                         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                          {STAFF.map(s => {
+                          {STAFF.filter(s => service?.id === "color-style" ? s.id === "sofia" || s.id === "any" : true).map(s => {
                             const sel = staffMember?.id === s.id;
                             const isAny = s.id === "any";
                             return (

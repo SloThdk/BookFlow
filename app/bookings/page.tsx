@@ -9,7 +9,7 @@ interface Booking {
   name: string; price: number; createdAt: number;
 }
 
-const DEMO_BOOKINGS: Booking[] = [
+const INITIAL_DEMO: Booking[] = [
   { service: "Classic Cut",     staff: "Marcus Holst", date: "Tomorrow",   time: "11:00", name: "", price: 35, createdAt: 0 },
   { service: "Beard Sculpt",    staff: "Emil Strand",  date: "Thu 20 Mar", time: "14:00", name: "", price: 24, createdAt: 0 },
   { service: "Color & Style",   staff: "Sofia Krag",   date: "Fri 21 Mar", time: "11:00", name: "", price: 75, createdAt: 0 },
@@ -22,7 +22,10 @@ const STAFF_PHOTOS: Record<string, string> = {
   "Sofia Krag":   "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&fit=crop&crop=face",
 };
 
-function BookingCard({ booking, isNew = false }: { booking: Booking; isNew?: boolean }) {
+function BookingCard({ booking, isNew = false, onCancel }: {
+  booking: Booking; isNew?: boolean; onCancel?: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
   const photo = STAFF_PHOTOS[booking.staff];
   const initials = booking.staff.split(" ").map((n: string) => n[0]).join("");
   const isSpecialDate = booking.date === "Tomorrow" || booking.date === "Today";
@@ -36,19 +39,16 @@ function BookingCard({ booking, isNew = false }: { booking: Booking; isNew?: boo
       display: "flex",
       alignItems: "stretch",
       overflow: "hidden",
+      opacity: confirming ? 0.75 : 1,
+      transition: "opacity 0.15s",
     }}>
       {/* Date block */}
       <div style={{
-        width: "90px",
-        flexShrink: 0,
+        width: "90px", flexShrink: 0,
         borderRight: "1px solid var(--border)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "20px 12px",
-        background: "var(--surface-2)",
-        gap: "3px",
+        display: "flex", flexDirection: "column", alignItems: "center",
+        justifyContent: "center", padding: "20px 12px",
+        background: "var(--surface-2)", gap: "3px",
       }}>
         {isSpecialDate ? (
           <>
@@ -67,19 +67,13 @@ function BookingCard({ booking, isNew = false }: { booking: Booking; isNew?: boo
 
       {/* Content */}
       <div style={{
-        flex: 1,
-        padding: "20px 24px",
-        display: "flex",
-        alignItems: "center",
-        gap: "18px",
-        minWidth: 0,
+        flex: 1, padding: "20px 24px",
+        display: "flex", alignItems: "center", gap: "18px", minWidth: 0,
       }}>
-        {/* Barber photo */}
         {photo ? (
           <img src={photo} alt={booking.staff} style={{
             width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover",
-            flexShrink: 0, display: "block",
-            border: "1px solid var(--border-strong)",
+            flexShrink: 0, display: "block", border: "1px solid var(--border-strong)",
           }}/>
         ) : (
           <div style={{
@@ -90,39 +84,67 @@ function BookingCard({ booking, isNew = false }: { booking: Booking; isNew?: boo
             <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-muted)" }}>{initials}</span>
           </div>
         )}
-
-        {/* Text */}
         <div style={{ minWidth: 0 }}>
           <div style={{
-            fontFamily: "var(--font-playfair)",
-            fontSize: "17px", fontWeight: 700,
-            color: "var(--text)",
-            marginBottom: "5px",
+            fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700,
+            color: "var(--text)", marginBottom: "5px",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>{booking.service}</div>
           <div style={{ fontSize: "13px", color: "var(--gold)", fontWeight: 500 }}>{booking.staff}</div>
         </div>
       </div>
 
-      {/* Price + status */}
+      {/* Price + status + cancel */}
       <div style={{
-        padding: "20px 24px",
-        flexShrink: 0,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-        justifyContent: "center",
-        gap: "8px",
+        padding: "16px 20px", flexShrink: 0,
+        display: "flex", flexDirection: "column",
+        alignItems: "flex-end", justifyContent: "center", gap: "8px",
         borderLeft: "1px solid var(--border)",
       }}>
-        <span className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)" }}>€{booking.price}</span>
-        <span style={{
-          fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
-          color: isNew ? "var(--text)" : "var(--gold)",
-          background: isNew ? "rgba(245,239,228,0.08)" : "var(--gold-dim)",
-          border: `1px solid ${isNew ? "rgba(245,239,228,0.18)" : "var(--gold-border)"}`,
-          borderRadius: "4px", padding: "3px 9px", whiteSpace: "nowrap",
-        }}>{isNew ? "New" : "Confirmed"}</span>
+        {confirming ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-end" }}>
+            <span style={{ fontSize: "11px", color: "var(--text-secondary)", whiteSpace: "nowrap" }}>Cancel booking?</span>
+            <div style={{ display: "flex", gap: "6px" }}>
+              <button onClick={() => setConfirming(false)} style={{
+                background: "transparent", border: "1px solid var(--border-strong)",
+                color: "var(--text-muted)", borderRadius: "5px", padding: "5px 10px",
+                fontSize: "11px", fontWeight: 600, cursor: "pointer",
+              }}>Keep</button>
+              <button onClick={onCancel} style={{
+                background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)",
+                color: "#f87171", borderRadius: "5px", padding: "5px 10px",
+                fontSize: "11px", fontWeight: 700, cursor: "pointer",
+              }}>Yes, cancel</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <span className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)" }}>€{booking.price}</span>
+            <span style={{
+              fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
+              color: isNew ? "var(--text)" : "var(--gold)",
+              background: isNew ? "rgba(245,239,228,0.08)" : "var(--gold-dim)",
+              border: `1px solid ${isNew ? "rgba(245,239,228,0.18)" : "var(--gold-border)"}`,
+              borderRadius: "4px", padding: "3px 9px",
+            }}>{isNew ? "New" : "Confirmed"}</span>
+            {onCancel && (
+              <button onClick={() => setConfirming(true)} style={{
+                background: "transparent", border: "none", padding: "2px 4px",
+                cursor: "pointer", color: "var(--text-muted)", opacity: 0.5,
+                display: "flex", alignItems: "center", transition: "opacity 0.15s",
+                marginTop: "2px",
+              }}
+                onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
+                onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.5")}
+                title="Cancel appointment"
+              >
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                </svg>
+              </button>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -132,23 +154,15 @@ function EmptyState() {
   return (
     <div style={{
       padding: "60px 24px", textAlign: "center",
-      background: "var(--surface)", border: "1px solid var(--border-strong)",
-      borderRadius: "10px",
+      background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px",
     }}>
-      <p style={{ fontSize: "16px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "8px" }}>
-        No upcoming appointments
-      </p>
-      <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "28px" }}>
-        Ready when you are.
-      </p>
+      <p style={{ fontSize: "16px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "8px" }}>No upcoming appointments</p>
+      <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "28px" }}>Ready when you are.</p>
       <Link href="/book" style={{
         display: "inline-flex", alignItems: "center", gap: "6px",
-        background: "var(--gold)", color: "#0E0C09",
-        borderRadius: "6px", padding: "11px 24px",
-        fontSize: "13px", fontWeight: 700, textDecoration: "none",
-      }}>
-        Book a visit
-      </Link>
+        background: "var(--gold)", color: "#0E0C09", borderRadius: "6px",
+        padding: "11px 24px", fontSize: "13px", fontWeight: 700, textDecoration: "none",
+      }}>Book a visit</Link>
     </div>
   );
 }
@@ -157,6 +171,7 @@ export default function BookingsPage() {
   const router = useRouter();
   const [session, setSession] = useState<{ name: string; email: string } | null>(null);
   const [myBookings, setMyBookings] = useState<Booking[]>([]);
+  const [demoBookings, setDemoBookings] = useState<Booking[]>(INITIAL_DEMO);
 
   useEffect(() => {
     try {
@@ -168,7 +183,17 @@ export default function BookingsPage() {
     } catch { router.replace("/"); }
   }, [router]);
 
-  const all = [...myBookings, ...DEMO_BOOKINGS];
+  function cancelMine(i: number) {
+    const updated = myBookings.filter((_, idx) => idx !== i);
+    setMyBookings(updated);
+    try { sessionStorage.setItem("bf_bookings", JSON.stringify(updated)); } catch {}
+  }
+
+  function cancelDemo(i: number) {
+    setDemoBookings(d => d.filter((_, idx) => idx !== i));
+  }
+
+  const all = [...myBookings, ...demoBookings];
 
   if (!session) return null;
 
@@ -196,45 +221,39 @@ export default function BookingsPage() {
         </div>
       </nav>
 
-      {/* Hero header */}
+      {/* Hero */}
       <div style={{
         position: "relative", overflow: "hidden",
         borderBottom: "1px solid var(--border)",
-        minHeight: "160px",
-        display: "flex", alignItems: "center", justifyContent: "center",
+        minHeight: "160px", display: "flex", alignItems: "center", justifyContent: "center",
       }}>
         <div style={{
           position: "absolute", inset: 0,
           backgroundImage: "url(https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&fit=crop&crop=center)",
           backgroundSize: "cover", backgroundPosition: "center 35%",
         }}/>
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(to bottom, rgba(14,12,9,0.72) 0%, rgba(14,12,9,0.88) 100%)",
-        }}/>
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(14,12,9,0.72) 0%, rgba(14,12,9,0.88) 100%)" }}/>
         <div style={{ position: "relative", width: "100%", maxWidth: "860px", padding: "36px 32px" }}>
-          <h1 className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>
-            Upcoming appointments
-          </h1>
+          <h1 className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Upcoming appointments</h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Nordklip Barbershop &mdash; Copenhagen</p>
         </div>
       </div>
 
       <main style={{ maxWidth: "860px", margin: "0 auto", padding: "36px 32px 80px" }}>
-
-        {/* List */}
         {all.length === 0 ? (
           <EmptyState/>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {all.map((b, i) => (
-              <BookingCard key={i} booking={b} isNew={i < myBookings.length}/>
+            {myBookings.map((b, i) => (
+              <BookingCard key={`mine-${i}`} booking={b} isNew={i === 0} onCancel={() => cancelMine(i)}/>
+            ))}
+            {demoBookings.map((b, i) => (
+              <BookingCard key={`demo-${i}`} booking={b} onCancel={() => cancelDemo(i)}/>
             ))}
           </div>
         )}
       </main>
 
-      {/* Footer */}
       <div style={{ paddingBottom: "40px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
         <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Powered by</span>
         <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
