@@ -128,19 +128,31 @@ function BookingCard({ booking, isNew = false, onCancel }: {
               borderRadius: "4px", padding: "3px 9px",
             }}>{isNew ? "New" : "Confirmed"}</span>
             {onCancel && (
-              <button onClick={() => setConfirming(true)} style={{
-                background: "transparent", border: "none", padding: "2px 4px",
-                cursor: "pointer", color: "var(--text-muted)", opacity: 0.5,
-                display: "flex", alignItems: "center", transition: "opacity 0.15s",
-                marginTop: "2px",
-              }}
-                onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
-                onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.5")}
+              <button onClick={() => setConfirming(true)}
+                onMouseOver={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.15)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.4)";
+                  (e.currentTarget as HTMLElement).style.color = "#f87171";
+                }}
+                onMouseOut={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.06)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.2)";
+                  (e.currentTarget as HTMLElement).style.color = "#f87171";
+                }}
+                style={{
+                  background: "rgba(239,68,68,0.06)",
+                  border: "1px solid rgba(239,68,68,0.2)",
+                  borderRadius: "5px", padding: "4px 9px",
+                  cursor: "pointer", color: "#f87171",
+                  display: "flex", alignItems: "center", gap: "4px",
+                  transition: "all 0.15s", marginTop: "2px", fontSize: "11px", fontWeight: 600,
+                }}
                 title="Cancel appointment"
               >
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
+                Cancel
               </button>
             )}
           </>
@@ -198,7 +210,11 @@ export default function BookingsPage() {
   if (!session) return null;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{
+      minHeight: "100vh", background: "var(--bg)",
+      backgroundImage: "linear-gradient(rgba(184,152,90,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(184,152,90,0.03) 1px, transparent 1px)",
+      backgroundSize: "52px 52px",
+    }}>
 
       {/* Nav */}
       <nav style={{
