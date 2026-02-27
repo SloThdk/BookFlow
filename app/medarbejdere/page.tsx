@@ -510,7 +510,7 @@ export default function MedarbejderePage() {
             </p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: "16px" }}>
+          <div className="emp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 420px), 1fr))", gap: "16px" }}>
             {EMPLOYEES.map(emp => (
               <EmployeeCard key={emp.id} emp={emp}/>
             ))}

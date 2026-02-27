@@ -74,3 +74,38 @@ button { font-family: inherit; cursor: pointer; }
   .kpi-4, .kpi-5 { grid-template-columns: 1fr 1fr !important; }
   .four-col       { grid-template-columns: 1fr 1fr !important; }
 }
+
+/* ── Kunder / mobile card fixes ── */
+@media (max-width: 640px) {
+  .appt-row         { flex-wrap: wrap !important; gap: 10px !important; }
+  .appt-actions     { width: 100% !important; justify-content: flex-end !important;
+                      padding-top: 6px !important; border-top: 1px solid var(--border) !important; }
+  .appt-confirm-row { width: 100% !important; flex-wrap: wrap !important; gap: 6px !important; }
+  .customer-header  { flex-wrap: wrap !important; }
+  .customer-badges  { flex-wrap: wrap !important; gap: 4px !important; }
+  .cal-scroll       { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+  .emp-grid         { grid-template-columns: 1fr !important; }
+  .appt-card-row    { flex-wrap: wrap !important; gap: 8px !important; }
+  .modal-inner      { padding: 16px !important; max-height: 90vh !important; overflow-y: auto !important; }
+  .modal-cols       { flex-direction: column !important; }
+}
+@media (max-width: 480px) {
+  .appt-actions button { font-size: 11px !important; padding: 5px 10px !important; }
+  .kunder-search    { padding: 10px 14px !important; }
+}
+
+/* ── Admin card mobile ── */
+@media (max-width: 580px) {
+  .appt-card-row              { flex-wrap: wrap !important; }
+  .appt-card-row > div:last-child { 
+    width: 100% !important; min-width: 0 !important;
+    border-left: none !important;
+    border-top: 1px solid var(--border) !important;
+  }
+  /* Barber filter tabs scroll */
+  .barber-tabs                { overflow-x: auto !important; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
+  /* Date nav wraps */
+  .date-nav                   { flex-wrap: wrap !important; gap: 8px !important; }
+  /* Stats row in header */
+  .stats-bar                  { flex-wrap: wrap !important; gap: 6px !important; }
+}

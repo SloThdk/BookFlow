@@ -245,10 +245,11 @@ function RescheduleModal({ appt, onClose, onConfirm }: {
       background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)",
       display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
     }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div style={{
+      <div className="modal-inner" style={{
         background: "var(--surface)", border: "1px solid var(--border-strong)",
         borderRadius: "14px", width: "100%", maxWidth: "500px",
         boxShadow: "0 32px 80px rgba(0,0,0,0.6)", overflow: "hidden",
+        maxHeight: "90dvh", overflowY: "auto",
       }}>
         {/* Header */}
         <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -338,7 +339,7 @@ function RescheduleModal({ appt, onClose, onConfirm }: {
               fontSize: "13px", fontWeight: 700,
               cursor: saved || !selectedDate ? "default" : "pointer", transition: "all 0.2s",
             }}>
-              {saved ? "Aftale flyttet" : selectedDate ? `Bekræft — ${formattedDate} kl. ${time}` : "Vælg en dato"}
+              {saved ? "Aftale flyttet" : selectedDate ? `Bekræft — kl. ${time}` : "Vælg en dato"}
             </button>
           </div>
         </div>
@@ -361,7 +362,7 @@ function CustomerCard({ customer, onReschedule, onCancel }: {
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden" }}>
       {/* Header row */}
-      <div onClick={() => setOpen(o => !o)} style={{ display: "flex", alignItems: "center", padding: "16px 20px", cursor: "pointer", gap: "16px" }}>
+      <div onClick={() => setOpen(o => !o)} className="customer-header" style={{ display: "flex", alignItems: "center", padding: "16px 20px", cursor: "pointer", gap: "16px" }}>
         {/* Initials avatar */}
         <div style={{
           width: "38px", height: "38px", borderRadius: "50%", flexShrink: 0,
@@ -377,7 +378,7 @@ function CustomerCard({ customer, onReschedule, onCancel }: {
           <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{customer.phone}</div>
         </div>
 
-        <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+        <div className="customer-badges" style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
           {upcoming.length > 0 && (
             <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--gold)", background: "var(--gold-dim)", border: "1px solid var(--gold-border)", borderRadius: "4px", padding: "2px 8px" }}>
               {upcoming.length} kommende
@@ -408,7 +409,7 @@ function CustomerCard({ customer, onReschedule, onCancel }: {
                 const isCancelling = cancellingId === appt.id;
 
                 return (
-                  <div key={appt.id} style={{
+                  <div key={appt.id} className="appt-row" style={{
                     display: "flex", alignItems: "center", gap: "14px",
                     padding: "14px 20px",
                     borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none",
@@ -437,9 +438,9 @@ function CustomerCard({ customer, onReschedule, onCancel }: {
 
                     {/* Actions — only for future appointments */}
                     {!isPast && (
-                      <div style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div className="appt-actions" style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                         {isCancelling ? (
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <div className="appt-confirm-row" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             <span style={{ fontSize: "12px", color: "var(--text-secondary)", fontWeight: 500 }}>Er du sikker?</span>
                             <button onClick={() => { onCancel(appt.id); setCancellingId(null); }} style={{
                               background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.35)",

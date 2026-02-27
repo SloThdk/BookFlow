@@ -104,6 +104,7 @@ function ApptRow({ appt, isPast }: { appt: Appt; isPast: boolean }) {
       opacity: isPast ? 0.45 : 1,
     }}>
       <div
+        className="appt-card-row"
         style={{ display: "flex", alignItems: "center", cursor: appt.notes ? "pointer" : "default" }}
         onClick={() => appt.notes && setOpen(o => !o)}
       >
@@ -214,7 +215,7 @@ export default function AdminPage() {
             <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>{getFullDate(dayOffset)}</p>
           </div>
           {/* Stats inline in header */}
-          <div style={{ display: "flex", gap: "24px" }}>
+          <div className="stats-bar" style={{ display: "flex", gap: "24px" }}>
             {[
               { val: total,     label: "I alt" },
               { val: done,      label: "Færdige" },
@@ -229,7 +230,7 @@ export default function AdminPage() {
         </div>
 
         {/* Date navigation bar */}
-        <div style={{
+        <div className="date-nav" style={{
           borderBottom: "1px solid var(--border)", background: "var(--surface)",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "14px 32px",
@@ -258,8 +259,8 @@ export default function AdminPage() {
         <main style={{ padding: "28px 32px 80px", flex: 1 }}>
 
           {/* Barber filter tabs */}
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}>
-            <div style={{ display: "flex", background: "var(--surface-2)", border: "1px solid var(--border-strong)", borderRadius: "8px", padding: "3px", gap: "2px" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px", overflow: "hidden" }}>
+            <div className="barber-tabs" style={{ display: "flex", background: "var(--surface-2)", border: "1px solid var(--border-strong)", borderRadius: "8px", padding: "3px", gap: "2px" }}>
               {BARBERS.map(b => (
                 <button key={b} onClick={() => setBarberFilter(b)} style={{
                   padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: barberFilter === b ? 700 : 400,
