@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
+import { OwnerSidebar } from "../components/OwnerSidebar";
 
 interface Appt {
   time: string; client: string; service: string;
@@ -189,143 +189,131 @@ export default function AdminPage() {
   const done = filtered.filter(a => isPast(a.time)).length;
   const remaining = total - done;
 
+  function handleLogout() {
+    try { sessionStorage.removeItem("bf_owner"); } catch {}
+    window.location.href = "/owner";
+  }
+
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
+      <OwnerSidebar onLogout={handleLogout}/>
 
-      {/* Nav */}
-      <nav style={{
-        position: "sticky", top: 0, height: "58px",
-        background: "rgba(14,12,9,0.97)", backdropFilter: "blur(14px)",
-        borderBottom: "1px solid var(--border)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 28px", zIndex: 100,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <a href="https://nordklip.pages.dev" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-            <span className="serif" style={{ fontSize: "18px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
-          </a>
-          <span style={{ fontSize: "11px", color: "var(--text-muted)", borderLeft: "1px solid var(--border)", paddingLeft: "12px", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600 }}>Holdplan</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          {[
-            { label: "Ejeroversigt", href: "/owner" },
-            { label: "Kundevisning", href: "/bookings" },
-            { label: "Book en tid", href: "/book" },
-          ].map(({ label, href }) => (
-            <Link key={href} href={href} style={{
-              fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500,
-              padding: "6px 12px", borderRadius: "6px", transition: "all 0.12s",
-              border: "1px solid transparent",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--text)"; (e.currentTarget as HTMLElement).style.borderColor = "var(--border-strong)"; (e.currentTarget as HTMLElement).style.background = "var(--surface)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; (e.currentTarget as HTMLElement).style.borderColor = "transparent"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-            >{label}</Link>
-          ))}
-        </div>
-      </nav>
+      {/* Main column */}
+      <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
 
-      {/* Date bar */}
-      <div style={{
-        borderBottom: "1px solid var(--border)", background: "var(--surface)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "16px 28px",
-      }}>
-        <button onClick={() => setDayOffset(d => d - 1)} style={{
-          background: "var(--surface-2)", border: "1px solid var(--border-strong)",
-          borderRadius: "6px", width: "34px", height: "34px", cursor: "pointer",
-          color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center",
+        {/* Sticky header */}
+        <div style={{
+          position: "sticky", top: 0, zIndex: 50,
+          background: "rgba(14,12,9,0.92)", backdropFilter: "blur(14px)",
+          borderBottom: "1px solid var(--border)",
+          padding: "24px 32px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        </button>
-
-        <div style={{ textAlign: "center" }}>
-          <div className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)" }}>{getDateLabel(dayOffset)}</div>
-          <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "2px" }}>{getFullDate(dayOffset)}</div>
-        </div>
-
-        <button onClick={() => setDayOffset(d => d + 1)} style={{
-          background: "var(--surface-2)", border: "1px solid var(--border-strong)",
-          borderRadius: "6px", width: "34px", height: "34px", cursor: "pointer",
-          color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        </button>
-      </div>
-
-      <main style={{ maxWidth: "860px", margin: "0 auto", padding: "28px 28px 80px" }}>
-
-        {/* Stats + barber filter */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
-          {/* Stats */}
-          <div style={{ display: "flex", gap: "20px" }}>
+          <div>
+            <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Holdplan</h1>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>{getFullDate(dayOffset)}</p>
+          </div>
+          {/* Stats inline in header */}
+          <div style={{ display: "flex", gap: "24px" }}>
             {[
               { val: total,     label: "I alt" },
               { val: done,      label: "Færdige" },
               { val: remaining, label: "Resterende" },
             ].map(({ val, label }) => (
               <div key={label} style={{ textAlign: "center" }}>
-                <div className="serif" style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)", lineHeight: 1 }}>{val}</div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", marginTop: "3px" }}>{label}</div>
+                <div style={{ fontFamily: "var(--font-playfair)", fontSize: "20px", fontWeight: 700, color: "var(--gold)", lineHeight: 1 }}>{val}</div>
+                <div style={{ fontSize: "9px", color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", marginTop: "3px" }}>{label}</div>
               </div>
             ))}
           </div>
-
-          {/* Barber tabs */}
-          <div style={{ display: "flex", background: "var(--surface-2)", border: "1px solid var(--border-strong)", borderRadius: "8px", padding: "3px", gap: "2px" }}>
-            {BARBERS.map(b => (
-              <button key={b} onClick={() => setBarberFilter(b)} style={{
-                padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: barberFilter === b ? 700 : 400,
-                background: barberFilter === b ? "var(--surface)" : "transparent",
-                border: barberFilter === b ? "1px solid var(--border-strong)" : "1px solid transparent",
-                color: barberFilter === b ? "var(--text)" : "var(--text-muted)",
-                transition: "all 0.12s",
-              }}>{b}</button>
-            ))}
-          </div>
         </div>
 
-        {/* Appointment list */}
-        {filtered.length === 0 ? (
-          <div style={{
-            padding: "48px 24px", textAlign: "center",
-            background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "8px",
-          }}>
-            <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>Ingen aftaler {barberFilter !== "Alle" ? `for ${barberFilter}` : ""} {getDateLabel(dayOffset).toLowerCase()}.</p>
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            {filtered.map((a, i) => (
-              <ApptRow key={i} appt={a} isPast={isPast(a.time)}/>
-            ))}
-          </div>
-        )}
-
-        {/* Demo note */}
+        {/* Date navigation bar */}
         <div style={{
-          marginTop: "28px", padding: "11px 16px",
-          background: "var(--surface)", border: "1px solid var(--border-strong)",
-          borderLeft: "3px solid var(--border-strong)", borderRadius: "6px",
-          display: "flex", gap: "10px", alignItems: "flex-start",
+          borderBottom: "1px solid var(--border)", background: "var(--surface)",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "14px 32px",
         }}>
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: "1px" }}>
-            <circle cx="8" cy="8" r="6.5" stroke="var(--text-muted)" strokeWidth="1.2"/>
-            <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
-          </svg>
-          <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.65, margin: 0 }}>
-            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Admin demo — </span>
-            dette er hvad barberteamet ser. I produktion synkroniseres alle bookinger i realtid. Personalet kan filtrere og navigere på tværs af dage.
-          </p>
-        </div>
-      </main>
+          <button onClick={() => setDayOffset(d => d - 1)} style={{
+            background: "var(--surface-2)", border: "1px solid var(--border-strong)",
+            borderRadius: "6px", width: "34px", height: "34px", cursor: "pointer",
+            color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
 
-      <div style={{ paddingBottom: "36px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
-        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Drevet af</span>
-        <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
-        <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
-          style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
-          Bygget af Sloth Studio
-        </a>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontFamily: "var(--font-playfair)", fontSize: "18px", fontWeight: 700, color: "var(--text)" }}>{getDateLabel(dayOffset)}</div>
+          </div>
+
+          <button onClick={() => setDayOffset(d => d + 1)} style={{
+            background: "var(--surface-2)", border: "1px solid var(--border-strong)",
+            borderRadius: "6px", width: "34px", height: "34px", cursor: "pointer",
+            color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </div>
+
+        <main style={{ padding: "28px 32px 80px", flex: 1 }}>
+
+          {/* Barber filter tabs */}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}>
+            <div style={{ display: "flex", background: "var(--surface-2)", border: "1px solid var(--border-strong)", borderRadius: "8px", padding: "3px", gap: "2px" }}>
+              {BARBERS.map(b => (
+                <button key={b} onClick={() => setBarberFilter(b)} style={{
+                  padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: barberFilter === b ? 700 : 400,
+                  background: barberFilter === b ? "var(--surface)" : "transparent",
+                  border: barberFilter === b ? "1px solid var(--border-strong)" : "1px solid transparent",
+                  color: barberFilter === b ? "var(--text)" : "var(--text-muted)",
+                  transition: "all 0.12s",
+                }}>{b}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Appointment list */}
+          {filtered.length === 0 ? (
+            <div style={{
+              padding: "48px 24px", textAlign: "center",
+              background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "8px",
+            }}>
+              <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>Ingen aftaler {barberFilter !== "Alle" ? `for ${barberFilter}` : ""} {getDateLabel(dayOffset).toLowerCase()}.</p>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {filtered.map((a, i) => (
+                <ApptRow key={i} appt={a} isPast={isPast(a.time)}/>
+              ))}
+            </div>
+          )}
+
+          {/* Demo note */}
+          <div style={{
+            marginTop: "28px", padding: "11px 16px",
+            background: "var(--surface)", border: "1px solid var(--border-strong)",
+            borderRadius: "6px", display: "flex", gap: "10px", alignItems: "flex-start",
+          }}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: "1px" }}>
+              <circle cx="8" cy="8" r="6.5" stroke="var(--text-muted)" strokeWidth="1.2"/>
+              <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.65, margin: 0 }}>
+              <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Holdplan demo — </span>
+              dette er hvad barberteamet ser. I produktion synkroniseres alle bookinger i realtid.
+            </p>
+          </div>
+        </main>
+
+        <div style={{ paddingBottom: "36px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+          <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Drevet af</span>
+          <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
+          <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
+          <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
+            Bygget af Sloth Studio
+          </a>
+        </div>
       </div>
     </div>
   );
