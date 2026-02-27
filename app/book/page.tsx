@@ -25,10 +25,10 @@ interface StaffMember {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const SERVICES: Service[] = [
-  { id: "classic-cut",  name: "Classic Cut",     duration: 30, price: 250, desc: "Scissor & clipper cut, styled to finish" },
-  { id: "beard-sculpt", name: "Beard Sculpt",    duration: 20, price: 150, desc: "Line-up, shaping, and beard balm finish" },
-  { id: "cut-beard",    name: "Cut & Beard",     duration: 45, price: 380, desc: "Full haircut + complete beard treatment" },
-  { id: "hot-towel",    name: "Hot Towel Shave", duration: 30, price: 200, desc: "Traditional straight-razor shave with hot towel" },
+  { id: "classic-cut",  name: "Classic Cut",     duration: 30, price: 35,  desc: "Scissor & clipper cut, styled to finish" },
+  { id: "beard-sculpt", name: "Beard Sculpt",    duration: 20, price: 20,  desc: "Line-up, shaping, and beard balm finish" },
+  { id: "cut-beard",    name: "Cut & Beard",     duration: 45, price: 50,  desc: "Full haircut + complete beard treatment" },
+  { id: "hot-towel",    name: "Hot Towel Shave", duration: 30, price: 28,  desc: "Traditional straight-razor shave with hot towel" },
 ];
 
 const STAFF: StaffMember[] = [
@@ -38,15 +38,16 @@ const STAFF: StaffMember[] = [
   { id: "any",    name: "No preference", role: "First available", note: "We assign the best available barber",        initials: "--" },
 ];
 
-// Some slots are pre-marked as unavailable for realism
-const TAKEN_INDICES: Record<number, number[]> = {
-  0: [1, 4, 9],
-  1: [3, 6, 11],
-  2: [0, 5, 8],
-  3: [2, 7, 10],
-  4: [1, 5, 9],
-  5: [4, 6, 8],
-  6: [0, 3, 11],
+// Slots pre-marked taken per weekday (day.getDay(): 1=Mon…6=Sat).
+// In production you'd pull real availability from your database.
+// Clients can configure which slots are blocked, how far in advance to allow bookings, etc.
+const TAKEN_SLOTS_BY_DAY: Record<number, number[]> = {
+  1: [1, 4, 9],    // Monday   — 09:30, 11:00, 13:30 taken
+  2: [3, 6, 11],   // Tuesday  — 10:30, 12:00, 15:30 taken
+  3: [0, 5, 8],    // Wednesday — 09:00, 11:30, 13:00 taken
+  4: [2, 7, 10],   // Thursday  — 10:00, 12:30, 15:00 taken
+  5: [1, 5, 9],    // Friday   — 09:30, 11:30, 13:30 taken
+  6: [4, 6, 8],    // Saturday — 11:00, 12:00, 13:00 taken
 };
 
 const TIME_SLOTS = [
@@ -212,7 +213,7 @@ function ConfirmScreen({
         </div>
         {[
           ["Service",  service.name],
-          ["Price",    `${service.price} DKK`],
+          ["Price",    `€${service.price}`],
           ["Barber",   staffMember.name],
           ["Duration", `${service.duration} min`],
           ["Date",     fmtDate(date)],
@@ -370,10 +371,11 @@ export default function BookPage() {
   const dates = useMemo(() => getAvailDates(), []);
   const slots = useMemo(() => {
     if (!date) return [];
-    const idx = dates.indexOf(date) % 7;
-    const taken = TAKEN_INDICES[idx] ?? [];
-    return TIME_SLOTS.map((t, i) => ({ time: t, taken: taken.includes(i) }));
-  }, [date, dates]);
+    // Use actual day-of-week so grayed slots are consistent and don't depend on array refs
+    const dayOfWeek = date.getDay(); // 1=Mon, 2=Tue, … 6=Sat (0=Sun excluded from picker)
+    const takenIndices = TAKEN_SLOTS_BY_DAY[dayOfWeek] ?? [];
+    return TIME_SLOTS.map((t, i) => ({ time: t, taken: takenIndices.includes(i) }));
+  }, [date]);
 
   if (!session) return null;
 
@@ -475,7 +477,7 @@ export default function BookPage() {
                             }}>
                               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", alignItems: "flex-start" }}>
                                 <span style={{ fontSize: "15px", fontWeight: 600, color: "var(--text)", lineHeight: 1.3 }}>{s.name}</span>
-                                <span style={{ fontSize: "15px", fontWeight: 700, color: sel ? "var(--accent)" : "var(--text)", flexShrink: 0, marginLeft: "8px" }}>{s.price} kr</span>
+                                <span style={{ fontSize: "15px", fontWeight: 700, color: sel ? "var(--accent)" : "var(--text)", flexShrink: 0, marginLeft: "8px" }}>€{s.price}</span>
                               </div>
                               <p style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "10px", lineHeight: 1.4 }}>{s.desc}</p>
                               <span style={{
@@ -607,7 +609,7 @@ export default function BookPage() {
                           ["Barber",  staffMember?.name ?? ""],
                           ["Date",    date ? fmtDate(date) : ""],
                           ["Time",    time ?? ""],
-                          ["Price",   `${service?.price ?? ""} DKK`],
+                          ["Price",   `€${service?.price ?? ""}`],
                         ].map(([label, value]) => (
                           <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "9px 16px", borderBottom: "1px solid var(--border)" }}>
                             <span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 500 }}>{label}</span>
