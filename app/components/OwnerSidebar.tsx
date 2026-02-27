@@ -108,10 +108,11 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
           <Link key={item.label} href={item.href} style={{
             display: "flex", alignItems: "center", gap: "10px",
             padding: "10px 12px", borderRadius: "7px", textDecoration: "none",
-            background: item.active ? "rgba(184,152,90,0.12)" : "transparent",
-            border: item.active ? "1px solid rgba(184,152,90,0.25)" : "1px solid transparent",
-            color: item.active ? "var(--gold)" : "var(--text-muted)",
-            fontSize: "14px", fontWeight: item.active ? 700 : 400,
+            background: item.active ? "rgba(184,152,90,0.13)" : "transparent",
+            border: item.active ? "1px solid rgba(184,152,90,0.28)" : "1px solid transparent",
+            boxShadow: item.active ? "inset 3px 0 0 var(--gold)" : "none",
+            color: item.active ? "var(--gold)" : "var(--text-secondary)",
+            fontSize: "14px", fontWeight: item.active ? 700 : 500,
             transition: "all 0.15s",
           }}>
             {item.icon}

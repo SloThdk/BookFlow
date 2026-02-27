@@ -208,7 +208,7 @@ function EmployeeCard({ emp }: { emp: Employee }) {
               { label: "Telefon",         value: emp.phone },
               { label: "Email",           value: emp.email },
               { label: "Adresse",         value: emp.address },
-              { label: "Fødselsdato",     value: emp.birthDate },
+              { label: "Fødselsdato",     value: `${emp.birthDate} (${yearsFrom(emp.birthDate)} år)` },
               { label: "Ansat siden",     value: emp.startDate },
               { label: "Ansættelsestype", value: emp.contractType },
               { label: "Timer/uge",       value: `${emp.hoursPerWeek} timer` },
@@ -405,6 +405,21 @@ export default function MedarbejderePage() {
         </div>
 
         <main style={{ padding: "24px 32px 80px", flex: 1 }}>
+          {/* Production note */}
+          <div style={{
+            display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "20px",
+            background: "rgba(184,152,90,0.06)", border: "1px solid var(--gold-border)",
+            borderRadius: "9px", padding: "12px 16px",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: "1px", color: "var(--gold)" }}>
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
+              <path d="M8 5.5v3.5M8 11v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>
+              <span style={{ color: "var(--gold)", fontWeight: 700 }}>I produktion</span> kan du redigere, tilføje og slette al medarbejderinformation direkte — navn, kontakt, arbejdstider, bankkonto og mere. Alt gemmes automatisk.
+            </p>
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: "16px" }}>
             {EMPLOYEES.map(emp => (
               <EmployeeCard key={emp.id} emp={emp}/>
