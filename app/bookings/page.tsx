@@ -196,15 +196,31 @@ export default function BookingsPage() {
         </div>
       </nav>
 
-      <main style={{ maxWidth: "860px", margin: "0 auto", padding: "44px 32px 80px" }}>
-
-        {/* Header */}
-        <div style={{ marginBottom: "32px" }}>
+      {/* Hero header */}
+      <div style={{
+        position: "relative", overflow: "hidden",
+        borderBottom: "1px solid var(--border)",
+        minHeight: "160px",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundImage: "url(https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&fit=crop&crop=center)",
+          backgroundSize: "cover", backgroundPosition: "center 35%",
+        }}/>
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, rgba(14,12,9,0.72) 0%, rgba(14,12,9,0.88) 100%)",
+        }}/>
+        <div style={{ position: "relative", width: "100%", maxWidth: "860px", padding: "36px 32px" }}>
           <h1 className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>
             Upcoming appointments
           </h1>
-          <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Nordklip Barbershop · Copenhagen</p>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Nordklip Barbershop &mdash; Copenhagen</p>
         </div>
+      </div>
+
+      <main style={{ maxWidth: "860px", margin: "0 auto", padding: "36px 32px 80px" }}>
 
         {/* List */}
         {all.length === 0 ? (
