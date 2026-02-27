@@ -17,7 +17,7 @@ const BARBER_PHOTOS: Record<string, string> = {
 const SERVICE_COLOR: Record<string, string> = {
   "Classic Cut": "#B8985A", "Beard Sculpt": "#7BA3C4",
   "Cut & Beard": "#C4977A", "Hot Towel Shave": "#7BBFA5",
-  "Junior Cut": "#A0B89A", "Color & Style": "#C49BBF",
+  "Junior Cut": "#A0B89A", "Farve & Stil": "#C49BBF",
 };
 
 // Schedule data: keyed by day offset from today (0=today, 1=tomorrow, 2=day after, -1=yesterday)
@@ -25,52 +25,52 @@ const SCHEDULE: Record<number, Appt[]> = {
   "-1": [
     { time: "09:30", client: "Lukas Jensen",      service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "10:00", client: "Mads Christensen",  service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
-    { time: "10:30", client: "Pernille Holm",      service: "Color & Style",   barber: "Sofia",  duration: 90 },
+    { time: "10:30", client: "Pernille Holm",      service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
     { time: "11:30", client: "Rasmus Berg",        service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "13:00", client: "Simon Koch",         service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
-    { time: "13:30", client: "Nanna Vestergaard",  service: "Color & Style",   barber: "Sofia",  duration: 90 },
+    { time: "13:30", client: "Nanna Vestergaard",  service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
     { time: "14:00", client: "Anders Nielsen",     service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "15:00", client: "Mikkel Dahl",        service: "Junior Cut",      barber: "Marcus", duration: 30 },
-    { time: "16:00", client: "Jonas KjÃ¦r",         service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
+    { time: "16:00", client: "Jonas Kjær",         service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
     { time: "17:00", client: "Thomas Bonde",       service: "Cut & Beard",     barber: "Marcus", duration: 70 },
   ],
   "0": [
-    { time: "09:00", client: "Casper MÃ¸ller",      service: "Classic Cut",     barber: "Marcus", duration: 45 },
+    { time: "09:00", client: "Casper Møller",      service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "10:00", client: "Erik Svendsen",      service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
-    { time: "10:30", client: "Laura Winther",      service: "Color & Style",   barber: "Sofia",  duration: 90, notes: "Full highlights, patch test done" },
+    { time: "10:30", client: "Laura Winther",      service: "Farve & Stil",   barber: "Sofia",  duration: 90, notes: "Fuld highlights, lappetest udført" },
     { time: "11:00", client: "Viktor Hansen",      service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "11:30", client: "Frederik Lund",      service: "Cut & Beard",     barber: "Emil",   duration: 70 },
     { time: "13:00", client: "Nikolaj Borg",       service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
-    { time: "13:30", client: "Anna Kristiansen",   service: "Color & Style",   barber: "Sofia",  duration: 90 },
+    { time: "13:30", client: "Anna Kristiansen",   service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
     { time: "14:30", client: "Daniel Westh",       service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "15:30", client: "Sofie Andersen",     service: "Junior Cut",      barber: "Marcus", duration: 30 },
     { time: "16:00", client: "Magnus Brandt",      service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
-    { time: "17:00", client: "Jakob MÃ¸ller",       service: "Cut & Beard",     barber: "Marcus", duration: 70, notes: "Prefers scissor-only, no clipper" },
+    { time: "17:00", client: "Jakob Møller",       service: "Cut & Beard",     barber: "Marcus", duration: 70, notes: "Foretrækker kun saks, ingen maskine" },
   ],
   "1": [
     { time: "09:30", client: "Mikkel Dahl",        service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { time: "10:00", client: "Rasmus Holm",        service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
-    { time: "11:00", client: "Camilla Voss",       service: "Color & Style",   barber: "Sofia",  duration: 90 },
-    { time: "12:00", client: "Tobias NÃ¸rgaard",    service: "Classic Cut",     barber: "Emil",   duration: 45 },
+    { time: "11:00", client: "Camilla Voss",       service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
+    { time: "12:00", client: "Tobias Nørgaard",    service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "13:00", client: "Bjarne Kjeldsen",    service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
-    { time: "14:00", client: "Lise Friis",         service: "Color & Style",   barber: "Sofia",  duration: 90 },
-    { time: "15:30", client: "Adam SchÃ¤fer",       service: "Cut & Beard",     barber: "Emil",   duration: 70 },
+    { time: "14:00", client: "Lise Friis",         service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
+    { time: "15:30", client: "Adam Schäfer",       service: "Cut & Beard",     barber: "Emil",   duration: 70 },
     { time: "17:00", client: "Jesper Winther",     service: "Classic Cut",     barber: "Marcus", duration: 45 },
   ],
   "2": [
-    { time: "10:00", client: "SÃ¸ren Bang",         service: "Classic Cut",     barber: "Marcus", duration: 45 },
-    { time: "10:30", client: "Ida Markussen",      service: "Color & Style",   barber: "Sofia",  duration: 90 },
+    { time: "10:00", client: "Søren Bang",         service: "Classic Cut",     barber: "Marcus", duration: 45 },
+    { time: "10:30", client: "Ida Markussen",      service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
     { time: "11:30", client: "Patrick Steen",      service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
     { time: "13:00", client: "Carl Henriksen",     service: "Junior Cut",      barber: "Marcus", duration: 30 },
-    { time: "14:00", client: "Trine Christoffersen", service: "Color & Style", barber: "Sofia",  duration: 90 },
+    { time: "14:00", client: "Trine Christoffersen", service: "Farve & Stil", barber: "Sofia",  duration: 90 },
     { time: "15:00", client: "Morten Staal",       service: "Cut & Beard",     barber: "Emil",   duration: 70 },
   ],
   "3": [
     { time: "09:00", client: "Henrik Bruun",       service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
-    { time: "10:00", client: "Maja LindstrÃ¶m",     service: "Color & Style",   barber: "Sofia",  duration: 90 },
+    { time: "10:00", client: "Maja Lindström",     service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
     { time: "11:30", client: "Lars Thomsen",       service: "Classic Cut",     barber: "Emil",   duration: 45 },
     { time: "13:00", client: "Oliver Brink",       service: "Cut & Beard",     barber: "Marcus", duration: 70 },
-    { time: "14:30", client: "Stine Krogh",        service: "Color & Style",   barber: "Sofia",  duration: 90 },
+    { time: "14:30", client: "Stine Krogh",        service: "Farve & Stil",   barber: "Sofia",  duration: 90 },
     { time: "16:30", client: "Jesper Vind",        service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
   ],
 };
@@ -130,7 +130,7 @@ function ApptRow({ appt, isPast }: { appt: Appt; isPast: boolean }) {
           {appt.notes && (
             <div style={{ marginTop: "3px", display: "flex", alignItems: "center", gap: "4px" }}>
               <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2h8v7H2z" stroke="var(--text-muted)" strokeWidth="1.2" strokeLinejoin="round"/><line x1="4" y1="5" x2="8" y2="5" stroke="var(--text-muted)" strokeWidth="1.1"/><line x1="4" y1="7" x2="7" y2="7" stroke="var(--text-muted)" strokeWidth="1.1"/></svg>
-              <span style={{ fontSize: "10px", color: "var(--text-muted)", fontStyle: "italic" }}>Note</span>
+              <span style={{ fontSize: "10px", color: "var(--text-muted)", fontStyle: "italic" }}>Bemærkning</span>
             </div>
           )}
         </div>
@@ -154,7 +154,7 @@ function ApptRow({ appt, isPast }: { appt: Appt; isPast: boolean }) {
               fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em",
               color: isPast ? "var(--text-muted)" : "var(--gold)",
               marginTop: "2px",
-            }}>{isPast ? "Færdige" : "Bekræftet"}</div>
+            }}>{isPast ? "Færdig" : "Bekræftet"}</div>
           </div>
         </div>
       </div>
@@ -204,9 +204,9 @@ export default function AdminPage() {
           <a href="https://nordklip.pages.dev" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
             <span className="serif" style={{ fontSize: "18px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
           </a>
-          <span style={{ fontSize: "11px", color: "var(--text-muted)", borderLeft: "1px solid var(--border)", paddingLeft: "12px", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600 }}>Team Schedule</span>
+          <span style={{ fontSize: "11px", color: "var(--text-muted)", borderLeft: "1px solid var(--border)", paddingLeft: "12px", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600 }}>Holdplan</span>
         </div>
-        <Link href="/bookings" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}>Customer view</Link>
+        <Link href="/bookings" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}>Kundevisning</Link>
       </nav>
 
       {/* Date bar */}
@@ -275,7 +275,7 @@ export default function AdminPage() {
             padding: "48px 24px", textAlign: "center",
             background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "8px",
           }}>
-            <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>No appointments {barberFilter !== "Alle" ? `for ${barberFilter}` : ""} {getDateLabel(dayOffset).toLowerCase()}.</p>
+            <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>Ingen aftaler {barberFilter !== "Alle" ? `for ${barberFilter}` : ""} {getDateLabel(dayOffset).toLowerCase()}.</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -297,19 +297,19 @@ export default function AdminPage() {
             <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
           </svg>
           <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.65, margin: 0 }}>
-            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Admin demo â€” </span>
-            this is what the barbershop team sees. In production, all bookings sync in real time. Staff can filter by barber and navigate days.
+            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Admin demo — </span>
+            dette er hvad barberteamet ser. I produktion synkroniseres alle bookinger i realtid. Personalet kan filtrere og navigere på tværs af dage.
           </p>
         </div>
       </main>
 
       <div style={{ paddingBottom: "36px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
-        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Powered by</span>
+        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Drevet af</span>
         <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>Â·</span>
+        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
         <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
           style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
-          Built by Sloth Studio
+          Bygget af Sloth Studio
         </a>
       </div>
     </div>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ interface Booking {
 const INITIAL_DEMO: Booking[] = [
   { service: "Classic Cut",     staff: "Marcus Holst", date: "I morgen",   time: "11:00", name: "", price: 260, createdAt: 0 },
   { service: "Beard Sculpt",    staff: "Emil Strand",  date: "Tor 20 mar", time: "14:00", name: "", price: 180, createdAt: 0 },
-  { service: "Farve & Stil",   staff: "Sofia Krag",   date: "Fre 21 mar", time: "11:00", name: "", price: 550, createdAt: 0 },
+  { service: "Farve & Stil",    staff: "Sofia Krag",   date: "Fre 21 mar", time: "11:00", name: "", price: 550, createdAt: 0 },
   { service: "Hot Towel Shave", staff: "Marcus Holst", date: "Lør 22 mar", time: "13:30", name: "", price: 220, createdAt: 0 },
 ];
 
@@ -36,11 +36,9 @@ function BookingCard({ booking, isNew = false, onCancel }: {
       background: "var(--surface)",
       border: "1px solid var(--border-strong)",
       borderRadius: "10px",
-      display: "flex",
-      alignItems: "stretch",
+      display: "flex", alignItems: "stretch",
       overflow: "hidden",
-      opacity: confirming ? 0.75 : 1,
-      transition: "opacity 0.15s",
+      opacity: confirming ? 0.75 : 1, transition: "opacity 0.15s",
     }}>
       {/* Date block */}
       <div style={{
@@ -72,16 +70,16 @@ function BookingCard({ booking, isNew = false, onCancel }: {
       }}>
         {photo ? (
           <img src={photo} alt={booking.staff} style={{
-            width: "62px", height: "62px", borderRadius: "50%", objectFit: "cover",
+            width: "66px", height: "66px", borderRadius: "50%", objectFit: "cover",
             flexShrink: 0, display: "block", border: "1px solid var(--border-strong)",
           }}/>
         ) : (
           <div style={{
-            width: "52px", height: "52px", borderRadius: "50%", flexShrink: 0,
+            width: "66px", height: "66px", borderRadius: "50%", flexShrink: 0,
             background: "var(--surface-2)", border: "1px solid var(--border-strong)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-muted)" }}>{initials}</span>
+            <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-muted)" }}>{initials}</span>
           </div>
         )}
         <div style={{ minWidth: 0 }}>
@@ -103,23 +101,23 @@ function BookingCard({ booking, isNew = false, onCancel }: {
       }}>
         {confirming ? (
           <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-end" }}>
-            <span style={{ fontSize: "11px", color: "var(--text-secondary)", whiteSpace: "nowrap" }}>Cancel booking?</span>
+            <span style={{ fontSize: "11px", color: "var(--text-secondary)", whiteSpace: "nowrap" }}>Annuller aftale?</span>
             <div style={{ display: "flex", gap: "6px" }}>
               <button onClick={() => setConfirming(false)} style={{
                 background: "transparent", border: "1px solid var(--border-strong)",
                 color: "var(--text-muted)", borderRadius: "5px", padding: "5px 10px",
                 fontSize: "11px", fontWeight: 600, cursor: "pointer",
-              }}>Keep</button>
+              }}>Behold</button>
               <button onClick={onCancel} style={{
                 background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)",
                 color: "#f87171", borderRadius: "5px", padding: "5px 10px",
                 fontSize: "11px", fontWeight: 700, cursor: "pointer",
-              }}>Yes, cancel</button>
+              }}>Ja, annuller</button>
             </div>
           </div>
         ) : (
           <>
-            <span className="serif" style={{ fontSize: "24px", fontWeight: 700, color: "var(--text)" }}>â‚¬{booking.price}</span>
+            <span className="serif" style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)" }}>{booking.price} kr.</span>
             <span style={{
               fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
               color: isNew ? "var(--text)" : "var(--gold)",
@@ -138,9 +136,7 @@ function BookingCard({ booking, isNew = false, onCancel }: {
                   textDecoration: "underline", textUnderlineOffset: "3px",
                   transition: "color 0.15s", marginTop: "4px",
                 }}
-              >
-                Cancel
-              </button>
+              >Annuller</button>
             )}
           </>
         )}
@@ -155,13 +151,13 @@ function EmptyState() {
       padding: "60px 24px", textAlign: "center",
       background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px",
     }}>
-      <p style={{ fontSize: "16px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "8px" }}>No upcoming appointments</p>
-      <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "28px" }}>Ready when you are.</p>
+      <p style={{ fontSize: "16px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen kommende aftaler</p>
+      <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "28px" }}>Klar når du er det.</p>
       <Link href="/book" style={{
         display: "inline-flex", alignItems: "center", gap: "6px",
         background: "var(--gold)", color: "#0E0C09", borderRadius: "6px",
         padding: "11px 24px", fontSize: "13px", fontWeight: 700, textDecoration: "none",
-      }}>Book a visit</Link>
+      }}>Book en tid</Link>
     </div>
   );
 }
@@ -216,7 +212,7 @@ export default function BookingsPage() {
           <button onClick={() => { try { sessionStorage.clear(); } catch {} router.push("/"); }} style={{
             background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-muted)",
             borderRadius: "5px", padding: "5px 12px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
-          }}>Sign out</button>
+          }}>Log ud</button>
         </div>
       </nav>
 
@@ -233,8 +229,8 @@ export default function BookingsPage() {
         }}/>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(14,12,9,0.72) 0%, rgba(14,12,9,0.88) 100%)" }}/>
         <div style={{ position: "relative", width: "100%", padding: "36px 48px" }}>
-          <h1 className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Upcoming appointments</h1>
-          <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Nordklip Barbershop &mdash; Copenhagen</p>
+          <h1 className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Kommende aftaler</h1>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Nordklip Barbershop &mdash; København</p>
         </div>
       </div>
 
@@ -254,12 +250,12 @@ export default function BookingsPage() {
       </main>
 
       <div style={{ paddingBottom: "40px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
-        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Powered by</span>
+        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Drevet af</span>
         <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>Â·</span>
+        <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
         <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer"
           style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
-          Built by Sloth Studio
+          Bygget af Sloth Studio
         </a>
       </div>
     </div>
