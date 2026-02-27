@@ -188,24 +188,27 @@ function downloadContract(emp: Employee) {
     "  Dokument genereret: " + new Date().toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" }),
     "  BookFlow — Drevet af Sloth Studio",
     "══════════════════════════════════════════════",
+    "  NOTE: Simulerede data – faktiske oplysninger",
+    "  vises i produktion.",
+    "══════════════════════════════════════════════",
   ];
   const text = lines.join("\n");
-  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
+  a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text);
   a.download = `kontrakt-${emp.name.toLowerCase().replace(/\s+/g, "-")}.pdf`;
+  a.style.display = "none";
   document.body.appendChild(a);
   a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  setTimeout(() => document.body.removeChild(a), 100);
 }
 function yearsFrom(dateStr: string) {
-  const parts = dateStr.split(". ");
+  // "22. juni 1990" → parts: ["22.", "juni", "1990"]
+  const parts = dateStr.trim().split(/\s+/);
   const months: Record<string, number> = { januar: 0, februar: 1, marts: 2, april: 3, maj: 4, juni: 5, juli: 6, august: 7, september: 8, oktober: 9, november: 10, december: 11 };
-  const day = parseInt(parts[0]);
-  const month = months[parts[1].toLowerCase()] ?? 0;
-  const year = parseInt(parts[2]);
+  const day   = parseInt(parts[0]);
+  const month = months[(parts[1] ?? "").toLowerCase()] ?? 0;
+  const year  = parseInt(parts[2] ?? "0");
+  if (isNaN(day) || isNaN(year)) return 0;
   const start = new Date(year, month, day);
   const now = new Date();
   return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 365.25));

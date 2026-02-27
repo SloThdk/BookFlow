@@ -28,6 +28,10 @@ export default function LoginPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (email.trim().toLowerCase() === "owner@nordklip.dk") {
+      setError("Denne konto tilhører ejeren. Log ind via ejersystemet.");
+      return;
+    }
     const err = validate();
     if (err) { setError(err); return; }
     setLoading(true);
