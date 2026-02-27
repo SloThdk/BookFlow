@@ -63,7 +63,20 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
   ];
 
   return (
-    <aside style={{
+    <>
+    <style>{`
+      @media (max-width: 768px) {
+        .owner-sidebar { width: 100% !important; min-height: unset !important; height: auto !important; position: relative !important; flex-direction: row !important; border-right: none !important; border-bottom: 1px solid var(--border) !important; overflow-x: auto !important; flex-shrink: 0 !important; }
+        .owner-sidebar .sidebar-logo { display: none !important; }
+        .owner-sidebar .sidebar-bottom { display: none !important; }
+        .owner-sidebar .sidebar-nav { flex-direction: row !important; padding: 0 !important; gap: 0 !important; overflow-x: auto !important; }
+        .owner-sidebar .sidebar-nav > div { display: none !important; }
+        .owner-sidebar .sidebar-nav a { flex-direction: column !important; gap: 3px !important; padding: 10px 14px !important; border-radius: 0 !important; font-size: 10px !important; white-space: nowrap !important; box-shadow: none !important; border: none !important; border-bottom: 2px solid transparent !important; }
+        .owner-sidebar .sidebar-nav a[data-active="true"] { border-bottom: 2px solid var(--gold) !important; background: transparent !important; }
+        .sidebar-wrapper { flex-direction: column !important; }
+      }
+    `}</style>
+    <aside className="owner-sidebar" style={{
       width: "220px",
       flexShrink: 0,
       minHeight: "100vh",
@@ -77,7 +90,7 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
       overflow: "hidden",
     }}>
       {/* Logo */}
-      <div style={{ padding: "28px 20px 20px", borderBottom: "1px solid var(--border)" }}>
+      <div className="sidebar-logo" style={{ padding: "28px 20px 20px", borderBottom: "1px solid var(--border)" }}>
         <a href="https://nordklip.pages.dev" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
           <span style={{ fontFamily: "var(--font-playfair)", fontSize: "20px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
         </a>
@@ -96,7 +109,7 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
       </div>
 
       {/* Nav */}
-      <nav style={{ padding: "16px 12px", flex: 1, display: "flex", flexDirection: "column", gap: "2px" }}>
+      <nav className="sidebar-nav" style={{ padding: "16px 12px", flex: 1, display: "flex", flexDirection: "column", gap: "2px" }}>
         <div style={{
           fontSize: "9px", fontWeight: 700, letterSpacing: "0.1em",
           textTransform: "uppercase", color: "var(--text-muted)",
@@ -105,7 +118,7 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
           Navigation
         </div>
         {nav.map(item => (
-          <Link key={item.label} href={item.href} style={{
+          <Link key={item.label} href={item.href} data-active={item.active ? "true" : "false"} style={{
             display: "flex", alignItems: "center", gap: "10px",
             padding: "10px 12px", borderRadius: "7px", textDecoration: "none",
             background: item.active ? "rgba(184,152,90,0.13)" : "transparent",
@@ -122,7 +135,7 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
       </nav>
 
       {/* Bottom */}
-      <div style={{ padding: "16px 12px", borderTop: "1px solid var(--border)" }}>
+      <div className="sidebar-bottom" style={{ padding: "16px 12px", borderTop: "1px solid var(--border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "0 8px", marginBottom: "12px" }}>
           <div style={{
             width: "32px", height: "32px", borderRadius: "50%", flexShrink: 0,
@@ -153,5 +166,6 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
         </button>
       </div>
     </aside>
+    </>
   );
 }

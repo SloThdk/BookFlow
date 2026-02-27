@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { OwnerSidebar } from "../components/OwnerSidebar";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Appt {
   id: string;
   dayOffset: number;
@@ -22,7 +22,7 @@ interface Customer {
   appointments: Appt[];
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SVC_COLOR: Record<string, string> = {
   "Classic Cut": "#B8985A", "Beard Sculpt": "#7BA3C4",
   "Cut & Beard": "#C4977A", "Hot Towel Shave": "#7BBFA5",
@@ -37,14 +37,14 @@ const BARBER_PHOTOS: Record<string, string> = {
 
 const BARBERS = ["Marcus", "Emil", "Sofia"];
 const MONTHS_DA = ["Januar","Februar","Marts","April","Maj","Juni","Juli","August","September","Oktober","November","December"];
-const DOW_DA = ["Ma","Ti","On","To","Fr","Lø","Sø"];
+const DOW_DA = ["Ma","Ti","On","To","Fr","LÃ¸","SÃ¸"];
 
 const INIT_CUSTOMERS: Customer[] = [
   { id: "1", name: "Henrik Bruun",       phone: "+45 22 34 56 78", appointments: [
     { id: "a1", dayOffset: -1, time: "13:00", service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
     { id: "a2", dayOffset:  0, time: "09:00", service: "Hot Towel Shave", barber: "Marcus", duration: 40 },
   ]},
-  { id: "2", name: "Maja Lindström",     phone: "+45 28 12 34 90", appointments: [
+  { id: "2", name: "Maja LindstrÃ¶m",     phone: "+45 28 12 34 90", appointments: [
     { id: "b1", dayOffset:  0, time: "10:00", service: "Farve & Stil",    barber: "Sofia",  duration: 90 },
   ]},
   { id: "3", name: "Lars Thomsen",       phone: "+45 40 87 65 43", appointments: [
@@ -57,9 +57,9 @@ const INIT_CUSTOMERS: Customer[] = [
   ]},
   { id: "5", name: "Stine Krogh",        phone: "+45 51 99 88 77", appointments: [
     { id: "e1", dayOffset:  0, time: "14:30", service: "Farve & Stil",    barber: "Sofia",  duration: 90 },
-    { id: "e2", dayOffset:  2, time: "14:00", service: "Farve & Stil",    barber: "Sofia",  duration: 90, notes: "Ønsker balayage" },
+    { id: "e2", dayOffset:  2, time: "14:00", service: "Farve & Stil",    barber: "Sofia",  duration: 90, notes: "Ã˜nsker balayage" },
   ]},
-  { id: "6", name: "Adam Schäfer",       phone: "+45 27 33 11 99", appointments: [
+  { id: "6", name: "Adam SchÃ¤fer",       phone: "+45 27 33 11 99", appointments: [
     { id: "f1", dayOffset: -1, time: "17:00", service: "Cut & Beard",     barber: "Marcus", duration: 70 },
     { id: "f2", dayOffset:  0, time: "15:30", service: "Cut & Beard",     barber: "Emil",   duration: 70 },
   ]},
@@ -67,7 +67,7 @@ const INIT_CUSTOMERS: Customer[] = [
     { id: "g1", dayOffset:  0, time: "17:00", service: "Classic Cut",     barber: "Marcus", duration: 45 },
     { id: "g2", dayOffset:  3, time: "17:00", service: "Classic Cut",     barber: "Marcus", duration: 45 },
   ]},
-  { id: "8", name: "Casper Møller",      phone: "+45 41 55 77 33", appointments: [
+  { id: "8", name: "Casper MÃ¸ller",      phone: "+45 41 55 77 33", appointments: [
     { id: "h1", dayOffset:  0, time: "09:00", service: "Classic Cut",     barber: "Marcus", duration: 45 },
   ]},
   { id: "9", name: "Erik Svendsen",      phone: "+45 23 88 99 00", appointments: [
@@ -75,7 +75,7 @@ const INIT_CUSTOMERS: Customer[] = [
     { id: "i2", dayOffset:  2, time: "11:30", service: "Beard Sculpt",    barber: "Emil",   duration: 30 },
   ]},
   { id: "10", name: "Laura Winther",     phone: "+45 52 66 44 88", appointments: [
-    { id: "j1", dayOffset:  0, time: "10:30", service: "Farve & Stil",    barber: "Sofia",  duration: 90, notes: "Fuld highlights, lappetest udført" },
+    { id: "j1", dayOffset:  0, time: "10:30", service: "Farve & Stil",    barber: "Sofia",  duration: 90, notes: "Fuld highlights, lappetest udfÃ¸rt" },
     { id: "j2", dayOffset:  4, time: "10:00", service: "Farve & Stil",    barber: "Sofia",  duration: 90 },
   ]},
   { id: "11", name: "Viktor Hansen",     phone: "+45 30 21 43 65", appointments: [
@@ -92,7 +92,7 @@ const INIT_CUSTOMERS: Customer[] = [
     { id: "n1", dayOffset:  1, time: "14:00", service: "Farve & Stil",    barber: "Sofia",  duration: 90 },
     { id: "n2", dayOffset:  4, time: "11:00", service: "Farve & Stil",    barber: "Sofia",  duration: 90 },
   ]},
-  { id: "15", name: "Søren Bang",        phone: "+45 42 11 33 77", appointments: [
+  { id: "15", name: "SÃ¸ren Bang",        phone: "+45 42 11 33 77", appointments: [
     { id: "o1", dayOffset:  2, time: "10:00", service: "Classic Cut",     barber: "Marcus", duration: 45 },
   ]},
   { id: "16", name: "Ida Markussen",     phone: "+45 53 99 11 22", appointments: [
@@ -107,11 +107,11 @@ const INIT_CUSTOMERS: Customer[] = [
   ]},
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function dayLabel(offset: number) {
   if (offset === 0) return "I dag";
   if (offset === 1) return "I morgen";
-  if (offset === -1) return "I går";
+  if (offset === -1) return "I gÃ¥r";
   const d = new Date(); d.setDate(d.getDate() + offset);
   return d.toLocaleDateString("da-DK", { weekday: "short", day: "numeric", month: "short" });
 }
@@ -126,7 +126,7 @@ function isValidTime(t: string) {
   return /^([01]\d|2[0-3]):([0-5]\d)$/.test(t);
 }
 
-// ─── Calendar Picker ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Calendar Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelect: (d: Date) => void }) {
   const today = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d; }, []);
   const [viewYear, setViewYear]   = useState(() => today.getFullYear());
@@ -205,7 +205,7 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
   );
 }
 
-// ─── Reschedule Modal ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Reschedule Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function RescheduleModal({ appt, onClose, onConfirm }: {
   appt: Appt;
   onClose: () => void;
@@ -237,7 +237,7 @@ function RescheduleModal({ appt, onClose, onConfirm }: {
 
   const formattedDate = selectedDate
     ? selectedDate.toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "long" })
-    : "Vælg dato";
+    : "VÃ¦lg dato";
 
   return (
     <div style={{
@@ -255,7 +255,7 @@ function RescheduleModal({ appt, onClose, onConfirm }: {
           <div>
             <div style={{ fontFamily: "var(--font-playfair)", fontSize: "16px", fontWeight: 700, color: "var(--text)" }}>Flyt aftale</div>
             <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "3px" }}>
-              {appt.service} · {dayLabel(appt.dayOffset)} kl. {appt.time}
+              {appt.service} Â· {dayLabel(appt.dayOffset)} kl. {appt.time}
             </div>
           </div>
           <button onClick={onClose} style={{ background: "var(--surface-2)", border: "1px solid var(--border-strong)", borderRadius: "6px", cursor: "pointer", color: "var(--text-secondary)", width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -299,7 +299,7 @@ function RescheduleModal({ appt, onClose, onConfirm }: {
                 }}
               />
               <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-                {timeError ? <span style={{ color: "#ef4444" }}>Skriv format HH:MM (f.eks. 14:30)</span> : "Skriv hvad som helst — f.eks. 14:30"}
+                {timeError ? <span style={{ color: "#ef4444" }}>Skriv format HH:MM (f.eks. 14:30)</span> : "Skriv hvad som helst â€” f.eks. 14:30"}
               </span>
             </div>
           </div>
@@ -338,7 +338,7 @@ function RescheduleModal({ appt, onClose, onConfirm }: {
               fontSize: "13px", fontWeight: 700,
               cursor: saved || !selectedDate ? "default" : "pointer", transition: "all 0.2s",
             }}>
-              {saved ? "Aftale flyttet" : selectedDate ? `Bekræft — ${formattedDate} kl. ${time}` : "Vælg en dato"}
+              {saved ? "Aftale flyttet" : selectedDate ? `BekrÃ¦ft â€” ${formattedDate} kl. ${time}` : "VÃ¦lg en dato"}
             </button>
           </div>
         </div>
@@ -347,7 +347,7 @@ function RescheduleModal({ appt, onClose, onConfirm }: {
   );
 }
 
-// ─── Customer Card ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Customer Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CustomerCard({ customer, onReschedule, onCancel }: {
   customer: Customer;
   onReschedule: (apptId: string) => void;
@@ -426,16 +426,16 @@ function CustomerCard({ customer, onReschedule, onCancel }: {
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                         <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: color, display: "inline-block", flexShrink: 0 }}/>
                         <span style={{ fontFamily: "var(--font-playfair)", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{appt.service}</span>
-                        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>· {appt.duration} min</span>
+                        <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Â· {appt.duration} min</span>
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <img src={BARBER_PHOTOS[appt.barber]} alt={appt.barber} style={{ width: "18px", height: "18px", borderRadius: "50%", objectFit: "cover" }}/>
                         <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{appt.barber}</span>
-                        {appt.notes && <span style={{ fontSize: "10px", color: "var(--text-muted)", fontStyle: "italic" }}>· {appt.notes}</span>}
+                        {appt.notes && <span style={{ fontSize: "10px", color: "var(--text-muted)", fontStyle: "italic" }}>Â· {appt.notes}</span>}
                       </div>
                     </div>
 
-                    {/* Actions — only for future appointments */}
+                    {/* Actions â€” only for future appointments */}
                     {!isPast && (
                       <div style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                         {isCancelling ? (
@@ -482,7 +482,7 @@ function CustomerCard({ customer, onReschedule, onCancel }: {
   );
 }
 
-// ─── Auth Gate ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Auth Gate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function AuthGate({ onAuth }: { onAuth: () => void }) {
   useEffect(() => {
     try { if (sessionStorage.getItem("bf_owner")) { onAuth(); } } catch {}
@@ -496,13 +496,13 @@ function AuthGate({ onAuth }: { onAuth: () => void }) {
         <Link href="/owner" style={{
           display: "inline-block", background: "var(--gold)", color: "#0E0C09",
           borderRadius: "8px", padding: "10px 20px", fontSize: "13px", fontWeight: 700, textDecoration: "none",
-        }}>Gå til ejeroversigt</Link>
+        }}>GÃ¥ til ejeroversigt</Link>
       </div>
     </div>
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function KunderPage() {
   const [authed, setAuthed]             = useState(false);
   const [checking, setChecking]         = useState(true);
@@ -559,7 +559,7 @@ export default function KunderPage() {
   const upcomingTotal = customers.reduce((s, c) => s + c.appointments.filter(a => a.dayOffset >= 0).length, 0);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
+    <div className="sidebar-wrapper" style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
       <OwnerSidebar onLogout={handleLogout}/>
 
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
@@ -573,7 +573,7 @@ export default function KunderPage() {
         }}>
           <div>
             <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Kunder</h1>
-            <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>{filtered.length} kunder · {upcomingTotal} kommende aftaler</p>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>{filtered.length} kunder Â· {upcomingTotal} kommende aftaler</p>
           </div>
           <div style={{ display: "flex", gap: "24px" }}>
             {[ { label: "Kunder i alt", val: customers.length }, { label: "Aftaler i alt", val: totalApts }, { label: "Kommende", val: upcomingTotal } ].map(({ label, val }) => (
@@ -592,7 +592,7 @@ export default function KunderPage() {
               <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3"/>
               <path d="M10 10l2.5 2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
             </svg>
-            <input type="text" placeholder="Søg navn, telefon, ydelse..." value={search} onChange={e => setSearch(e.target.value)} style={{
+            <input type="text" placeholder="SÃ¸g navn, telefon, ydelse..." value={search} onChange={e => setSearch(e.target.value)} style={{
               width: "100%", padding: "10px 12px 10px 34px",
               background: "var(--surface)", border: "1px solid var(--border-strong)",
               borderRadius: "8px", color: "var(--text)", fontSize: "13px", outline: "none", boxSizing: "border-box",
@@ -627,7 +627,7 @@ export default function KunderPage() {
         <div style={{ paddingBottom: "36px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
           <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Drevet af</span>
           <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)" }}>BookFlow</span>
-          <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>·</span>
+          <span style={{ fontSize: "10px", color: "var(--border-strong)" }}>Â·</span>
           <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer" style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>Bygget af Sloth Studio</a>
         </div>
       </div>
@@ -645,3 +645,4 @@ export default function KunderPage() {
     </div>
   );
 }
+

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { OwnerSidebar } from "../components/OwnerSidebar";
 
-// ─── Data ──────────────────────────────────────────────────────────────────────
+// ─── Data ────────────────────────────────────────────────────────────────────
 const WEEK = [
   { day: "Man", revenue: 7840 },
   { day: "Tir", revenue: 9120 },
@@ -41,26 +41,28 @@ const YEAR = [
   { day: "Dec", revenue: 198600 },
 ];
 
-type Period = "Uge" | "Måned" | "År";
+type Period = "Uge" | "Maaned" | "Aar";
+
+const PERIOD_LABELS: Record<Period, string> = { Uge: "Uge", Maaned: "Måned", Aar: "År" };
 
 const CHART_DATA: Record<Period, { day: string; revenue: number }[]> = {
-  Uge: WEEK, Måned: MONTH, År: YEAR,
+  Uge: WEEK, Maaned: MONTH, Aar: YEAR,
 };
 
 const CHART_META: Record<Period, { title: string; sub: string; kpiLabel: string; kpiSub: string; kpiTotal: number }> = {
-  Uge:   { title: "Omsætning — denne uge",  sub: "Daglig omsætning i DKK",    kpiLabel: "Uge — omsætning",   kpiSub: "Man 17 — I dag",  kpiTotal: 66620 },
-  Måned: { title: "Omsætning — denne måned", sub: "Omsætning per 3 dage",      kpiLabel: "Måned — omsætning", kpiSub: "Marts 2026",      kpiTotal: 351400 },
-  År:    { title: "Omsætning — dette år",    sub: "Månedlig omsætning i DKK",  kpiLabel: "År — omsætning",   kpiSub: "Jan — Dec 2026",  kpiTotal: 1722200 },
+  Uge:    { title: "Omsætning – denne uge",  sub: "Daglig omsætning i DKK",    kpiLabel: "Uge – omsætning",   kpiSub: "Man 17 – I dag",  kpiTotal: 66620 },
+  Maaned: { title: "Omsætning – denne måned", sub: "Omsætning per 3 dage",      kpiLabel: "Måned – omsætning", kpiSub: "Marts 2026",      kpiTotal: 351400 },
+  Aar:    { title: "Omsætning – dette år",    sub: "Månedlig omsætning i DKK",  kpiLabel: "År – omsætning",   kpiSub: "Jan – Dec 2026",  kpiTotal: 1722200 },
 };
 
 const TODAY_APTS = [
-  { time: "09:00", client: "Henrik Bruun",    service: "Hot Towel Shave", barber: "Marcus", dur: 40, price: 220, done: true },
-  { time: "10:00", client: "Maja Lindström",  service: "Farve & Stil",    barber: "Sofia",  dur: 90, price: 550, done: true },
-  { time: "11:30", client: "Lars Thomsen",    service: "Classic Cut",     barber: "Emil",   dur: 45, price: 260, done: true },
-  { time: "13:00", client: "Oliver Brink",    service: "Cut & Beard",     barber: "Marcus", dur: 70, price: 390, done: false },
-  { time: "14:30", client: "Stine Krogh",     service: "Farve & Stil",    barber: "Sofia",  dur: 90, price: 550, done: false },
-  { time: "15:30", client: "Adam Schäfer",    service: "Cut & Beard",     barber: "Emil",   dur: 70, price: 390, done: false },
-  { time: "17:00", client: "Jesper Winther",  service: "Classic Cut",     barber: "Marcus", dur: 45, price: 260, done: false },
+  { time: "09:00", client: "Henrik Bruun",   service: "Hot Towel Shave", barber: "Marcus", dur: 40, price: 220, done: true },
+  { time: "10:00", client: "Maja Lindström", service: "Farve & Stil",    barber: "Sofia",  dur: 90, price: 550, done: true },
+  { time: "11:30", client: "Lars Thomsen",   service: "Classic Cut",     barber: "Emil",   dur: 45, price: 260, done: true },
+  { time: "13:00", client: "Oliver Brink",   service: "Cut & Beard",     barber: "Marcus", dur: 70, price: 390, done: false },
+  { time: "14:30", client: "Stine Krogh",    service: "Farve & Stil",    barber: "Sofia",  dur: 90, price: 550, done: false },
+  { time: "15:30", client: "Adam Schäfer",   service: "Cut & Beard",     barber: "Emil",   dur: 70, price: 390, done: false },
+  { time: "17:00", client: "Jesper Winther", service: "Classic Cut",     barber: "Marcus", dur: 45, price: 260, done: false },
 ];
 
 const TOP_SERVICES = [
@@ -79,7 +81,7 @@ const SVC_COLOR: Record<string, string> = {
 
 function fmtDKK(n: number) { return n.toLocaleString("da-DK") + " kr."; }
 
-// ─── SVG Area Chart ────────────────────────────────────────────────────────────
+// ─── SVG Area Chart ───────────────────────────────────────────────────────────
 function AreaChart({ data }: { data: typeof WEEK }) {
   const W = 580, H = 130, pad = { l: 8, r: 8, t: 20, b: 0 };
   const max = Math.max(...data.map(d => d.revenue)) * 1.12;
@@ -98,22 +100,17 @@ function AreaChart({ data }: { data: typeof WEEK }) {
           <stop offset="100%" stopColor="rgba(184,152,90,0)"/>
         </linearGradient>
       </defs>
-      {/* Horizontal grid lines */}
       {[0.25, 0.5, 0.75].map(f => {
         const y = pad.t + (1 - f) * (H - pad.t - pad.b);
         return <line key={f} x1={pad.l} y1={y} x2={W - pad.r} y2={y} stroke="rgba(245,239,228,0.05)" strokeWidth="1"/>;
       })}
-      {/* Area fill */}
       <path d={areaPath} fill="url(#areaGrad)"/>
-      {/* Line */}
       <path d={linePath} fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      {/* Dots */}
       {pts.map((p, i) => (
         <circle key={i} cx={p.x} cy={p.y} r={i === data.length - 1 ? 5 : 3}
           fill={i === data.length - 1 ? "var(--gold)" : "var(--bg)"}
           stroke="var(--gold)" strokeWidth="1.5"/>
       ))}
-      {/* Latest value label */}
       {(() => { const p = pts[pts.length - 1]; return (
         <text x={p.x} y={p.y - 10} textAnchor="middle" fill="var(--gold)" fontSize="9" fontWeight="700" fontFamily="Inter,sans-serif">
           {fmtDKK(data[data.length - 1].revenue)}
@@ -123,7 +120,7 @@ function AreaChart({ data }: { data: typeof WEEK }) {
   );
 }
 
-// ─── Login ─────────────────────────────────────────────────────────────────────
+// ─── Login ────────────────────────────────────────────────────────────────────
 function OwnerLogin({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState("owner@nordklip.dk");
   const [password, setPassword] = useState("");
@@ -143,7 +140,6 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
       display: "flex", alignItems: "center", justifyContent: "center",
       padding: "24px", position: "relative", overflow: "hidden",
     }}>
-      {/* Background glow */}
       <div style={{
         position: "absolute", top: "30%", left: "50%", transform: "translateX(-50%)",
         width: "500px", height: "400px",
@@ -152,7 +148,6 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
       }}/>
 
       <div style={{ width: "100%", maxWidth: "400px", position: "relative" }}>
-        {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <span className="serif" style={{ fontSize: "32px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.01em" }}>Nordklip</span>
           <div style={{ marginTop: "10px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
@@ -164,7 +159,6 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
 
-        {/* Form card */}
         <div style={{
           background: "var(--surface)", border: "1px solid var(--border-strong)",
           borderRadius: "14px", padding: "36px 32px",
@@ -209,7 +203,6 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
             </button>
           </form>
 
-          {/* Demo hint */}
           <div style={{
             marginTop: "18px", padding: "11px 14px",
             background: "rgba(184,152,90,0.05)", border: "1px solid rgba(184,152,90,0.15)",
@@ -220,7 +213,7 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
               <path d="M8 5.5v3.5M8 11v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
             </svg>
             <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.55, margin: 0 }}>
-              <span style={{ color: "var(--gold)", fontWeight: 600 }}>Demo — </span>
+              <span style={{ color: "var(--gold)", fontWeight: 600 }}>Demo – </span>
               e-mail er udfyldt. Skriv en vilkårlig adgangskode og tryk log ind.
             </p>
           </div>
@@ -228,7 +221,7 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
 
         <div style={{ textAlign: "center", marginTop: "20px" }}>
           <Link href="/" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>
-            Ikke ejer? Book en tid i stedet →
+            Ikke ejer? Book en tid i stedet
           </Link>
         </div>
       </div>
@@ -238,7 +231,7 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-// ─── Dashboard ─────────────────────────────────────────────────────────────────
+// ─── Dashboard ────────────────────────────────────────────────────────────────
 export default function OwnerPage() {
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -266,46 +259,44 @@ export default function OwnerPage() {
   if (checking) return null;
   if (!authed) return <OwnerLogin onLogin={handleLogin}/>;
 
-  const todayDone  = TODAY_APTS.filter(a => a.done);
-  const todayRem   = TODAY_APTS.filter(a => !a.done);
-  const todayRev   = todayDone.reduce((s, a) => s + a.price, 0);
-  const totalRev   = TODAY_APTS.reduce((s, a) => s + a.price, 0);
-  const meta       = CHART_META[chartPeriod];
-  const chartData  = CHART_DATA[chartPeriod];
+  const todayDone = TODAY_APTS.filter(a => a.done);
+  const todayRem  = TODAY_APTS.filter(a => !a.done);
+  const todayRev  = todayDone.reduce((s, a) => s + a.price, 0);
+  const totalRev  = TODAY_APTS.reduce((s, a) => s + a.price, 0);
+  const meta      = CHART_META[chartPeriod];
+  const chartData = CHART_DATA[chartPeriod];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
+    <div className="sidebar-wrapper" style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
       <OwnerSidebar onLogout={handleLogout}/>
 
-      {/* Main */}
       <div style={{ flex: 1, overflow: "auto" }}>
-
-        {/* Top header */}
+        {/* Header */}
         <div style={{
-          padding: "24px 32px", borderBottom: "1px solid var(--border)",
+          padding: "20px 28px", borderBottom: "1px solid var(--border)",
           background: "rgba(14,12,9,0.8)", backdropFilter: "blur(12px)",
           position: "sticky", top: 0, zIndex: 50,
         }}>
-          <h1 className="serif" style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ejeroversigt</h1>
+          <h1 className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ejeroversigt</h1>
           <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Søndag, 23. marts 2026</p>
         </div>
 
-        <div style={{ padding: "28px 32px" }}>
+        <div style={{ padding: "24px 28px" }}>
 
           {/* KPI strip */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "24px" }}>
+          <div className="kpi-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "20px" }}>
             {[
-              { label: "Omsætning i dag", value: fmtDKK(todayRev), sub: `af ${fmtDKK(totalRev)} muligt`, change: "+12%", up: true },
-              { label: "Gennemførte aftaler", value: `${todayDone.length}/${TODAY_APTS.length}`, sub: `${todayRem.length} resterende`, change: "I dag", up: null },
-              { label: meta.kpiLabel, value: fmtDKK(meta.kpiTotal), sub: meta.kpiSub, change: "+8%", up: true },
-              { label: "Måned — total", value: fmtDKK(86440), sub: "Marts 2026", change: "+23%", up: true },
+              { label: "Omsætning i dag",   value: fmtDKK(todayRev), sub: `af ${fmtDKK(totalRev)} muligt`, change: "+12%", up: true },
+              { label: "Gennemførte",        value: `${todayDone.length}/${TODAY_APTS.length}`, sub: `${todayRem.length} resterende`, change: "I dag", up: null },
+              { label: meta.kpiLabel,        value: fmtDKK(meta.kpiTotal), sub: meta.kpiSub, change: "+8%", up: true },
+              { label: "Måned – total",      value: fmtDKK(86440), sub: "Marts 2026", change: "+23%", up: true },
             ].map(({ label, value, sub, change, up }) => (
               <div key={label} style={{
                 background: "var(--surface)", border: "1px solid var(--border-strong)",
-                borderRadius: "10px", padding: "18px 20px",
+                borderRadius: "10px", padding: "16px 18px",
               }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                  <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</span>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
+                  <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</span>
                   {up !== null && (
                     <span style={{
                       fontSize: "10px", fontWeight: 700,
@@ -313,30 +304,28 @@ export default function OwnerPage() {
                       background: up ? "rgba(74,222,128,0.08)" : "rgba(248,113,113,0.08)",
                       border: `1px solid ${up ? "rgba(74,222,128,0.2)" : "rgba(248,113,113,0.2)"}`,
                       borderRadius: "4px", padding: "2px 7px",
-                      display: "flex", alignItems: "center", gap: "3px",
                     }}>
-                      {up ? "↑" : "↓"} {change}
+                      {up ? "+" : "–"} {change}
                     </span>
                   )}
                 </div>
-                <div className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--gold)", lineHeight: 1, marginBottom: "5px" }}>{value}</div>
+                <div className="serif" style={{ fontSize: "18px", fontWeight: 700, color: "var(--gold)", lineHeight: 1, marginBottom: "4px" }}>{value}</div>
                 <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{sub}</div>
               </div>
             ))}
           </div>
 
-          {/* Revenue chart + top services */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "14px", marginBottom: "14px" }}>
-
+          {/* Chart + top services */}
+          <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "14px", marginBottom: "14px" }}>
             {/* Chart */}
             <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden" }}>
-              <div style={{ padding: "18px 22px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
                 <div>
-                  <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{meta.title}</div>
-                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{meta.sub}</div>
+                  <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{meta.title}</div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{meta.sub}</div>
                 </div>
                 <div style={{ display: "flex", gap: "6px" }}>
-                  {(["Uge", "Måned", "År"] as Period[]).map(t => (
+                  {(["Uge", "Maaned", "Aar"] as Period[]).map(t => (
                     <button key={t} onClick={() => setChartPeriod(t)} style={{
                       background: chartPeriod === t ? "var(--gold-dim)" : "transparent",
                       border: `1px solid ${chartPeriod === t ? "var(--gold-border)" : "var(--border)"}`,
@@ -344,11 +333,11 @@ export default function OwnerPage() {
                       fontSize: "11px", fontWeight: chartPeriod === t ? 700 : 400,
                       color: chartPeriod === t ? "var(--gold)" : "var(--text-muted)",
                       cursor: "pointer", transition: "all 0.12s",
-                    }}>{t}</button>
+                    }}>{PERIOD_LABELS[t]}</button>
                   ))}
                 </div>
               </div>
-              <div style={{ padding: "20px 22px 14px" }}>
+              <div style={{ padding: "18px 20px 12px" }}>
                 <AreaChart data={chartData}/>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
                   {chartData.map((d, i) => (
@@ -360,11 +349,11 @@ export default function OwnerPage() {
 
             {/* Top services */}
             <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden" }}>
-              <div style={{ padding: "18px 20px", borderBottom: "1px solid var(--border)" }}>
-                <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ydelser</div>
+              <div style={{ padding: "16px 18px", borderBottom: "1px solid var(--border)" }}>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ydelser</div>
                 <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Omsætning denne måned</div>
               </div>
-              <div style={{ padding: "14px 20px", display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div style={{ padding: "14px 18px", display: "flex", flexDirection: "column", gap: "13px" }}>
                 {TOP_SERVICES.map(s => (
                   <div key={s.name}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
@@ -386,12 +375,12 @@ export default function OwnerPage() {
           {/* Today's schedule */}
           <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden", marginBottom: "14px" }}>
             <div style={{
-              padding: "16px 22px", borderBottom: "1px solid var(--border)",
-              display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "14px 20px", borderBottom: "1px solid var(--border)",
+              display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px",
             }}>
               <div>
-                <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Dagens program</div>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{TODAY_APTS.length} aftaler · {fmtDKK(totalRev)}</div>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Dagens program</div>
+                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{TODAY_APTS.length} aftaler – {fmtDKK(totalRev)}</div>
               </div>
               <div style={{ display: "flex", gap: "8px" }}>
                 <span style={{ fontSize: "11px", color: "#4ade80", background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: "4px", padding: "3px 10px", fontWeight: 600 }}>
@@ -403,36 +392,35 @@ export default function OwnerPage() {
               </div>
             </div>
             <div style={{ overflowX: "auto" }}>
-              {/* Header */}
               <div style={{
-                display: "grid", gridTemplateColumns: "72px 1fr 180px 110px 80px 90px 100px",
-                padding: "10px 22px", background: "var(--surface-2)", borderBottom: "1px solid var(--border)",
-                minWidth: "700px",
+                display: "grid", gridTemplateColumns: "70px 1fr 160px 100px 72px 85px 100px",
+                padding: "10px 20px", background: "var(--surface-2)", borderBottom: "1px solid var(--border)",
+                minWidth: "680px",
               }}>
-                {["Tid", "Kunde", "Ydelse", "Barber", "Varighed", "Pris", "Status"].map(h => (
+                {["Tid", "Kunde", "Ydelse", "Barber", "Min", "Pris", "Status"].map(h => (
                   <div key={h} style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>{h}</div>
                 ))}
               </div>
               {TODAY_APTS.map((a, i) => (
                 <div key={i} style={{
-                  display: "grid", gridTemplateColumns: "72px 1fr 180px 110px 80px 90px 100px",
-                  padding: "14px 22px", alignItems: "center", minWidth: "700px",
+                  display: "grid", gridTemplateColumns: "70px 1fr 160px 100px 72px 85px 100px",
+                  padding: "13px 20px", alignItems: "center", minWidth: "680px",
                   borderBottom: i < TODAY_APTS.length - 1 ? "1px solid var(--border)" : "none",
                   background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.012)",
-                  opacity: a.done ? 0.55 : 1, transition: "opacity 0.15s",
+                  opacity: a.done ? 0.55 : 1,
                 }}>
-                  <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)", fontVariantNumeric: "tabular-nums" }}>{a.time}</div>
+                  <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", fontVariantNumeric: "tabular-nums" }}>{a.time}</div>
                   <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text)" }}>{a.client}</div>
                   <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <div style={{ width: "6px", height: "6px", borderRadius: "2px", background: SVC_COLOR[a.service] || "var(--gold)", flexShrink: 0 }}/>
                     <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{a.service}</span>
                   </div>
                   <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{a.barber}</div>
-                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{a.dur} min</div>
+                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{a.dur}</div>
                   <div style={{ fontSize: "13px", fontWeight: 600, color: a.done ? "var(--text-muted)" : "var(--gold)" }}>{a.price} kr.</div>
                   <div>
                     <span style={{
-                      fontSize: "10px", fontWeight: 700, borderRadius: "4px", padding: "3px 9px",
+                      fontSize: "10px", fontWeight: 700, borderRadius: "4px", padding: "3px 8px",
                       color: a.done ? "#4ade80" : "var(--gold)",
                       background: a.done ? "rgba(74,222,128,0.08)" : "var(--gold-dim)",
                       border: `1px solid ${a.done ? "rgba(74,222,128,0.2)" : "var(--gold-border)"}`,
@@ -444,7 +432,7 @@ export default function OwnerPage() {
           </div>
 
           {/* Demo note */}
-          <div style={{ marginTop: "24px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
             <div style={{
               display: "flex", gap: "8px", alignItems: "center",
               background: "var(--surface)", border: "1px solid var(--border-strong)",
@@ -455,8 +443,8 @@ export default function OwnerPage() {
                 <circle cx="8" cy="8" r="6.5" stroke="var(--text-muted)" strokeWidth="1.2"/>
                 <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
               </svg>
-              <span><span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Ejerdemo — </span>I produktion opdateres alt i realtid.</span>
-              <span style={{ color: "var(--border-strong)" }}>·</span>
+              <span><span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Ejerdemo – </span>I produktion opdateres alt i realtid.</span>
+              <span style={{ color: "var(--border-strong)", margin: "0 4px" }}>·</span>
               <a href="https://sloth-studio.pages.dev" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: "2px" }}>Bygget af Sloth Studio</a>
             </div>
           </div>

@@ -195,7 +195,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
+    <div className="sidebar-wrapper" style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
       <OwnerSidebar onLogout={handleLogout}/>
 
       {/* Main column */}
@@ -318,3 +318,4 @@ export default function AdminPage() {
     </div>
   );
 }
+
