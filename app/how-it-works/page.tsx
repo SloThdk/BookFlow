@@ -173,7 +173,7 @@ export default function HowItWorksPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "0", border: "1px solid var(--border-strong)", borderRadius: "8px", overflow: "hidden" }}>
             {[
               { q: "Is my email or data stored anywhere?", a: "No. Everything runs in your browser's sessionStorage, which clears the moment you close or refresh the tab. Nothing is saved to a server." },
-              { q: "Can I use this booking system for my business?", a: "Yes. Sloth Studio builds custom versions of this — connected to a real database, email confirmations, payment integration, and a business admin dashboard. Contact us at sloth-studio.pages.dev." },
+              { q: "Can I get this for my business?", a: "Yes — this is exactly what we build for clients. BookFlow is our own custom booking system, not a plugin or third-party widget. We build you a version branded to match your website, with your services, team, and availability. Comes with real bookings, email confirmations, and a business dashboard. Get in touch at sloth-studio.pages.dev." },
               { q: "What happens after the demo?", a: "It resets. Close the tab, come back, and it's fresh. You can complete the booking flow as many times as you like." },
               { q: "Does this work on mobile?", a: "Yes — fully responsive. The booking flow works on phones and tablets." },
             ].map((item, i, arr) => (
@@ -195,36 +195,43 @@ export default function HowItWorksPage() {
         {/* CTA */}
         <div style={{
           background: "var(--surface)", border: "1px solid var(--border-strong)",
-          borderRadius: "10px", padding: "32px", textAlign: "center",
+          borderRadius: "10px", padding: "36px", textAlign: "center",
         }}>
-          <h3 style={{ fontSize: "20px", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "10px" }}>
-            Ready to try it?
+          <div style={{
+            fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "var(--accent)", marginBottom: "12px",
+          }}>
+            Want this for your business?
+          </div>
+          <h3 style={{ fontSize: "22px", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "12px" }}>
+            We built this. We can build yours.
           </h3>
-          <p style={{ fontSize: "14px", color: "var(--text-secondary)", marginBottom: "24px" }}>
-            Takes 90 seconds to complete a full booking.
+          <p style={{ fontSize: "14px", color: "var(--text-secondary)", marginBottom: "28px", maxWidth: "420px", margin: "0 auto 28px", lineHeight: 1.7 }}>
+            BookFlow is our own custom booking system — not a plugin, not Calendly.
+            Your business, your brand, your rules. Built from scratch and styled to match your website.
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link
-              href={loggedIn ? "/book" : "/"}
-              style={{
-                background: "var(--accent)", color: "#0A0A0E",
-                borderRadius: "8px", padding: "12px 28px",
-                fontSize: "15px", fontWeight: 700, display: "inline-block",
-              }}
-            >
-              {loggedIn ? "Back to booking" : "Start booking"}
-            </Link>
             <a
               href="https://sloth-studio.pages.dev"
               target="_blank" rel="noopener noreferrer"
               style={{
+                background: "var(--accent)", color: "#0A0A0E",
+                borderRadius: "8px", padding: "13px 32px",
+                fontSize: "15px", fontWeight: 700, display: "inline-block",
+              }}
+            >
+              Get a quote
+            </a>
+            <Link
+              href={loggedIn ? "/book" : "/"}
+              style={{
                 background: "transparent", border: "1px solid var(--border-strong)",
-                color: "var(--text)", borderRadius: "8px", padding: "12px 28px",
+                color: "var(--text)", borderRadius: "8px", padding: "13px 28px",
                 fontSize: "15px", fontWeight: 600, display: "inline-block",
               }}
             >
-              Hire Sloth Studio
-            </a>
+              {loggedIn ? "Try the demo" : "Try the demo"}
+            </Link>
           </div>
         </div>
       </main>
