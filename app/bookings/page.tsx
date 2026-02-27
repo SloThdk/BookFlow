@@ -44,10 +44,10 @@ function BookingCard({ booking, isNew = false, onCancel }: {
     }}>
       {/* Date block */}
       <div style={{
-        width: "90px", flexShrink: 0,
+        width: "110px", flexShrink: 0,
         borderRight: "1px solid var(--border)",
         display: "flex", flexDirection: "column", alignItems: "center",
-        justifyContent: "center", padding: "20px 12px",
+        justifyContent: "center", padding: "28px 14px",
         background: "var(--surface-2)", gap: "3px",
       }}>
         {isSpecialDate ? (
@@ -58,21 +58,21 @@ function BookingCard({ booking, isNew = false, onCancel }: {
         ) : (
           <>
             <span style={{ fontSize: "10px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>{parts[0]}</span>
-            <span className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", lineHeight: 1, marginTop: "1px" }}>{parts[1]}</span>
-            <span style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "1px" }}>{parts[2]}</span>
-            <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", marginTop: "8px" }}>{booking.time}</span>
+            <span className="serif" style={{ fontSize: "34px", fontWeight: 700, color: "var(--text)", lineHeight: 1, marginTop: "1px" }}>{parts[1]}</span>
+            <span style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>{parts[2]}</span>
+            <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)", marginTop: "10px" }}>{booking.time}</span>
           </>
         )}
       </div>
 
       {/* Content */}
       <div style={{
-        flex: 1, padding: "20px 24px",
-        display: "flex", alignItems: "center", gap: "18px", minWidth: 0,
+        flex: 1, padding: "26px 32px",
+        display: "flex", alignItems: "center", gap: "22px", minWidth: 0,
       }}>
         {photo ? (
           <img src={photo} alt={booking.staff} style={{
-            width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover",
+            width: "62px", height: "62px", borderRadius: "50%", objectFit: "cover",
             flexShrink: 0, display: "block", border: "1px solid var(--border-strong)",
           }}/>
         ) : (
@@ -86,19 +86,19 @@ function BookingCard({ booking, isNew = false, onCancel }: {
         )}
         <div style={{ minWidth: 0 }}>
           <div style={{
-            fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700,
-            color: "var(--text)", marginBottom: "5px",
+            fontFamily: "var(--font-playfair)", fontSize: "20px", fontWeight: 700,
+            color: "var(--text)", marginBottom: "7px",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>{booking.service}</div>
-          <div style={{ fontSize: "13px", color: "var(--gold)", fontWeight: 500 }}>{booking.staff}</div>
+          <div style={{ fontSize: "14px", color: "var(--gold)", fontWeight: 500 }}>{booking.staff}</div>
         </div>
       </div>
 
       {/* Price + status + cancel */}
       <div style={{
-        padding: "16px 20px", flexShrink: 0,
+        padding: "26px 28px", flexShrink: 0,
         display: "flex", flexDirection: "column",
-        alignItems: "flex-end", justifyContent: "center", gap: "8px",
+        alignItems: "flex-end", justifyContent: "center", gap: "10px",
         borderLeft: "1px solid var(--border)",
       }}>
         {confirming ? (
@@ -119,7 +119,7 @@ function BookingCard({ booking, isNew = false, onCancel }: {
           </div>
         ) : (
           <>
-            <span className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)" }}>€{booking.price}</span>
+            <span className="serif" style={{ fontSize: "24px", fontWeight: 700, color: "var(--text)" }}>€{booking.price}</span>
             <span style={{
               fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
               color: isNew ? "var(--text)" : "var(--gold)",
@@ -129,29 +129,16 @@ function BookingCard({ booking, isNew = false, onCancel }: {
             }}>{isNew ? "New" : "Confirmed"}</span>
             {onCancel && (
               <button onClick={() => setConfirming(true)}
-                onMouseOver={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.15)";
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.4)";
-                  (e.currentTarget as HTMLElement).style.color = "#f87171";
-                }}
-                onMouseOut={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.06)";
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.2)";
-                  (e.currentTarget as HTMLElement).style.color = "#f87171";
-                }}
+                onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)"; }}
+                onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}
                 style={{
-                  background: "rgba(239,68,68,0.06)",
-                  border: "1px solid rgba(239,68,68,0.2)",
-                  borderRadius: "5px", padding: "4px 9px",
-                  cursor: "pointer", color: "#f87171",
-                  display: "flex", alignItems: "center", gap: "4px",
-                  transition: "all 0.15s", marginTop: "2px", fontSize: "11px", fontWeight: 600,
+                  background: "none", border: "none", padding: "2px 0",
+                  cursor: "pointer", color: "var(--text-muted)",
+                  fontSize: "11px", fontWeight: 500,
+                  textDecoration: "underline", textUnderlineOffset: "3px",
+                  transition: "color 0.15s", marginTop: "4px",
                 }}
-                title="Cancel appointment"
               >
-                <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
                 Cancel
               </button>
             )}
@@ -210,11 +197,7 @@ export default function BookingsPage() {
   if (!session) return null;
 
   return (
-    <div style={{
-      minHeight: "100vh", background: "var(--bg)",
-      backgroundImage: "linear-gradient(rgba(184,152,90,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(184,152,90,0.03) 1px, transparent 1px)",
-      backgroundSize: "52px 52px",
-    }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
 
       {/* Nav */}
       <nav style={{
@@ -249,13 +232,13 @@ export default function BookingsPage() {
           backgroundSize: "cover", backgroundPosition: "center 35%",
         }}/>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(14,12,9,0.72) 0%, rgba(14,12,9,0.88) 100%)" }}/>
-        <div style={{ position: "relative", width: "100%", maxWidth: "860px", padding: "36px 32px" }}>
+        <div style={{ position: "relative", width: "100%", padding: "36px 48px" }}>
           <h1 className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Upcoming appointments</h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Nordklip Barbershop &mdash; Copenhagen</p>
         </div>
       </div>
 
-      <main style={{ maxWidth: "860px", margin: "0 auto", padding: "36px 32px 80px" }}>
+      <main style={{ padding: "36px 48px 80px" }}>
         {all.length === 0 ? (
           <EmptyState/>
         ) : (
