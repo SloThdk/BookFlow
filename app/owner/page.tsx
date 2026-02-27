@@ -15,6 +15,44 @@ const WEEK = [
   { day: "I dag", revenue: 8760 },
 ];
 
+const MONTH = [
+  { day: "3. mar", revenue: 38400 },
+  { day: "6. mar", revenue: 41200 },
+  { day: "9. mar", revenue: 36800 },
+  { day: "12. mar", revenue: 44600 },
+  { day: "15. mar", revenue: 49100 },
+  { day: "18. mar", revenue: 42300 },
+  { day: "21. mar", revenue: 51200 },
+  { day: "I dag", revenue: 47800 },
+];
+
+const YEAR = [
+  { day: "Jan", revenue: 124500 },
+  { day: "Feb", revenue: 118200 },
+  { day: "Mar", revenue: 142800 },
+  { day: "Apr", revenue: 155400 },
+  { day: "Maj", revenue: 168200 },
+  { day: "Jun", revenue: 145600 },
+  { day: "Jul", revenue: 122000 },
+  { day: "Aug", revenue: 138900 },
+  { day: "Sep", revenue: 162400 },
+  { day: "Okt", revenue: 175800 },
+  { day: "Nov", revenue: 168300 },
+  { day: "Dec", revenue: 198600 },
+];
+
+type Period = "Uge" | "Måned" | "År";
+
+const CHART_DATA: Record<Period, { day: string; revenue: number }[]> = {
+  Uge: WEEK, Måned: MONTH, År: YEAR,
+};
+
+const CHART_META: Record<Period, { title: string; sub: string; kpiLabel: string; kpiSub: string; kpiTotal: number }> = {
+  Uge:   { title: "Omsætning — denne uge",  sub: "Daglig omsætning i DKK",    kpiLabel: "Uge — omsætning",   kpiSub: "Man 17 — I dag",  kpiTotal: 66620 },
+  Måned: { title: "Omsætning — denne måned", sub: "Omsætning per 3 dage",      kpiLabel: "Måned — omsætning", kpiSub: "Marts 2026",      kpiTotal: 351400 },
+  År:    { title: "Omsætning — dette år",    sub: "Månedlig omsætning i DKK",  kpiLabel: "År — omsætning",   kpiSub: "Jan — Dec 2026",  kpiTotal: 1722200 },
+};
+
 const TODAY_APTS = [
   { time: "09:00", client: "Henrik Bruun",    service: "Hot Towel Shave", barber: "Marcus", dur: 40, price: 220, done: true },
   { time: "10:00", client: "Maja Lindström",  service: "Farve & Stil",    barber: "Sofia",  dur: 90, price: 550, done: true },
@@ -71,14 +109,14 @@ function AreaChart({ data }: { data: typeof WEEK }) {
       <path d={linePath} fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       {/* Dots */}
       {pts.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={data[i].day === "I dag" ? 5 : 3}
-          fill={data[i].day === "I dag" ? "var(--gold)" : "var(--bg)"}
+        <circle key={i} cx={p.x} cy={p.y} r={i === data.length - 1 ? 5 : 3}
+          fill={i === data.length - 1 ? "var(--gold)" : "var(--bg)"}
           stroke="var(--gold)" strokeWidth="1.5"/>
       ))}
-      {/* Today label */}
+      {/* Latest value label */}
       {(() => { const p = pts[pts.length - 1]; return (
         <text x={p.x} y={p.y - 10} textAnchor="middle" fill="var(--gold)" fontSize="9" fontWeight="700" fontFamily="Inter,sans-serif">
-          {fmtDKK(WEEK[WEEK.length - 1].revenue)}
+          {fmtDKK(data[data.length - 1].revenue)}
         </text>
       ); })()}
     </svg>
@@ -204,6 +242,7 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
 export default function OwnerPage() {
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [chartPeriod, setChartPeriod] = useState<Period>("Uge");
 
   useEffect(() => {
     try { if (sessionStorage.getItem("bf_owner")) setAuthed(true); } catch {}
@@ -231,7 +270,8 @@ export default function OwnerPage() {
   const todayRem   = TODAY_APTS.filter(a => !a.done);
   const todayRev   = todayDone.reduce((s, a) => s + a.price, 0);
   const totalRev   = TODAY_APTS.reduce((s, a) => s + a.price, 0);
-  const weekRev    = WEEK.reduce((s, d) => s + d.revenue, 0);
+  const meta       = CHART_META[chartPeriod];
+  const chartData  = CHART_DATA[chartPeriod];
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
@@ -243,24 +283,11 @@ export default function OwnerPage() {
         {/* Top header */}
         <div style={{
           padding: "24px 32px", borderBottom: "1px solid var(--border)",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
           background: "rgba(14,12,9,0.8)", backdropFilter: "blur(12px)",
           position: "sticky", top: 0, zIndex: 50,
         }}>
-          <div>
-            <h1 className="serif" style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ejeroversigt</h1>
-            <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Søndag, 23. marts 2026</p>
-          </div>
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <div style={{
-              display: "flex", alignItems: "center", gap: "6px",
-              background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)",
-              borderRadius: "6px", padding: "6px 12px",
-            }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80", boxShadow: "0 0 6px rgba(74,222,128,0.8)" }}/>
-              <span style={{ fontSize: "11px", fontWeight: 600, color: "#4ade80" }}>Live data</span>
-            </div>
-          </div>
+          <h1 className="serif" style={{ fontSize: "22px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ejeroversigt</h1>
+          <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Søndag, 23. marts 2026</p>
         </div>
 
         <div style={{ padding: "28px 32px" }}>
@@ -270,7 +297,7 @@ export default function OwnerPage() {
             {[
               { label: "Omsætning i dag", value: fmtDKK(todayRev), sub: `af ${fmtDKK(totalRev)} muligt`, change: "+12%", up: true },
               { label: "Gennemførte aftaler", value: `${todayDone.length}/${TODAY_APTS.length}`, sub: `${todayRem.length} resterende`, change: "I dag", up: null },
-              { label: "Uge — omsætning", value: fmtDKK(weekRev), sub: "Man 17 — I dag", change: "+8%", up: true },
+              { label: meta.kpiLabel, value: fmtDKK(meta.kpiTotal), sub: meta.kpiSub, change: "+8%", up: true },
               { label: "Måned — total", value: fmtDKK(86440), sub: "Marts 2026", change: "+23%", up: true },
             ].map(({ label, value, sub, change, up }) => (
               <div key={label} style={{
@@ -305,27 +332,27 @@ export default function OwnerPage() {
             <div style={{ background: "var(--surface)", border: "1px solid var(--border-strong)", borderRadius: "10px", overflow: "hidden" }}>
               <div style={{ padding: "18px 22px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                  <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Omsætning — denne uge</div>
-                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Daglig omsætning i DKK</div>
+                  <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{meta.title}</div>
+                  <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{meta.sub}</div>
                 </div>
                 <div style={{ display: "flex", gap: "6px" }}>
-                  {["Uge", "Måned", "År"].map((t, i) => (
-                    <button key={t} style={{
-                      background: i === 0 ? "var(--gold-dim)" : "transparent",
-                      border: `1px solid ${i === 0 ? "var(--gold-border)" : "var(--border)"}`,
+                  {(["Uge", "Måned", "År"] as Period[]).map(t => (
+                    <button key={t} onClick={() => setChartPeriod(t)} style={{
+                      background: chartPeriod === t ? "var(--gold-dim)" : "transparent",
+                      border: `1px solid ${chartPeriod === t ? "var(--gold-border)" : "var(--border)"}`,
                       borderRadius: "5px", padding: "4px 10px",
-                      fontSize: "11px", fontWeight: i === 0 ? 700 : 400,
-                      color: i === 0 ? "var(--gold)" : "var(--text-muted)",
-                      cursor: "pointer",
+                      fontSize: "11px", fontWeight: chartPeriod === t ? 700 : 400,
+                      color: chartPeriod === t ? "var(--gold)" : "var(--text-muted)",
+                      cursor: "pointer", transition: "all 0.12s",
                     }}>{t}</button>
                   ))}
                 </div>
               </div>
               <div style={{ padding: "20px 22px 14px" }}>
-                <AreaChart data={WEEK}/>
+                <AreaChart data={chartData}/>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
-                  {WEEK.map(d => (
-                    <span key={d.day} style={{ fontSize: "10px", color: d.day === "I dag" ? "var(--gold)" : "var(--text-muted)", fontWeight: d.day === "I dag" ? 700 : 400, flex: 1, textAlign: "center" }}>{d.day}</span>
+                  {chartData.map((d, i) => (
+                    <span key={d.day} style={{ fontSize: "10px", color: i === chartData.length - 1 ? "var(--gold)" : "var(--text-muted)", fontWeight: i === chartData.length - 1 ? 700 : 400, flex: 1, textAlign: "center" }}>{d.day}</span>
                   ))}
                 </div>
               </div>
