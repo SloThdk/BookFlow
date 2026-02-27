@@ -121,11 +121,11 @@ export default function LoginPage() {
             {[
               {
                 path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-                text: "Vesterbrogade 12, Copenhagen"
+                text: "Kongensgade 14, 1264 Copenhagen K"
               },
               {
                 path: "M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 3v7l4.5 2.5",
-                text: "Mon–Fri 09:00–18:00 · Sat 09:00–16:00"
+                text: "Mon–Fri 10:00–19:00 · Sat 09:00–17:00"
               },
             ].map(({ path, text }) => (
               <div key={text} style={{ display: "flex", alignItems: "center", gap: "10px" }}>

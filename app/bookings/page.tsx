@@ -10,16 +10,16 @@ interface Booking {
 }
 
 const DEMO_BOOKINGS: Booking[] = [
-  { service: "Classic Cut",     staff: "Oliver Berg", date: "Tomorrow",   time: "10:30", name: "Marcus Holst", price: 35, createdAt: 0 },
-  { service: "Beard Sculpt",    staff: "Marcus Lund", date: "Thu 20 Mar", time: "14:00", name: "Emil Strand",  price: 20, createdAt: 0 },
-  { service: "Cut & Beard",     staff: "Emil Dahl",   date: "Fri 21 Mar", time: "11:00", name: "Sofia Krag",   price: 50, createdAt: 0 },
-  { service: "Hot Towel Shave", staff: "Oliver Berg", date: "Sat 22 Mar", time: "13:30", name: "Marcus Holst", price: 28, createdAt: 0 },
+  { service: "Classic Cut",     staff: "Marcus Holst", date: "Tomorrow",   time: "11:00", name: "Jakob Møller",  price: 35, createdAt: 0 },
+  { service: "Beard Sculpt",    staff: "Emil Strand",  date: "Thu 20 Mar", time: "14:00", name: "Rasmus Berg",   price: 24, createdAt: 0 },
+  { service: "Color & Style",   staff: "Sofia Krag",   date: "Fri 21 Mar", time: "11:00", name: "Laura Winther", price: 75, createdAt: 0 },
+  { service: "Hot Towel Shave", staff: "Marcus Holst", date: "Sat 22 Mar", time: "13:30", name: "Daniel Westh",  price: 30, createdAt: 0 },
 ];
 
 const STAFF_PHOTOS: Record<string, string> = {
-  "Oliver Berg": "https://i.pravatar.cc/120?img=68",
-  "Marcus Lund": "https://i.pravatar.cc/120?img=57",
-  "Emil Dahl":   "https://i.pravatar.cc/120?img=13",
+  "Marcus Holst": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=face",
+  "Emil Strand":  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face",
+  "Sofia Krag":   "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&fit=crop&crop=face",
 };
 
 const SERVICE_ACCENTS: Record<string, string> = {
@@ -27,6 +27,8 @@ const SERVICE_ACCENTS: Record<string, string> = {
   "Beard Sculpt":    "#7BA3C4",
   "Cut & Beard":     "#C4977A",
   "Hot Towel Shave": "#7BBFA5",
+  "Junior Cut":      "#A0B89A",
+  "Color & Style":   "#C49BBF",
 };
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
