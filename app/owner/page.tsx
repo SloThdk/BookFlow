@@ -219,11 +219,6 @@ function OwnerLogin({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
 
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <Link href="/" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>
-            Ikke ejer? Book en tid i stedet
-          </Link>
-        </div>
       </div>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

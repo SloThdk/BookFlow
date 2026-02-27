@@ -415,7 +415,7 @@ export default function BookPage() {
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [notes, setNotes] = useState("");
-  const [errors, setErrors] = useState<{ name?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
 
   useEffect(() => {
     try {
@@ -443,7 +443,13 @@ export default function BookPage() {
 
   function handleNext() {
     if (step < 5) { setStep(s => s + 1); return; }
-    if (!clientName.trim()) { setErrors({ name: "Name is required." }); return; }
+    const newErrors: { name?: string; phone?: string } = {};
+    if (!clientName.trim()) newErrors.name = "Feltet er påkrævet";
+    if (clientPhone.trim()) {
+      const digits = clientPhone.replace(/[\s\-+()]/g, "");
+      if (!/^\d{8,}$/.test(digits)) newErrors.phone = "Ugyldigt telefonnummer";
+    }
+    if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
     setErrors({});
     try {
       const booking = { service: service!.name, staff: staffMember!.name, date: fmtDate(date!), time: time!, name: clientName, price: service!.price, createdAt: Date.now() };
@@ -723,7 +729,7 @@ export default function BookPage() {
                               Fulde navn <span style={{ color: "var(--red)" }}>*</span>
                             </label>
                             <input type="text" placeholder="Dit navn" value={clientName}
-                              onChange={e => { setClientName(e.target.value); setErrors({}); }}
+                              onChange={e => { setClientName(e.target.value); setErrors(prev => ({ ...prev, name: undefined })); }}
                               style={errors.name ? { borderColor: "var(--red)" } : {}}/>
                             {errors.name && <p style={{ fontSize: "12px", color: "var(--red)", marginTop: "5px" }}>{errors.name}</p>}
                           </div>
@@ -731,7 +737,10 @@ export default function BookPage() {
                             <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>
                               Telefon <span style={{ fontWeight: 400, textTransform: "none" as const, color: "var(--text-muted)" }}>valgfrit</span>
                             </label>
-                            <input type="tel" placeholder="+45 12 34 56 78" value={clientPhone} onChange={e => setClientPhone(e.target.value)}/>
+                            <input type="tel" placeholder="+45 12 34 56 78" value={clientPhone}
+                              onChange={e => { setClientPhone(e.target.value); setErrors(prev => ({ ...prev, phone: undefined })); }}
+                              style={errors.phone ? { borderColor: "#DC2626" } : {}}/>
+                            {errors.phone && <p style={{ fontSize: "12px", color: "#DC2626", marginTop: "4px" }}>{errors.phone}</p>}
                           </div>
                           <div>
                             <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>

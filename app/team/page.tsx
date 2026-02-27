@@ -121,9 +121,6 @@ function TeamLogin({ onLogin }: { onLogin:(n:string)=>void }) {
             </p>
           </div>
         </div>
-        <div style={{textAlign:"center",marginTop:"16px"}}>
-          <Link href="/owner" style={{fontSize:"12px",color:"var(--text-muted)",textDecoration:"none"}}>Ejer? Log ind via ejersystemet →</Link>
-        </div>
       </div>
       <style>{`@keyframes spin{to{transform:rotate(360deg);}}`}</style>
     </div>
