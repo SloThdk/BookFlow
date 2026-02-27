@@ -228,16 +228,13 @@ function SwapModal({ appt, myName, onClose, onConfirm }: { appt:Appt; myName:str
 function ChatPanel({ myName }: { myName: string }) {
   type Contact = "all" | "Manager" | MemberName;
   const [contact, setContact] = useState<Contact>("all");
-  const [msgs, setMsgs] = useState<Msg[]>([]);
+  const [allMsgs, setAllMsgs] = useState<Record<string, Msg[]>>({});
   const [input, setInput] = useState("");
   const chatRef = useRef<HTMLDivElement>(null);
   const member = MEMBER[myName as MemberName]!;
 
   const key = chatKey(myName, contact === "all" ? "all" : contact);
-
-  useEffect(()=>{
-    setMsgs(loadLS<Msg[]>(key, []));
-  }, [key]);
+  const msgs = allMsgs[key] || [];
 
   useEffect(()=>{
     if(chatRef.current) chatRef.current.scrollTop=chatRef.current.scrollHeight;
@@ -246,8 +243,8 @@ function ChatPanel({ myName }: { myName: string }) {
   function send() {
     if(!input.trim()) return;
     const m: Msg = { id:uid(), sender:myName, text:input.trim(), ts:Date.now() };
-    const updated = [...msgs, m];
-    setMsgs(updated); saveLS(key, updated); setInput("");
+    setAllMsgs(prev => ({ ...prev, [key]: [...(prev[key] || []), m] }));
+    setInput("");
   }
 
   const contacts: { id: Contact; label: string; sublabel: string; color: string; photo?: string }[] = [
@@ -279,7 +276,7 @@ function ChatPanel({ myName }: { myName: string }) {
           {contacts.map(c=>{
             const active = contact===c.id;
             const dmKey = chatKey(myName, c.id==="all"?"all":c.id as string);
-            const dmMsgs = loadLS<Msg[]>(dmKey,[]);
+            const dmMsgs = allMsgs[dmKey] || [];
             const lastMsg = dmMsgs[dmMsgs.length-1];
             return (
               <button key={c.id} onClick={()=>setContact(c.id)} style={{
@@ -329,6 +326,9 @@ function ChatPanel({ myName }: { myName: string }) {
 
         {/* Messages */}
         <div ref={chatRef} style={{flex:1,overflowY:"auto",padding:"16px 20px",display:"flex",flexDirection:"column",gap:"12px"}}>
+          <div style={{textAlign:"center",padding:"6px 12px",background:"var(--surface-2)",border:"1px solid var(--border)",borderRadius:"6px",marginBottom:"4px"}}>
+            <p style={{fontSize:"11px",color:"var(--text-muted)",margin:0}}>Beskeder gemmes ikke — chat-historik er ikke aktiv i demo</p>
+          </div>
           {msgs.length===0&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",minHeight:"200px"}}>
               <p style={{fontSize:"13px",color:"var(--text-muted)",textAlign:"center"}}>

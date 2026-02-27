@@ -211,16 +211,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div style={{ marginTop: "16px", display: "flex", gap: "12px", justifyContent: "center" }}>
-            <a href="/team" style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: "5px", padding: "5px 10px", borderRadius: "5px", border: "1px solid var(--border-strong)" }}>
-              <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.3"/><path d="M1 14c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><path d="M11 7.5c1.1.4 2 1.5 2 2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/><path d="M13 5a2 2 0 0 1 0 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-              Team login
-            </a>
-            <a href="/owner" style={{ fontSize: "11px", color: "var(--text-muted)", textDecoration: "none", display: "flex", alignItems: "center", gap: "5px", padding: "5px 10px", borderRadius: "5px", border: "1px solid var(--border-strong)" }}>
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><rect x="1" y="5" width="10" height="6.5" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M3.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-              Ejersystem
-            </a>
-          </div>
+          {/* Team and owner access removed — use direct URLs /team or /owner */}
         </div>
       </div>
 
