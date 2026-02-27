@@ -1,19 +1,21 @@
 @import "tailwindcss";
 
+/* ── Nordklip design tokens ─────────────────────────────── */
 :root {
-  --bg:             #0A0A0E;
-  --surface:        #111116;
-  --surface-2:      #18181F;
-  --border:         rgba(255,255,255,0.08);
-  --border-strong:  rgba(255,255,255,0.14);
-  --accent:         #00D4A8;
-  --accent-dim:     rgba(0,212,168,0.1);
-  --accent-border:  rgba(0,212,168,0.25);
-  --text:           #F0EEF8;
-  --text-secondary: rgba(240,238,248,0.6);
-  --text-muted:     rgba(240,238,248,0.38);
+  --bg:             #0E0C09;
+  --surface:        #171410;
+  --surface-2:      #1E1C17;
+  --surface-3:      #252219;
+  --gold:           #B8985A;
+  --gold-dim:       rgba(184,152,90,0.10);
+  --gold-border:    rgba(184,152,90,0.25);
+  --gold-glow:      rgba(184,152,90,0.18);
+  --border:         rgba(255,255,255,0.07);
+  --border-strong:  rgba(255,255,255,0.12);
+  --text:           #F5EFE4;
+  --text-secondary: rgba(245,239,228,0.62);
+  --text-muted:     rgba(245,239,228,0.36);
   --red:            #F87171;
-  --yellow:         #FBBF24;
 }
 
 *, *::before, *::after {
@@ -22,23 +24,22 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
 
+/* Inputs */
 input, select, textarea {
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
   color: var(--text);
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 12px 16px;
   width: 100%;
   font-size: 15px;
@@ -46,68 +47,15 @@ input, select, textarea {
   transition: border-color 0.2s;
   font-family: inherit;
 }
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
 
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent);
-}
+/* Anchors */
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
 
-input::placeholder, textarea::placeholder {
-  color: var(--text-muted);
-}
-
-select option {
-  background: var(--surface-2);
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
-
-/* Minimal top bar used on login + how-it-works pages */
-.topbar {
-  height: 56px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  position: sticky;
-  top: 0;
-  background: var(--bg);
-  z-index: 100;
-}
-
-.topbar-logo {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
-
-.topbar-logo span {
-  color: var(--accent);
-}
-
-.topbar-links {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  list-style: none;
-}
-
-.topbar-links a {
-  font-size: 14px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  transition: color 0.15s;
-}
-
-.topbar-links a:hover {
-  color: var(--text);
+/* Heading font helper */
+.serif {
+  font-family: var(--font-playfair), Georgia, serif;
+  letter-spacing: -0.01em;
 }

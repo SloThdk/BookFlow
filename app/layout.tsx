@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter     = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const playfair  = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
 export const metadata: Metadata = {
-  title: "BookFlow — Online Booking System Demo",
-  description: "A fully interactive booking system demo. Built by Sloth Studio.",
+  title: "Book — Nordklip Barbershop",
+  description: "Book your appointment at Nordklip. Precision cuts, beard sculpting, and hot towel shaves in Copenhagen.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.variable}>{children}</body>
+      <body className={`${inter.variable} ${playfair.variable}`}>{children}</body>
     </html>
   );
 }
