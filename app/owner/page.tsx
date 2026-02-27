@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 // ─── Demo Data ─────────────────────────────────────────────────────────────────
 const WEEK_REVENUE = [
@@ -67,8 +68,148 @@ function isPast(time: string) {
   return h < now.getHours() || (h === now.getHours() && m <= now.getMinutes());
 }
 
+// ─── Login gate ────────────────────────────────────────────────────────────────
+function OwnerLogin({ onLogin }: { onLogin: () => void }) {
+  const [email, setEmail] = useState("owner@nordklip.dk");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!password.trim()) { setError("Indtast en adgangskode."); return; }
+    setLoading(true);
+    setTimeout(() => { setLoading(false); onLogin(); }, 800);
+  }
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: "var(--bg)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "24px",
+    }}>
+      <div style={{ width: "100%", maxWidth: "420px" }}>
+
+        {/* Logo */}
+        <div style={{ textAlign: "center", marginBottom: "36px" }}>
+          <div style={{ marginBottom: "14px" }}>
+            <span className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.01em" }}>Nordklip</span>
+          </div>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: "6px",
+            background: "rgba(184,152,90,0.08)", border: "1px solid var(--gold-border)",
+            borderRadius: "6px", padding: "5px 14px",
+          }}>
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+              <rect x="1" y="5" width="10" height="6.5" rx="1.5" stroke="var(--gold)" strokeWidth="1.2"/>
+              <path d="M3.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="var(--gold)" strokeWidth="1.2" strokeLinecap="round"/>
+            </svg>
+            <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gold)" }}>Ejersystem</span>
+          </div>
+        </div>
+
+        {/* Card */}
+        <div style={{
+          background: "var(--surface)", border: "1px solid var(--border-strong)",
+          borderRadius: "12px", padding: "36px 32px",
+        }}>
+          <h1 style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Log ind som ejer</h1>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "28px" }}>
+            Adgang til din forretningsoversigt, omsætning og teamperformance.
+          </p>
+
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div>
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Email</label>
+              <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(""); }}
+                style={{ background: "var(--surface-2)" }}/>
+            </div>
+            <div>
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Adgangskode</label>
+              <input type="password" placeholder="••••••••" value={password}
+                onChange={e => { setPassword(e.target.value); setError(""); }}/>
+              {error && <p style={{ fontSize: "12px", color: "var(--red, #ef4444)", marginTop: "5px" }}>{error}</p>}
+            </div>
+
+            <button type="submit" disabled={loading} style={{
+              marginTop: "8px",
+              background: loading ? "var(--surface-2)" : "var(--gold)",
+              color: loading ? "var(--text-muted)" : "#0E0C09",
+              border: "none", borderRadius: "7px",
+              padding: "13px 24px", fontSize: "14px", fontWeight: 700,
+              cursor: loading ? "default" : "pointer",
+              transition: "all 0.15s",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+            }}>
+              {loading ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ animation: "spin 0.8s linear infinite" }}>
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeDasharray="32" strokeDashoffset="12" strokeLinecap="round"/>
+                  </svg>
+                  Logger ind...
+                </>
+              ) : "Log ind"}
+            </button>
+          </form>
+
+          {/* Demo hint */}
+          <div style={{
+            marginTop: "20px", padding: "12px 14px",
+            background: "var(--surface-2)", border: "1px solid var(--border)",
+            borderRadius: "7px", display: "flex", gap: "8px", alignItems: "flex-start",
+          }}>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: "1px" }}>
+              <circle cx="8" cy="8" r="6.5" stroke="var(--text-muted)" strokeWidth="1.2"/>
+              <path d="M8 5.5v3.5M8 11v.5" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            <p style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.55, margin: 0 }}>
+              <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Demo — </span>
+              e-mail er udfyldt på forhånd. Skriv en vilkårlig adgangskode for at komme ind.
+            </p>
+          </div>
+        </div>
+
+        {/* Back link */}
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <Link href="/" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>
+            Ikke ejer? Book en tid i stedet
+          </Link>
+        </div>
+
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────────
 export default function OwnerPage() {
+  const [authed, setAuthed] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    try {
+      const s = sessionStorage.getItem("bf_owner");
+      if (s) setAuthed(true);
+    } catch {}
+    setChecking(false);
+  }, []);
+
+  function handleLogin() {
+    try { sessionStorage.setItem("bf_owner", "1"); } catch {}
+    setAuthed(true);
+  }
+
+  function handleLogout() {
+    try { sessionStorage.removeItem("bf_owner"); } catch {}
+    setAuthed(false);
+  }
+
+  if (checking) return null;
+  if (!authed) return <OwnerLogin onLogin={handleLogin}/>;
+
   const todayRevenue = TODAY_APTS.reduce((s, a) => s + a.price, 0);
   const weekRevenue  = WEEK_REVENUE.reduce((s, d) => s + d.revenue, 0);
   const maxBar       = Math.max(...WEEK_REVENUE.map(d => d.revenue));
@@ -100,6 +241,11 @@ export default function OwnerPage() {
           <Link href="/admin" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}>Holdplan</Link>
           <Link href="/bookings" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none", fontWeight: 500 }}>Kundevisning</Link>
           <Link href="/book" style={{ fontSize: "12px", color: "var(--gold)", textDecoration: "none", fontWeight: 600 }}>Ny booking</Link>
+          <button onClick={handleLogout} style={{
+            background: "transparent", border: "1px solid var(--border-strong)",
+            color: "var(--text-muted)", borderRadius: "5px", padding: "5px 12px",
+            fontSize: "12px", fontWeight: 600, cursor: "pointer",
+          }}>Log ud</button>
         </div>
       </nav>
 
