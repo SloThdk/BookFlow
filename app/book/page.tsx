@@ -7,7 +7,7 @@ import Link from "next/link";
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Service {
   id: string; name: string; duration: number; price: number;
-  desc: string; category: string; badge?: string; popular?: boolean;
+  desc: string; category: string; badge?: string; popular?: boolean; photo?: string;
 }
 interface StaffMember {
   id: string; name: string; role: string; experience: string;
@@ -22,6 +22,7 @@ const SERVICES: Service[] = [
     category: "Haircut",
     duration: 45, price: 35, popular: true,
     desc: "Our signature scissor and clipper cut, styled and finished to perfection.",
+    photo: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "beard-sculpt",
@@ -29,6 +30,7 @@ const SERVICES: Service[] = [
     category: "Beard",
     duration: 30, price: 24,
     desc: "Full shaping with straight razor edges and a warm towel finish.",
+    photo: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "cut-beard",
@@ -36,6 +38,7 @@ const SERVICES: Service[] = [
     category: "Haircut + Beard",
     duration: 70, price: 52, popular: true,
     desc: "The full Nordklip experience. Precision cut followed by a complete beard service.",
+    photo: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "hot-towel",
@@ -43,6 +46,7 @@ const SERVICES: Service[] = [
     category: "Shave",
     duration: 40, price: 30,
     desc: "Traditional straight razor shave with hot towel preparation and aftercare balm.",
+    photo: "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "junior-cut",
@@ -51,6 +55,7 @@ const SERVICES: Service[] = [
     duration: 30, price: 24,
     badge: "Under 16",
     desc: "The same precision and care, adapted and priced for our younger clients.",
+    photo: "https://images.unsplash.com/photo-1519340333755-56e9c1d04579?w=160&h=160&fit=crop&crop=center",
   },
   {
     id: "color-style",
@@ -58,6 +63,7 @@ const SERVICES: Service[] = [
     category: "Colour",
     duration: 90, price: 75,
     desc: "Root coverage, highlights, or a full colour refresh finished with styling.",
+    photo: "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=160&h=160&fit=crop&crop=center",
   },
 ];
 
@@ -463,10 +469,29 @@ export default function BookPage() {
         </div>
       </nav>
 
-      {/* Header */}
-      <div style={{ borderBottom: "1px solid var(--border)", padding: "28px 24px", display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "100%", maxWidth: "640px" }}>
-          <h1 className="serif" style={{ fontSize: "26px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Book an appointment</h1>
+      {/* Hero header */}
+      <div style={{
+        position: "relative",
+        overflow: "hidden",
+        borderBottom: "1px solid var(--border)",
+        minHeight: "160px",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        {/* Background photo */}
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundImage: "url(https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&fit=crop&crop=center)",
+          backgroundSize: "cover",
+          backgroundPosition: "center 35%",
+        }}/>
+        {/* Dark overlay */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, rgba(14,12,9,0.72) 0%, rgba(14,12,9,0.88) 100%)",
+        }}/>
+        {/* Content */}
+        <div style={{ position: "relative", width: "100%", maxWidth: "640px", padding: "36px 24px" }}>
+          <h1 className="serif" style={{ fontSize: "28px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Book an appointment</h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Nordklip Barbershop &mdash; Kongensgade 14, Copenhagen</p>
         </div>
       </div>
@@ -501,15 +526,14 @@ export default function BookPage() {
                                 cursor: "pointer", transition: "all 0.15s",
                                 display: "flex", alignItems: "center", gap: "14px",
                               }}>
-                                {/* Icon */}
+                                {/* Photo */}
                                 <div style={{
-                                  width: "36px", height: "36px", borderRadius: "8px", flexShrink: 0,
-                                  background: sel ? "rgba(184,152,90,0.15)" : "var(--surface)",
-                                  border: `1px solid ${sel ? "var(--gold-border)" : "var(--border)"}`,
-                                  display: "flex", alignItems: "center", justifyContent: "center",
-                                  transition: "all 0.15s",
+                                  width: "64px", height: "64px", borderRadius: "8px", flexShrink: 0,
+                                  overflow: "hidden",
+                                  border: `1px solid ${sel ? "var(--gold-border)" : "var(--border-strong)"}`,
+                                  transition: "border-color 0.15s",
                                 }}>
-                                  <ServiceIcon id={s.id} active={sel}/>
+                                  {s.photo && <img src={s.photo} alt={s.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}/>}
                                 </div>
 
                                 {/* Info */}
