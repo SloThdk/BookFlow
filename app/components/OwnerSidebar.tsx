@@ -48,6 +48,18 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
         </svg>
       ),
     },
+    {
+      label: "Medarbejdere",
+      href: "/medarbejdere",
+      active: pathname === "/medarbejdere",
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="3" width="9" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+          <path d="M4 7h5M4 9.5h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          <path d="M12 5l2 2-2 2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
   ];
 
   return (
