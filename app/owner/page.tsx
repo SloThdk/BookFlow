@@ -231,6 +231,7 @@ export default function OwnerPage() {
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
   const [chartPeriod, setChartPeriod] = useState<Period>("Uge");
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
     try { if (sessionStorage.getItem("bf_owner")) setAuthed(true); } catch {}
@@ -244,6 +245,8 @@ export default function OwnerPage() {
         sessionStorage.setItem("bf_session", JSON.stringify({ name: "Ejer", email: "owner@nordklip.dk" }));
     } catch {}
     setAuthed(true);
+    setToast("Logget ind som Ejer");
+    setTimeout(() => setToast(""), 2500);
   }
 
   function handleLogout() { try { sessionStorage.removeItem("bf_owner"); sessionStorage.removeItem("bf_session"); } catch {} window.location.href = "https://nordklip.pages.dev"; }
@@ -443,6 +446,7 @@ export default function OwnerPage() {
 
         </div>
       </div>
+      {toast && <div style={{ position: "fixed", bottom: "24px", left: "50%", transform: "translateX(-50%)", background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.4)", borderRadius: "10px", padding: "12px 24px", color: "#86efac", fontSize: "14px", fontWeight: 600, zIndex: 300, whiteSpace: "nowrap", backdropFilter: "blur(8px)" }}>{toast}</div>}
     </div>
   );
 }
