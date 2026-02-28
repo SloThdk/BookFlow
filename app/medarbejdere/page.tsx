@@ -125,81 +125,22 @@ const EMPLOYEES: Employee[] = [
 function fmtDKK(n: number) { return n.toLocaleString("da-DK") + " kr."; }
 
 function downloadContract(emp: Employee) {
-  const lines = [
-    "══════════════════════════════════════════════",
-    "             ANSÆTTELSESKONTRAKT",
-    "══════════════════════════════════════════════",
-    "",
-    "Arbejdsgiver:",
-    "  Nordklip Barber ApS",
-    "  CVR: 38 47 21 09",
-    "  Blågårdsgade 17, st.",
-    "  2200 København N",
-    "  Tlf: +45 32 15 67 89",
-    "",
-    "Medarbejder:",
-    `  Fulde navn:     ${emp.name}`,
-    `  Stilling:       ${emp.role}`,
-    `  Fødselsdato:    ${emp.birthDate}`,
-    `  Adresse:        ${emp.address}`,
-    `  Telefon:        ${emp.phone}`,
-    `  E-mail:         ${emp.email}`,
-    "",
-    "──────────────────────────────────────────────",
-    "Ansættelsesforhold",
-    "──────────────────────────────────────────────",
-    "",
-    `  Startdato:           ${emp.startDate}`,
-    `  Ansættelsestype:     ${emp.contractType}`,
-    `  Ugentlige timer:     ${emp.hoursPerWeek} timer`,
-    "",
-    "Arbejdstider:",
-    ...Object.entries(emp.schedule).map(([day, hrs]) => `  ${day.padEnd(6)}  ${hrs}`),
-    "",
-    "──────────────────────────────────────────────",
-    "Løn og vilkår",
-    "──────────────────────────────────────────────",
-    "",
-    "  Løn udbetales den 1. i hver måned til",
-    `  bankkonto: ${emp.bankAccount}`,
-    "",
-    "  Ferie: Afholdes i henhold til ferieloven.",
-    "  Opsigelsesvarsel: 1 måned (prøvetid 3 mdr.)",
-    "  Overenskomst: Frisørfagets Overenskomst 2024",
-    "",
-    "──────────────────────────────────────────────",
-    "Særlige kompetencer",
-    "──────────────────────────────────────────────",
-    "",
-    `  ${emp.specialties.join(", ")}`,
-    "",
-    "──────────────────────────────────────────────",
-    "Underskrifter",
-    "──────────────────────────────────────────────",
-    "",
-    "  Arbejdsgiver:                 Medarbejder:",
-    "",
-    "",
-    "  _______________________       _______________________",
-    "  Nordklip Barber ApS           " + emp.name,
-    `  Dato: _______________          Dato: _______________`,
-    "",
-    "══════════════════════════════════════════════",
-    "  Dokument genereret: " + new Date().toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" }),
-    "  BookFlow — Drevet af Sloth Studio",
-    "══════════════════════════════════════════════",
-    "  NOTE: Simulerede data – faktiske oplysninger",
-    "  vises i produktion.",
-    "══════════════════════════════════════════════",
-  ];
-  const text = lines.join("\n");
-  const a = document.createElement("a");
-  a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text);
-  a.download = `kontrakt-${emp.name.toLowerCase().replace(/\s+/g, "-")}.pdf`;
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => document.body.removeChild(a), 100);
+  const contractData = {
+    employeeName: emp.name,
+    role: emp.role,
+    birthDate: emp.birthDate,
+    address: emp.address,
+    phone: emp.phone,
+    email: emp.email,
+    startDate: emp.startDate,
+    contractType: emp.contractType,
+    hoursPerWeek: emp.hoursPerWeek,
+    schedule: emp.schedule,
+    bankAccount: emp.bankAccount,
+    specialties: emp.specialties,
+  };
+  try { sessionStorage.setItem("bf_employee_contract", JSON.stringify(contractData)); } catch {}
+  window.open("/medarbejder-kontrakt", "_blank");
 }
 function yearsFrom(dateStr: string) {
   // "22. juni 1990" → parts: ["22.", "juni", "1990"]
@@ -464,10 +405,7 @@ export default function MedarbejderePage() {
     setChecking(false);
   }, []);
 
-  function handleLogout() {
-    try { sessionStorage.removeItem("bf_owner"); } catch {}
-    window.location.href = "/owner";
-  }
+  function handleLogout() { try { sessionStorage.removeItem("bf_owner"); sessionStorage.removeItem("bf_team"); sessionStorage.removeItem("bf_session"); } catch {} window.location.href = "https://nordklip.pages.dev"; }
 
   if (checking) return null;
   if (!authed) return <AuthGate onAuth={() => setAuthed(true)}/>;

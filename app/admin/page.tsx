@@ -190,10 +190,7 @@ export default function AdminPage() {
   const done = filtered.filter(a => isPast(a.time)).length;
   const remaining = total - done;
 
-  function handleLogout() {
-    try { sessionStorage.removeItem("bf_owner"); } catch {}
-    window.location.href = "/owner";
-  }
+  function handleLogout() { try { sessionStorage.removeItem("bf_owner"); sessionStorage.removeItem("bf_session"); } catch {} window.location.href = "https://nordklip.pages.dev"; }
 
   return (
     <div className="sidebar-wrapper" style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>

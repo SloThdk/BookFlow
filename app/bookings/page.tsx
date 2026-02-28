@@ -240,7 +240,7 @@ export default function BookingsPage() {
         <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
           <Link href="/book" style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 500, textDecoration: "none" }}>Book</Link>
           <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{session.name}</span>
-          <button onClick={() => { try { sessionStorage.clear(); } catch {} router.push("/"); }} style={{
+          <button onClick={() => { try { sessionStorage.clear(); } catch {} window.location.href = "https://nordklip.pages.dev"; }} style={{
             background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-muted)",
             borderRadius: "5px", padding: "5px 12px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
           }}>Log ud</button>

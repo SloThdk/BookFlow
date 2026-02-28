@@ -246,10 +246,7 @@ export default function OwnerPage() {
     setAuthed(true);
   }
 
-  function handleLogout() {
-    try { sessionStorage.removeItem("bf_owner"); } catch {}
-    setAuthed(false);
-  }
+  function handleLogout() { try { sessionStorage.removeItem("bf_owner"); sessionStorage.removeItem("bf_session"); } catch {} window.location.href = "https://nordklip.pages.dev"; }
 
   if (checking) return null;
   if (!authed) return <OwnerLogin onLogin={handleLogin}/>;

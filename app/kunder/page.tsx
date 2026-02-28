@@ -517,10 +517,7 @@ export default function KunderPage() {
     setChecking(false);
   }, []);
 
-  function handleLogout() {
-    try { sessionStorage.removeItem("bf_owner"); } catch {}
-    window.location.href = "/owner";
-  }
+  function handleLogout() { try { sessionStorage.removeItem("bf_owner"); sessionStorage.removeItem("bf_session"); } catch {} window.location.href = "https://nordklip.pages.dev"; }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();

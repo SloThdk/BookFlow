@@ -511,7 +511,7 @@ export default function BookPage() {
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <Link href="/bookings" style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 500, textDecoration: "none" }}>Mine bookinger</Link>
           <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>{session.name}</span>
-          <button onClick={() => { try { sessionStorage.clear(); } catch {} router.push("/"); }} style={{
+          <button onClick={() => { try { sessionStorage.clear(); } catch {} window.location.href = "https://nordklip.pages.dev"; }} style={{
             background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-secondary)",
             borderRadius: "5px", padding: "5px 12px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
           }}>Log ud</button>

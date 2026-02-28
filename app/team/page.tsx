@@ -622,7 +622,7 @@ export default function TeamPage() {
   const [checking,setChecking] = useState(true);
   useEffect(()=>{ try{const s=sessionStorage.getItem("bf_team");if(s)setMember(s);}catch{} setChecking(false); },[]);
   function handleLogin(name:string){try{sessionStorage.setItem("bf_team",name);}catch{} setMember(name);}
-  function handleLogout(){try{sessionStorage.removeItem("bf_team");}catch{} setMember(null);}
+  function handleLogout(){try{sessionStorage.removeItem("bf_team");sessionStorage.removeItem("bf_session");}catch{} window.location.href="https://nordklip.pages.dev";}
   if(checking) return null;
   if(!member) return <TeamLogin onLogin={handleLogin}/>;
   return <TeamDashboard memberName={member} onLogout={handleLogout}/>;
