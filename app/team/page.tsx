@@ -178,8 +178,8 @@ function TeamLogin({ onLogin }: { onLogin: (n: string) => void }) {
       <div style={{ position: "absolute", top: "25%", left: "50%", transform: "translateX(-50%)", width: "600px", height: "400px", background: "radial-gradient(ellipse,rgba(184,152,90,0.06) 0%,transparent 70%)", pointerEvents: "none" }} />
       <div style={{ width: "100%", maxWidth: "420px", position: "relative" }}>
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <span style={{ fontFamily: "var(--font-playfair)", fontSize: "30px", fontWeight: 700, color: "var(--text)" }}>Nordklip</span>
-          <div style={{ marginTop: "8px", display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(184,152,90,0.08)", border: "1px solid rgba(184,152,90,0.2)", borderRadius: "4px", padding: "3px 10px" }}>
+          <div style={{ fontFamily: "var(--font-playfair)", fontSize: "30px", fontWeight: 700, color: "var(--text)" }}>Nordklip</div>
+          <div style={{ marginTop: "10px", display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(184,152,90,0.08)", border: "1px solid rgba(184,152,90,0.2)", borderRadius: "4px", padding: "3px 10px" }}>
             <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--gold)" }} />
             <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "var(--gold)" }}>Team Portal</span>
           </div>
@@ -690,6 +690,8 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
   const [toast, setToast] = useState<{ text: string; type: "success"|"error"|"info" } | null>(null);
   const member = MEMBER[memberName as MemberName]!;
   const swapCountRef = useRef(0);
+  const loginToastShown = useRef(false);
+  useEffect(() => { if (!loginToastShown.current) { loginToastShown.current = true; setToast({ text: `Logget ind som ${memberName}`, type: "success" }); setTimeout(() => setToast(null), 2500); } }, [memberName]);
 
   function playNotifSound(accepted: boolean) {
     try {
