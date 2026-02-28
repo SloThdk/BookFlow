@@ -109,3 +109,17 @@ button { font-family: inherit; cursor: pointer; }
   /* Stats row in header */
   .stats-bar                  { flex-wrap: wrap !important; gap: 6px !important; }
 }
+
+/* ── Mobile responsive base (added by fix script) ── */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* ── Responsive grid/layout helpers ── */
+@media (max-width: 768px) {
+  .responsive-grid { grid-template-columns: 1fr !important; }
+  .responsive-grid-2 { grid-template-columns: 1fr !important; }
+  .brand-panel { display: none !important; }
+  .nav-links-desktop { display: none !important; }
+}
