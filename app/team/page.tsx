@@ -157,7 +157,7 @@ function DemoBadge() {
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "20px", padding: "8px 14px", background: "rgba(184,152,90,0.06)", border: "1px solid rgba(184,152,90,0.15)", borderRadius: "8px" }}>
       <span style={{ background: "var(--gold)", color: "var(--bg)", fontSize: "9px", fontWeight: 700, padding: "2px 7px", borderRadius: "100px", letterSpacing: "0.06em" }}>DEMO</span>
-      <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Demonstrationsmiljø — data er simuleret og nulstilles ved lukning</span>
+      <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Demo — alt kan tilpasses, udvides og integreres efter jeres behov</span>
     </div>
   );
 }
@@ -247,7 +247,7 @@ function ApptRow({ appt, myName, isPast, onOfferSwap, swapOffered, onCancelSwap 
           <span style={{ fontSize: "11px", fontWeight: 600, color: isMe ? mc : "var(--text-secondary)" }}>{appt.barber}</span>
         </div>
         {isMe && !isPast && onOfferSwap && (
-          <button onClick={e => { e.stopPropagation(); onOfferSwap(); }} style={{ margin: "8px 12px 8px 0", background: swapOffered ? "rgba(74,222,128,0.1)" : "var(--surface)", border: `1px solid ${swapOffered ? "rgba(74,222,128,0.35)" : "var(--border)"}`, borderRadius: "6px", padding: "5px 10px", fontSize: "10px", fontWeight: 600, color: swapOffered ? "#4ade80" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>{swapOffered ? "Vagt tilbudt" : "Tilbyd vagt"}</button>
+          <button onClick={e => { e.stopPropagation(); onOfferSwap(); }} style={{ margin: "8px 12px 8px 0", background: swapOffered ? "rgba(74,222,128,0.1)" : "var(--surface)", border: `1px solid ${swapOffered ? "rgba(74,222,128,0.35)" : "var(--border)"}`, borderRadius: "6px", padding: "5px 10px", fontSize: "10px", fontWeight: 600, color: swapOffered ? "#4ade80" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>{swapOffered ? "Vagt tilbudt" : "Afgiv vagt"}</button>
         )}
         {swapOffered && onCancelSwap && (
           <button onClick={e => { e.stopPropagation(); onCancelSwap(); }} style={{ margin: "8px 12px 8px 0", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: "6px", padding: "5px 8px", fontSize: "10px", fontWeight: 600, color: "#ef4444", cursor: "pointer", whiteSpace: "nowrap" }}>Annuller</button>
@@ -258,6 +258,60 @@ function ApptRow({ appt, myName, isPast, onOfferSwap, swapOffered, onCancelSwap 
           <p style={{ fontSize: "12px", color: "var(--text-secondary)", margin: 0, lineHeight: 1.55 }}>{appt.notes}</p>
         </div>
       )}
+    </div>
+  );
+}
+
+
+/* ─── Shift Date Picker (mini calendar, only work days selectable) ─────── */
+function ShiftDatePicker({ barber, selected, onSelect }: { barber: string; selected: string; onSelect: (d: string) => void }) {
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth());
+  const shifts = generateMonthShifts(year, month, barber);
+  const workDays = new Set(shifts.filter(s => s.type === "work").map(s => s.date));
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startIdx = firstDay === 0 ? 6 : firstDay - 1;
+  const todayStr = new Date().toISOString().split("T")[0];
+  function prevMonth() { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); }
+  function nextMonth() { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); }
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < startIdx; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  while (cells.length % 7 !== 0) cells.push(null);
+  return (
+    <div style={{ marginBottom: "18px" }}>
+      <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Vælg vagtdag (kun dine arbejdsdage)</label>
+      <div style={{ background: "rgba(0,0,0,0.2)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+          <button onClick={prevMonth} style={{ background: "transparent", border: "1px solid var(--border)", borderRadius: "6px", padding: "4px 8px", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><IconChevLeft /></button>
+          <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{MONTH_NAMES[month]} {year}</span>
+          <button onClick={nextMonth} style={{ background: "transparent", border: "1px solid var(--border)", borderRadius: "6px", padding: "4px 8px", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><IconChevRight /></button>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
+          {DAY_KEYS.map(d => <div key={d} style={{ textAlign: "center", fontSize: "9px", fontWeight: 700, color: "var(--text-secondary)", padding: "4px 0" }}>{d}</div>)}
+          {cells.map((day, i) => {
+            if (day === null) return <div key={`e${i}`} />;
+            const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+            const isWork = workDays.has(dateStr);
+            const isSel = dateStr === selected;
+            const isPast = dateStr < todayStr;
+            const canSelect = isWork && !isPast;
+            return (
+              <button key={dateStr} onClick={() => canSelect && onSelect(dateStr)} disabled={!canSelect} style={{
+                padding: "6px 2px", borderRadius: "6px", textAlign: "center", cursor: canSelect ? "pointer" : "default",
+                background: isSel ? "#4ade8022" : "transparent",
+                border: `1px solid ${isSel ? "#4ade80" : "transparent"}`,
+                opacity: isPast ? 0.25 : canSelect ? 1 : 0.35,
+              }}>
+                <div style={{ fontSize: "12px", fontWeight: isSel || isWork ? 700 : 400, color: isSel ? "#4ade80" : isWork ? "var(--text)" : "var(--text-secondary)" }}>{day}</div>
+                {isWork && !isPast && <div style={{ width: "3px", height: "3px", borderRadius: "50%", background: "#4ade80", margin: "1px auto 0" }} />}
+              </button>
+            );
+          })}
+        </div>
+        {selected && <div style={{ marginTop: "8px", padding: "8px 10px", background: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: "6px", fontSize: "12px", color: "#4ade80", fontWeight: 600 }}>Valgt: {fmtDate(selected)}</div>}
+      </div>
     </div>
   );
 }
@@ -274,7 +328,7 @@ function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { app
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", width: "100%", maxWidth: "480px", padding: "28px", boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}>
-        <div style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Tilbyd vagtbytte</div>
+        <div style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Afgiv vagt</div>
         <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "20px" }}>{appt.service} · {appt.time} · {appt.client}</div>
 
         {/* Mode toggle — only show if both modes available */}
@@ -312,11 +366,8 @@ function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { app
           </div>
         )}
 
-        {/* Date picker */}
-        <div style={{ marginBottom: "18px" }}>
-          <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "8px" }}>Dato for vagten</label>
-          <input type="date" value={shiftDate} min={minDate} max={maxD.toISOString().split("T")[0]} onChange={e => setShiftDate(e.target.value)} style={{ width: "100%", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text)", fontSize: "14px", padding: "10px 14px", boxSizing: "border-box" as const, outline: "none", colorScheme: "dark" }} />
-        </div>
+        {/* Shift date picker - only work days */}
+        <ShiftDatePicker barber={myName} selected={shiftDate} onSelect={setShiftDate} />
 
         <div style={{ marginBottom: "18px" }}>
           <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "8px" }}>Besked (valgfri)</label>
@@ -343,9 +394,9 @@ function CancelConfirm({ swap, onConfirm, onClose }: { swap: Swap; onConfirm: ()
         <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: "#ef4444" }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         </div>
-        <div style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--text)", marginBottom: "8px" }}>Annuller vagtbytte?</div>
+        <div style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--text)", marginBottom: "8px" }}>Annuller forespørgsel?</div>
         <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "24px", lineHeight: 1.5 }}>
-          Er du sikker på at du vil annullere vagtbyttet med <strong style={{ color: "var(--text)" }}>{targetName}</strong> for <strong style={{ color: "var(--text)" }}>{swap.service}</strong> kl. {swap.time}?
+          Er du sikker på at du vil annullere forespørgslen til <strong style={{ color: "var(--text)" }}>{targetName}</strong> for <strong style={{ color: "var(--text)" }}>{swap.service}</strong> kl. {swap.time}?
         </p>
         <div style={{ display: "flex", gap: "10px" }}>
           <button onClick={onClose} style={{ flex: 1, padding: "11px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text-secondary)", fontSize: "13px", cursor: "pointer" }}>Behold</button>
@@ -390,7 +441,7 @@ function SettingsPanel({ myName, onClose }: { myName: string; onClose: () => voi
 }
 
 /* ─── Chat Panel ───────────────────────────────────────────────────────────── */
-function ChatPanel({ myName }: { myName: string }) {
+function ChatPanel({ myName, onNewMessage }: { myName: string; onNewMessage?: () => void }) {
   type Contact = "all" | "Manager" | MemberName;
   const [contact, setContact] = useState<Contact>("all");
   const [allMsgs, setAllMsgs] = useState<Record<string, Msg[]>>({});
@@ -629,8 +680,10 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
   const [cancelTarget, setCancelTarget] = useState<Swap | null>(null);
   const [schedule, setSchedule] = useState<Appt[]>(SCHEDULE_BASE);
   const [showSettings, setShowSettings] = useState(false);
+  const [chatUnread, setChatUnread] = useState(0);
   const [toast, setToast] = useState<{ text: string; type: "success"|"error"|"info" } | null>(null);
   const member = MEMBER[memberName as MemberName]!;
+  const swapCountRef = useRef(0);
 
   function playNotifSound(accepted: boolean) {
     try {
@@ -665,9 +718,10 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
     const s: Swap = { id: uid(), barber: memberName, apptId: appt.id, time: appt.time, service: appt.service, client: appt.client, duration: appt.duration, note, ts: Date.now(), mode, targetBarber: target || undefined };
     const updated = [...swaps, s]; setSwaps(updated);  setSwapTarget(null);
 
-    // Simulate response after 3-6 seconds (80% accept, 20% reject)
+    // Simulate response: alternating accept/reject for quick demo testing
     const acceptor = mode === "ask" ? target! : TEAM.filter(t => t.name !== memberName)[Math.floor(Math.random() * (TEAM.length - 1))].name;
-    const willAccept = Math.random() > 0.2;
+    swapCountRef.current += 1;
+    const willAccept = swapCountRef.current % 2 === 1;
     setTimeout(() => {
       if (willAccept) {
         setSwaps(prev => {
@@ -687,7 +741,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
   function cancelSwap(swapId: string) {
     const updated = swaps.filter(s => s.id !== swapId);
     setSwaps(updated);  setCancelTarget(null);
-    showToast("Vagtbytte annulleret", "info");
+    showToast("Forespørgsel annulleret", "info");
   }
 
   function claimSwap(swapId: string) {
@@ -704,10 +758,10 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { key: "dag", label: "Dagsoversigt", icon: <IconCalendar /> },
-    { key: "team", label: "Hele teamet", icon: <IconTeam /> },
-    { key: "chat", label: "Chat", icon: <IconChat /> },
+    { key: "team", label: "Dagens vagtplan", icon: <IconTeam /> },
+    { key: "chat", label: "Chat", icon: <IconChat />, badge: chatUnread },
     { key: "timer", label: "Mine Arbejdstider", icon: <IconClock /> },
-    { key: "vagtbyt", label: "Vagtbytte", icon: <IconSwap />, badge: offeredToMe.length },
+    { key: "vagtbyt", label: "Afgiv vagt", icon: <IconSwap />, badge: offeredToMe.length },
   ];
 
   return (
@@ -726,11 +780,11 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             <div style={{ fontSize: "11px", color: member.color }}>{member.role}</div>
           </div>
         </div>
-        <nav style={{ flex: 1, padding: "12px 10px", display: "flex", flexDirection: "column", gap: "2px" }}>
+        <nav style={{ flex: 1, padding: "12px 10px", display: "flex", flexDirection: "column", gap: "2px", overflowY: "auto" }}>
           {tabs.map(t => {
             const active = tab === t.key;
             return (
-              <button key={t.key} onClick={() => setTab(t.key)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", borderRadius: "8px", background: active ? `${member.color}14` : "transparent", border: `1px solid ${active ? member.color + "33" : "transparent"}`, cursor: "pointer", transition: "all 0.1s", width: "100%", textAlign: "left", color: active ? "var(--text)" : "var(--text-secondary)" }}>
+              <button key={t.key} onClick={() => { setTab(t.key); if (t.key === 'chat') setChatUnread(0); }} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", borderRadius: "8px", background: active ? `${member.color}14` : "transparent", border: `1px solid ${active ? member.color + "33" : "transparent"}`, cursor: "pointer", transition: "all 0.1s", width: "100%", textAlign: "left", color: active ? "var(--text)" : "var(--text-secondary)" }}>
                 <span style={{ color: active ? member.color : "var(--text-secondary)", display: "flex" }}>{t.icon}</span>
                 <span style={{ fontSize: "13px", fontWeight: active ? 700 : 400 }}>{t.label}</span>
                 {t.badge && t.badge > 0 ? <span style={{ marginLeft: "auto", width: "18px", height: "18px", borderRadius: "50%", background: "#4ade80", color: "#0A0A0A", fontSize: "10px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{t.badge}</span> : null}
@@ -754,7 +808,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
           <button onClick={() => setShowSettings(true)} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0, position: "relative" }}><img src={member.photo} alt={memberName} style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${member.color}` }} /></button>
         </div>
 
-        {tab === "chat" ? <ChatPanel myName={memberName} /> : (
+        {tab === "chat" ? <ChatPanel myName={memberName} onNewMessage={() => { if (tab !== "chat") setChatUnread(c => c + 1); }} /> : (
           <div style={{ flex: 1, maxWidth: "960px", margin: "0 auto", width: "100%", padding: "32px 28px 100px" }}>
             <DemoBadge />
 
@@ -780,7 +834,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                 </div>
                 {offeredToMe.length > 0 && (
                   <div style={{ marginBottom: "18px", background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.22)", borderRadius: "10px", padding: "14px 16px" }}>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase" as const, letterSpacing: "0.07em", marginBottom: "10px" }}>Vagtbytte-forespørgsler til dig</div>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase" as const, letterSpacing: "0.07em", marginBottom: "10px" }}>Forespørgsler til dig</div>
                     {offeredToMe.map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 0", borderBottom: "1px solid rgba(74,222,128,0.1)" }}>
                         <img src={MEMBER[s.barber as MemberName]?.photo} alt={s.barber} style={{ width: "30px", height: "30px", borderRadius: "50%", objectFit: "cover" }} />
@@ -804,8 +858,8 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             {/* ── HELE TEAMET ── */}
             {tab === "team" && (
               <div>
-                <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Hele teamet</h1>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>{getToday()} · {schedule.length} aftaler i alt</p>
+                <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Dagens vagtplan</h1>
+                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>{getToday()} — alle kollegers aftaler i dag ({schedule.length} i alt)</p>
                 {TEAM.map(m => {
                   const apts = schedule.filter(a => a.barber === m.name).sort((a, b) => a.time.localeCompare(b.time));
                   return (
@@ -874,8 +928,8 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             {/* ── VAGTBYTTE ── */}
             {tab === "vagtbyt" && (
               <div>
-                <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Vagtbytte</h1>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>Sælg vagter til alle, eller spørg en bestemt kollega om at overtage.</p>
+                <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Afgiv vagt</h1>
+                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>Sæt vagter til salg for alle, eller spørg en kollega direkte.</p>
 
                 {offeredToMe.length > 0 && (
                   <div style={{ marginBottom: "24px" }}>
@@ -916,7 +970,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                     {swaps.filter(s => s.claimedBy).map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px", opacity: 0.6 }}>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time}</div>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time}{s.date ? ` — ${fmtDate(s.date)}` : ""}</div>
                           <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.barber} → {s.claimedBy}</div>
                         </div>
                         <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600 }}>Gennemført</span>
@@ -927,7 +981,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
                 {swaps.length === 0 && offeredToMe.length === 0 && (
                   <div style={{ padding: "48px", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px" }}>
-                    <p style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen aktive vagtbytter.</p>
+                    <p style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen aktive forespørgsler.</p>
                     <p style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Gå til Dagsoversigt og klik "Tilbyd vagt" på en aftale for at starte.</p>
                   </div>
                 )}
@@ -968,7 +1022,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
         {tabs.slice(0, 4).map(t => {
           const active = tab === t.key;
           return (
-            <button key={t.key} onClick={() => setTab(t.key)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", background: "transparent", border: "none", cursor: "pointer", padding: "8px", color: active ? member.color : "var(--text-secondary)", position: "relative" }}>
+            <button key={t.key} onClick={() => { setTab(t.key); if (t.key === 'chat') setChatUnread(0); }} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", background: "transparent", border: "none", cursor: "pointer", padding: "8px", color: active ? member.color : "var(--text-secondary)", position: "relative" }}>
               {t.icon}<span style={{ fontSize: "9px", fontWeight: active ? 700 : 400 }}>{t.label.split(" ")[0]}</span>
               {t.badge && t.badge > 0 ? <span style={{ position: "absolute", top: "4px", right: "4px", width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80" }} /> : null}
             </button>
