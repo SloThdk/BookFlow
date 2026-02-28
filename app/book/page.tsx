@@ -315,7 +315,23 @@ function ConfirmScreen({ service, staffMember, date, time, clientName, clientEma
   service: Service; staffMember: StaffMember; date: Date; time: string;
   clientName: string; clientEmail: string; onBookAgain: () => void;
 }) {
-  return (
+    // Store contract data for /kontrakt page
+  const refNr = 'NK-' + Math.random().toString(36).slice(2,8).toUpperCase();
+  const _contractData = {
+    refNr,
+    clientName,
+    clientEmail,
+    serviceName: service.name,
+    servicePrice: service.price,
+    serviceDuration: service.duration,
+    barber: staffMember.name,
+    date: fmtDate(date),
+    time,
+    bookedAt: new Date().toLocaleDateString('da-DK', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+  };
+  try { sessionStorage.setItem('nordklip_pending_contract', JSON.stringify(_contractData)); } catch {}
+
+return (
     <div>
       <div style={{ textAlign: "center", marginBottom: "28px" }}>
         <div style={{
@@ -362,7 +378,7 @@ function ConfirmScreen({ service, staffMember, date, time, clientName, clientEma
           const staffPhoto: Record<string, string> = {
             "Marcus Holst": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&crop=face",
             "Emil Strand":  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face",
-            "Sofia Krag":   "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face",
+            "Sofia Krag":   "https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop",
           };
           const photo = staffPhoto[row.barber];
           return (
@@ -393,6 +409,10 @@ function ConfirmScreen({ service, staffMember, date, time, clientName, clientEma
         <button onClick={onBookAgain} style={{ background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text)", borderRadius: "6px", padding: "11px 22px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
           Book igen
         </button>
+        <Link href="/kontrakt" style={{ background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-secondary)", borderRadius: "6px", padding: "11px 22px", fontSize: "14px", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Download kontrakt
+        </Link>
         <Link href="/bookings" style={{ background: "var(--gold)", color: "#0E0C09", borderRadius: "6px", padding: "11px 22px", fontSize: "14px", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
           Mine bookinger
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H6M11 3V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
