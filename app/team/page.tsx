@@ -29,9 +29,9 @@ const SVC_COLOR: Record<string, string> = {
 };
 
 const SCHEDULE_BASE: Appt[] = [
-  { id:"a1", time:"09:00", client:"Casper Moeller",   service:"Classic Cut",     barber:"Marcus", duration:45 },
+  { id:"a1", time:"09:00", client:"Casper Møller",   service:"Classic Cut",     barber:"Marcus", duration:45 },
   { id:"a2", time:"10:00", client:"Erik Svendsen",    service:"Beard Sculpt",    barber:"Emil",   duration:30 },
-  { id:"a3", time:"10:30", client:"Laura Winther",    service:"Farve & Stil",    barber:"Sofia",  duration:90, notes:"Fuld highlights, lappetest udfoert" },
+  { id:"a3", time:"10:30", client:"Laura Winther",    service:"Farve & Stil",    barber:"Sofia",  duration:90, notes:"Fuld highlights, lappetest udført" },
   { id:"a4", time:"11:00", client:"Viktor Hansen",    service:"Classic Cut",     barber:"Marcus", duration:45 },
   { id:"a5", time:"11:30", client:"Frederik Lund",    service:"Cut & Beard",     barber:"Emil",   duration:70 },
   { id:"a6", time:"13:00", client:"Nikolaj Borg",     service:"Hot Towel Shave", barber:"Marcus", duration:40 },
@@ -39,16 +39,16 @@ const SCHEDULE_BASE: Appt[] = [
   { id:"a8", time:"14:30", client:"Daniel Westh",     service:"Classic Cut",     barber:"Emil",   duration:45 },
   { id:"a9", time:"15:30", client:"Sofie Andersen",   service:"Junior Cut",      barber:"Marcus", duration:30 },
   { id:"a10",time:"16:00", client:"Magnus Brandt",    service:"Beard Sculpt",    barber:"Emil",   duration:30 },
-  { id:"a11",time:"17:00", client:"Jakob Moeller",    service:"Cut & Beard",     barber:"Marcus", duration:70, notes:"Foretraekker kun saks, ingen maskine" },
+  { id:"a11",time:"17:00", client:"Jakob Møller",    service:"Cut & Beard",     barber:"Marcus", duration:70, notes:"Foretrækker kun saks, ingen maskine" },
 ];
 
 const WORK_HOURS: Record<string, Record<string, string>> = {
-  Marcus: { Man:"09:00-17:30", Tir:"09:00-17:30", Ons:"09:00-17:30", Tor:"09:00-17:30", Fre:"09:00-17:30", "Loer":"10:00-15:00", "Soen":"Fri" },
-  Emil:   { Man:"09:00-17:30", Tir:"09:00-17:30", Ons:"11:00-19:30", Tor:"11:00-19:30", Fre:"09:00-17:30", "Loer":"10:00-15:00", "Soen":"Fri" },
-  Sofia:  { Man:"10:00-18:30", Tir:"10:00-18:30", Ons:"10:00-18:30", Tor:"10:00-18:30", Fre:"10:00-18:30", "Loer":"10:00-16:00", "Soen":"Fri" },
+  Marcus: { Man:"09:00-17:30", Tir:"09:00-17:30", Ons:"09:00-17:30", Tor:"09:00-17:30", Fre:"09:00-17:30", "Lør":"10:00-15:00", "Søn":"Fri" },
+  Emil:   { Man:"09:00-17:30", Tir:"09:00-17:30", Ons:"11:00-19:30", Tor:"11:00-19:30", Fre:"09:00-17:30", "Lør":"10:00-15:00", "Søn":"Fri" },
+  Sofia:  { Man:"10:00-18:30", Tir:"10:00-18:30", Ons:"10:00-18:30", Tor:"10:00-18:30", Fre:"10:00-18:30", "Lør":"10:00-16:00", "Søn":"Fri" },
 };
 
-const DAY_LABELS: Record<string, string> = { Man:"Mandag", Tir:"Tirsdag", Ons:"Onsdag", Tor:"Torsdag", Fre:"Fredag", "Loer":"Loerdag", "Soen":"Soendag" };
+const DAY_LABELS: Record<string, string> = { Man:"Mandag", Tir:"Tirsdag", Ons:"Onsdag", Tor:"Torsdag", Fre:"Fredag", "Lør":"Lørdag", "Søn":"Søndag" };
 
 /* Simulated seed messages */
 function getSeedMessages(myName: string): Record<string, Msg[]> {
@@ -58,8 +58,8 @@ function getSeedMessages(myName: string): Record<string, Msg[]> {
   /* "Alle" channel — manager announcement */
   const allKey = "bf_chat_all";
   seeds[allKey] = [
-    { id:"seed1", sender:"Manager", text:"Hej alle -- vi har faaet nye Wahl Legend clippers ind. De ligger i skuffen under station 2. Husk at rengoere bladene efter hver kunde. Derudover: vi lukker en time tidligere naeste fredag pga. maling af facaden. God arbejdslyst!", ts: now - 3600000 },
-    { id:"seed2", sender:"Marcus", text:"Fedt, de gamle var ved at vaere slidte. Tak for opdateringen.", ts: now - 3200000 },
+    { id:"seed1", sender:"Manager", text:"Hej alle -- vi har fået nye Wahl Legend clippers ind. De ligger i skuffen under station 2. Husk at rengøre bladene efter hver kunde. Derudover: vi lukker en time tidligere næste fredag pga. maling af facaden. God arbejdslyst!", ts: now - 3600000 },
+    { id:"seed2", sender:"Marcus", text:"Fedt, de gamle var ved at være slidte. Tak for opdateringen.", ts: now - 3200000 },
     { id:"seed3", sender:"Sofia", text:"Noteret med fredagen. Skal jeg flytte mine sene aftaler?", ts: now - 2800000 },
   ];
 
@@ -72,13 +72,13 @@ function getSeedMessages(myName: string): Record<string, Msg[]> {
     } else if (m.name === "Emil") {
       seeds[k] = [{ id:"seede1", sender:"Emil", text:"Er der nogen der har en ekstra kappe? Min er i vask og jeg har en kunde om 20 min.", ts: now - 900000 }];
     } else if (m.name === "Sofia") {
-      seeds[k] = [{ id:"seeds1", sender:"Sofia", text:"Kan en af jer tage min 15:30? Jeg har en tandlaegetid jeg glemte at aflyse.", ts: now - 1200000 }];
+      seeds[k] = [{ id:"seeds1", sender:"Sofia", text:"Kan en af jer tage min 15:30? Jeg har en tandlægetid jeg glemte at aflyse.", ts: now - 1200000 }];
     }
   });
 
   /* Manager DM */
   const mk = chatKeyFn(myName, "Manager");
-  seeds[mk] = [{ id:"seedmgr1", sender:"Manager", text:"Hej " + myName + " -- husk at opdatere din profil med det nye foto naar du faar tid. Vi opdaterer hjemmesiden snart.", ts: now - 7200000 }];
+  seeds[mk] = [{ id:"seedmgr1", sender:"Manager", text:"Hej " + myName + " -- husk at opdatere din profil med det nye foto naar du får tid. Vi opdaterer hjemmesiden snart.", ts: now - 7200000 }];
 
   return seeds;
 }
@@ -101,10 +101,10 @@ function getToday() { return new Date().toLocaleDateString("da-DK", { weekday: "
 
 /* Simulated auto-replies */
 const AUTO_REPLIES: Record<string, string[]> = {
-  Marcus: ["Godt spoergsmaal, lad mig tjekke.", "Ja, det kan jeg godt. Giv mig fem minutter.", "Har du spurgt Lars om det?"],
+  Marcus: ["Godt spørgsmål, lad mig tjekke.", "Ja, det kan jeg godt. Giv mig fem minutter.", "Har du spurgt Lars om det?"],
   Emil: ["Kommer lige!", "Fedt, tak for besked.", "Lad os tage det efter frokost."],
   Sofia: ["Perfekt, jeg ordner det.", "Tak! Ses i morgen.", "God ide, lad os proeve det."],
-  Manager: ["Tak for beskeden. Jeg vender tilbage.", "Noteret. God dag derude!", "Lad os tage det op paa naeste moedet."],
+  Manager: ["Tak for beskeden. Jeg vender tilbage.", "Noteret. God dag derude!", "Lad os tage det op på næste moedet."],
 };
 
 /* ─── Icons (inline SVG) ──────────────────────────────────────────────────── */
@@ -140,7 +140,7 @@ function TeamLogin({ onLogin }: { onLogin: (n: string) => void }) {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!sel || !pin.trim()) { setErr("Vaelg dit navn og skriv en pinkode."); return; }
+    if (!sel || !pin.trim()) { setErr("Vælg dit navn og skriv en pinkode."); return; }
     setLoading(true);
     setTimeout(() => { setLoading(false); onLogin(sel); }, 700);
   }
@@ -158,7 +158,7 @@ function TeamLogin({ onLogin }: { onLogin: (n: string) => void }) {
         </div>
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", padding: "28px", boxShadow: "0 24px 80px rgba(0,0,0,0.4)" }}>
           <h1 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Log ind som medarbejder</h1>
-          <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>Vaelg dit navn og indtast din pinkode.</p>
+          <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>Vælg dit navn og indtast din pinkode.</p>
           <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
             {TEAM.map(m => (
               <button key={m.name} onClick={() => { setSel(m.name); setErr(""); }} style={{
@@ -194,7 +194,7 @@ function TeamLogin({ onLogin }: { onLogin: (n: string) => void }) {
           </form>
           <div style={{ marginTop: "14px", padding: "10px 12px", background: "rgba(184,152,90,0.05)", border: "1px solid rgba(184,152,90,0.12)", borderRadius: "8px" }}>
             <p style={{ fontSize: "11px", color: "var(--text-secondary)", margin: 0, lineHeight: 1.55 }}>
-              <span style={{ color: "var(--gold)", fontWeight: 600 }}>Demo -- </span>vaelg et navn og skriv en vilkaarlig pinkode.
+              <span style={{ color: "var(--gold)", fontWeight: 600 }}>Demo -- </span>vælg et navn og skriv en vilkårlig pinkode.
             </p>
           </div>
         </div>
@@ -225,7 +225,7 @@ function ApptRow({ appt, myName, isPast, onOfferSwap, swapOffered, onCancelSwap 
             <span style={{ fontFamily: "var(--font-playfair)", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{appt.service}</span>
           </div>
           <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{appt.client}</span>
-          {appt.notes && <div style={{ marginTop: "2px", fontSize: "10px", color: "var(--text-secondary)", fontStyle: "italic" }}>Bemaerkning</div>}
+          {appt.notes && <div style={{ marginTop: "2px", fontSize: "10px", color: "var(--text-secondary)", fontStyle: "italic" }}>Bemærkning</div>}
         </div>
         <div style={{ padding: "12px 14px", borderLeft: "1px solid var(--border)", flexShrink: 0, display: "flex", alignItems: "center", gap: "8px" }}>
           <img src={MEMBER[appt.barber as MemberName]?.photo} alt={appt.barber} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", border: `1px solid ${mc}55` }} />
@@ -287,7 +287,7 @@ function SwapModal({ appt, myName, onClose, onConfirm }: { appt: Appt; myName: s
         </div>
         <div style={{ marginBottom: "18px" }}>
           <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "8px" }}>Besked (valgfri)</label>
-          <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="F.eks. 'Kan du tage denne? Tandlaege kl. 14'" style={{ width: "100%", minHeight: "70px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text)", fontSize: "13px", padding: "10px 12px", resize: "vertical", boxSizing: "border-box" as const, outline: "none" }} />
+          <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="F.eks. 'Kan du tage denne? Tandlæge kl. 14'" style={{ width: "100%", minHeight: "70px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text)", fontSize: "13px", padding: "10px 12px", resize: "vertical", boxSizing: "border-box" as const, outline: "none" }} />
         </div>
         <div style={{ display: "flex", gap: "10px" }}>
           <button onClick={onClose} style={{ flex: 1, padding: "11px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text-secondary)", fontSize: "13px", cursor: "pointer" }}>Annuller</button>
@@ -295,7 +295,7 @@ function SwapModal({ appt, myName, onClose, onConfirm }: { appt: Appt; myName: s
             flex: 2, padding: "11px", background: target ? "var(--gold)" : "var(--surface)",
             border: "none", borderRadius: "8px", color: target ? "#0A0A0A" : "var(--text-secondary)",
             fontSize: "13px", fontWeight: 700, cursor: target ? "pointer" : "default", transition: "all 0.15s",
-          }}>Send vagtbyt-foresp.</button>
+          }}>Send vagtbyt-forespørgsel</button>
         </div>
       </div>
     </div>
@@ -322,7 +322,7 @@ function SettingsPanel({ myName, onClose }: { myName: string; onClose: () => voi
         <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
           {[
             { label: "Skift profilbillede", action: "Profilbillede opdateret" },
-            { label: "Skift adgangskode", action: "Adgangskode aendret" },
+            { label: "Skift adgangskode", action: "Adgangskode ændret" },
             { label: "Notifikationer", action: "Notifikationer opdateret", toggle: true },
             { label: "Sprog", action: "Sprog gemt", sub: "Dansk" },
           ].map(item => (
@@ -425,7 +425,7 @@ function ChatPanel({ myName }: { myName: string }) {
     const updated = { ...allMsgs, [key]: [...(allMsgs[key] || []), m] };
     setAllMsgs(updated);
     saveSS("bf_chat_msgs", updated);
-    setAttachToast(`Fil vedhaeftet: ${f}`);
+    setAttachToast(`Fil vedhæftet: ${f}`);
     setTimeout(() => setAttachToast(""), 2000);
   }
 
@@ -579,7 +579,7 @@ function ChatPanel({ myName }: { myName: string }) {
 
         {/* Input */}
         <div style={{ padding: "14px 20px", borderTop: "1px solid var(--border)", background: "var(--surface)", display: "flex", gap: "8px", alignItems: "flex-end" }}>
-          <button onClick={handleAttach} title="Vedhaeft fil" style={{ background: "transparent", border: "1px solid var(--border)", borderRadius: "8px", padding: "9px", cursor: "pointer", color: "var(--text-secondary)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.1s" }}
+          <button onClick={handleAttach} title="Vedhæft fil" style={{ background: "transparent", border: "1px solid var(--border)", borderRadius: "8px", padding: "9px", cursor: "pointer", color: "var(--text-secondary)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.1s" }}
             onMouseOver={e => { (e.currentTarget as HTMLElement).style.color = "var(--gold)"; }}
             onMouseOut={e => { (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)"; }}>
             <IconPaperclip />
@@ -658,7 +658,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
     { key: "vagtbyt", label: "Vagtbytte", icon: <IconSwap />, badge: offeredToMe.length },
   ];
 
-  const todayDow = ["Soen", "Man", "Tir", "Ons", "Tor", "Fre", "Loer"][new Date().getDay()];
+  const todayDow = ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"][new Date().getDay()];
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex" }}>
@@ -751,7 +751,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
                 {/* Stats row */}
                 <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
-                  {[{ label: "Aftaler", val: myDay.length }, { label: "Gennemfoert", val: myDay.filter(a => isPast(a.time)).length }, { label: "Tilbage", val: myDay.filter(a => !isPast(a.time)).length }].map(({ label, val }) => (
+                  {[{ label: "Aftaler", val: myDay.length }, { label: "Gennemført", val: myDay.filter(a => isPast(a.time)).length }, { label: "Tilbage", val: myDay.filter(a => !isPast(a.time)).length }].map(({ label, val }) => (
                     <div key={label} style={{ flex: 1, minWidth: "80px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", padding: "16px 18px" }}>
                       <div style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: member.color, lineHeight: 1, marginBottom: "4px" }}>{val}</div>
                       <div style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.07em" }}>{label}</div>
@@ -759,7 +759,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                   ))}
                   {myNext && (
                     <div style={{ flex: 2, minWidth: "180px", background: `${member.color}0D`, border: `1px solid ${member.color}33`, borderRadius: "10px", padding: "16px 18px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.07em", marginBottom: "4px" }}>Naeste aftale</div>
+                      <div style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.07em", marginBottom: "4px" }}>Næste aftale</div>
                       <div style={{ fontFamily: "var(--font-playfair)", fontSize: "16px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{myNext.time} - {myNext.client}</div>
                       <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{myNext.service} - {myNext.duration} min</div>
                     </div>
@@ -769,7 +769,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                 {/* Swap requests */}
                 {offeredToMe.length > 0 && (
                   <div style={{ marginBottom: "18px", background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.22)", borderRadius: "10px", padding: "14px 16px" }}>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase" as const, letterSpacing: "0.07em", marginBottom: "10px" }}>Vagtbyt-forespoergsler til dig</div>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase" as const, letterSpacing: "0.07em", marginBottom: "10px" }}>Vagtbyt-forespørgsler til dig</div>
                     {offeredToMe.map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 0", borderBottom: "1px solid rgba(74,222,128,0.1)" }}>
                         <img src={MEMBER[s.barber as MemberName]?.photo} alt={s.barber} style={{ width: "30px", height: "30px", borderRadius: "50%", objectFit: "cover" }} />
@@ -907,7 +907,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
                 {offeredToMe.length > 0 && (
                   <div style={{ marginBottom: "20px" }}>
-                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Forespoergsler til dig</h3>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Forespørgsler til dig</h3>
                     {offeredToMe.map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.22)", borderRadius: "8px", marginBottom: "8px" }}>
                         <img src={MEMBER[s.barber as MemberName]?.photo} alt={s.barber} style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover" }} />
@@ -924,7 +924,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
                 {myOffered.length > 0 && (
                   <div style={{ marginBottom: "20px" }}>
-                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--gold)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Dine aktive forespoergsler</h3>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--gold)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Dine aktive forespørgsler</h3>
                     {myOffered.map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: `${member.color}08`, border: `1px solid ${member.color}22`, borderRadius: "8px", marginBottom: "8px" }}>
                         <div style={{ flex: 1 }}>
@@ -940,14 +940,14 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
                 {swaps.filter(s => s.claimedBy).length > 0 && (
                   <div>
-                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemfoerte bytter</h3>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte bytter</h3>
                     {swaps.filter(s => s.claimedBy).map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", marginBottom: "8px", opacity: 0.6 }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time}</div>
                           <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.barber} → {s.claimedBy}</div>
                         </div>
-                        <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600 }}>Gennemfoert</span>
+                        <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600 }}>Gennemført</span>
                       </div>
                     ))}
                   </div>
@@ -956,7 +956,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                 {swaps.length === 0 && offeredToMe.length === 0 && (
                   <div style={{ padding: "48px", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px" }}>
                     <p style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen aktive vagtbytter.</p>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Gaa til Dagsoversigt og klik "Tilbyd byt" paa en aftale for at starte.</p>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Gå til Dagsoversigt og klik "Tilbyd byt" på en aftale for at starte.</p>
                   </div>
                 )}
               </div>
