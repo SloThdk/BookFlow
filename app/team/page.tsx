@@ -55,13 +55,22 @@ const WORK_HOURS: Record<string, Record<string, string>> = {
   Sofia:  { Man:"10:00-18:30", Tir:"10:00-18:30", Ons:"10:00-18:30", Tor:"10:00-18:30", Fre:"10:00-18:30", Lør:"10:00-16:00", Søn:"Fri" },
 };
 
+
+/* Vacation days per barber (simulated) */
+const VACATION_DAYS: Record<string, string[]> = {
+  Marcus: ["2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-06-22","2026-06-23","2026-06-24","2026-06-25","2026-06-26","2026-06-27","2026-06-28","2026-06-29","2026-06-30","2026-07-01","2026-07-02","2026-07-03"],
+  Emil:   ["2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-11","2026-07-12","2026-07-13","2026-07-14","2026-07-15","2026-07-16","2026-07-17"],
+  Sofia:  ["2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-05-25","2026-05-26","2026-05-27","2026-05-28","2026-05-29","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-08","2026-08-09","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14"],
+};
+
 const DAY_KEYS = ["Man","Tir","Ons","Tor","Fre","Lør","Søn"];
 const DAY_FULL: Record<string,string> = { Man:"Mandag", Tir:"Tirsdag", Ons:"Onsdag", Tor:"Torsdag", Fre:"Fredag", Lør:"Lørdag", Søn:"Søndag" };
 const MONTH_NAMES = ["Januar","Februar","Marts","April","Maj","Juni","Juli","August","September","Oktober","November","December"];
 
 /* Generate simulated shifts for any month */
-function generateMonthShifts(year: number, month: number, barber: string): { date: string; hours: string }[] {
-  const shifts: { date: string; hours: string }[] = [];
+function generateMonthShifts(year: number, month: number, barber: string): { date: string; hours: string; type: "work"|"off"|"vacation" }[] {
+  const shifts: { date: string; hours: string; type: "work"|"off"|"vacation" }[] = [];
+  const vacDays = new Set(VACATION_DAYS[barber] || []);
   const hours = WORK_HOURS[barber];
   if (!hours) return shifts;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -70,8 +79,13 @@ function generateMonthShifts(year: number, month: number, barber: string): { dat
     const dow = dt.getDay();
     const dayKey = DAY_KEYS[dow === 0 ? 6 : dow - 1];
     const h = hours[dayKey];
-    if (h && h !== "Fri") {
-      shifts.push({ date: `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`, hours: h });
+    const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    if (vacDays.has(dateStr)) {
+      shifts.push({ date: dateStr, hours: "Ferie", type: "vacation" });
+    } else if (h && h !== "Fri") {
+      shifts.push({ date: dateStr, hours: h, type: "work" });
+    } else {
+      shifts.push({ date: dateStr, hours: "Fri", type: "off" });
     }
   }
   return shifts;
@@ -233,7 +247,7 @@ function ApptRow({ appt, myName, isPast, onOfferSwap, swapOffered, onCancelSwap 
           <span style={{ fontSize: "11px", fontWeight: 600, color: isMe ? mc : "var(--text-secondary)" }}>{appt.barber}</span>
         </div>
         {isMe && !isPast && onOfferSwap && (
-          <button onClick={e => { e.stopPropagation(); onOfferSwap(); }} style={{ margin: "8px 12px 8px 0", background: swapOffered ? "rgba(74,222,128,0.1)" : "var(--surface)", border: `1px solid ${swapOffered ? "rgba(74,222,128,0.35)" : "var(--border)"}`, borderRadius: "6px", padding: "5px 10px", fontSize: "10px", fontWeight: 600, color: swapOffered ? "#4ade80" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>{swapOffered ? "Byt tilbudt" : "Tilbyd byt"}</button>
+          <button onClick={e => { e.stopPropagation(); onOfferSwap(); }} style={{ margin: "8px 12px 8px 0", background: swapOffered ? "rgba(74,222,128,0.1)" : "var(--surface)", border: `1px solid ${swapOffered ? "rgba(74,222,128,0.35)" : "var(--border)"}`, borderRadius: "6px", padding: "5px 10px", fontSize: "10px", fontWeight: 600, color: swapOffered ? "#4ade80" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>{swapOffered ? "Vagt tilbudt" : "Tilbyd vagt"}</button>
         )}
         {swapOffered && onCancelSwap && (
           <button onClick={e => { e.stopPropagation(); onCancelSwap(); }} style={{ margin: "8px 12px 8px 0", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: "6px", padding: "5px 8px", fontSize: "10px", fontWeight: 600, color: "#ef4444", cursor: "pointer", whiteSpace: "nowrap" }}>Annuller</button>
@@ -501,8 +515,8 @@ function ShiftCalendar({ barber, memberColor }: { barber: string; memberColor: s
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const shifts = generateMonthShifts(year, month, barber);
-  const shiftDates = new Set(shifts.map(s => s.date));
-  const shiftMap = Object.fromEntries(shifts.map(s => [s.date, s.hours]));
+  const shiftDateSet = new Set(shifts.map(s => s.date));
+  const shiftMap = Object.fromEntries(shifts.map(s => [s.date, s])) as Record<string, { date: string; hours: string; type: string }>;
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -518,7 +532,7 @@ function ShiftCalendar({ barber, memberColor }: { barber: string; memberColor: s
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
   while (cells.length % 7 !== 0) cells.push(null);
 
-  const selectedShift = selectedDate ? shiftMap[selectedDate] : null;
+  const selectedInfo = selectedDate ? shiftMap[selectedDate] : null;
 
   return (
     <div>
@@ -542,18 +556,23 @@ function ShiftCalendar({ barber, memberColor }: { barber: string; memberColor: s
         {cells.map((day, i) => {
           if (day === null) return <div key={`e${i}`} />;
           const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-          const hasShift = shiftDates.has(dateStr);
+          const info = shiftMap[dateStr];
+          const hasShift = info?.type === "work";
+          const isVacation = info?.type === "vacation";
+          const isOff = info?.type === "off";
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDate;
           return (
             <button key={dateStr} onClick={() => setSelectedDate(isSelected ? null : dateStr)} style={{
               padding: "10px 4px", borderRadius: "8px", cursor: "pointer", textAlign: "center",
-              background: isSelected ? `${memberColor}22` : hasShift ? "var(--surface)" : "transparent",
-              border: `1px solid ${isSelected ? memberColor : isToday ? memberColor + "55" : hasShift ? "var(--border)" : "transparent"}`,
+              background: isSelected ? `${memberColor}22` : isVacation ? "rgba(251,191,36,0.08)" : hasShift ? "rgba(74,222,128,0.06)" : "transparent",
+              border: `1px solid ${isSelected ? memberColor : isToday ? memberColor + "55" : isVacation ? "rgba(251,191,36,0.2)" : hasShift ? "rgba(74,222,128,0.15)" : "transparent"}`,
               position: "relative", transition: "all 0.1s",
             }}>
-              <div style={{ fontSize: "14px", fontWeight: isToday || hasShift ? 700 : 400, color: isToday ? memberColor : hasShift ? "var(--text)" : "var(--text-secondary)" }}>{day}</div>
-              {hasShift && <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: memberColor, margin: "3px auto 0" }} />}
+              <div style={{ fontSize: "14px", fontWeight: isToday || hasShift ? 700 : 400, color: isToday ? memberColor : isVacation ? "#fbbf24" : hasShift ? "#4ade80" : isOff ? "#ef4444" : "var(--text-secondary)" }}>{day}</div>
+              {hasShift && <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#4ade80", margin: "3px auto 0" }} />}
+              {isVacation && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2.5" style={{ display: "block", margin: "2px auto 0" }}><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>}
+              {isOff && !isVacation && <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#ef4444", margin: "3px auto 0" }} />}
             </button>
           );
         })}
@@ -561,23 +580,32 @@ function ShiftCalendar({ barber, memberColor }: { barber: string; memberColor: s
 
       {/* Selected date detail */}
       {selectedDate && (
-        <div style={{ marginTop: "16px", padding: "16px", background: "var(--surface)", border: `1px solid ${selectedShift ? memberColor + "33" : "var(--border)"}`, borderRadius: "10px" }}>
+        <div style={{ marginTop: "16px", padding: "16px", background: "var(--surface)", border: `1px solid ${selectedInfo?.type === "work" ? "rgba(74,222,128,0.3)" : selectedInfo?.type === "vacation" ? "rgba(251,191,36,0.3)" : "var(--border)"}`, borderRadius: "10px" }}>
           <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>{fmtDate(selectedDate)}</div>
-          {selectedShift ? (
+          {selectedInfo?.type === "work" ? (
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: memberColor }} />
-              <span style={{ fontSize: "14px", color: "var(--text)" }}>{selectedShift}</span>
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#4ade80" }} />
+              <span style={{ fontSize: "14px", color: "#4ade80", fontWeight: 600 }}>{selectedInfo.hours}</span>
+            </div>
+          ) : selectedInfo?.type === "vacation" ? (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              <span style={{ fontSize: "14px", color: "#fbbf24", fontWeight: 600 }}>Ferie</span>
             </div>
           ) : (
-            <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Fri — ingen vagt denne dag</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444" }} />
+              <span style={{ fontSize: "13px", color: "#ef4444" }}>Fri</span>
+            </div>
           )}
         </div>
       )}
 
       {/* Legend */}
       <div style={{ display: "flex", gap: "16px", marginTop: "14px", justifyContent: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}><div style={{ width: "8px", height: "8px", borderRadius: "50%", background: memberColor }} /><span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Vagt</span></div>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}><div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--border)" }} /><span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Fri</span></div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}><div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#4ade80" }} /><span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Vagt</span></div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}><div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444" }} /><span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Fri</span></div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg><span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Ferie</span></div>
       </div>
     </div>
   );
@@ -864,7 +892,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                 {swaps.length === 0 && offeredToMe.length === 0 && (
                   <div style={{ padding: "48px", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px" }}>
                     <p style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen aktive vagtbytter.</p>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Gå til Dagsoversigt og klik "Tilbyd byt" på en aftale for at starte.</p>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Gå til Dagsoversigt og klik "Tilbyd vagt" på en aftale for at starte.</p>
                   </div>
                 )}
               </div>
