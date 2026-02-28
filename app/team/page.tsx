@@ -661,7 +661,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             <div style={{ position: "absolute", bottom: "-2px", right: "-2px", width: "22px", height: "22px", borderRadius: "50%", background: "var(--surface)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)" }}><IconSettings /></div>
           </button>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>{member.fullName}</div>
+            <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>{member.fullName} <span style={{ fontSize: "11px", color: "var(--text-secondary)", fontWeight: 400 }}>(dig)</span></div>
             <div style={{ fontSize: "11px", color: member.color }}>{member.role}</div>
           </div>
         </div>
@@ -751,7 +751,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                     <div key={m.name} style={{ marginBottom: "22px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
                         <div style={{ position: "relative" }}><img src={m.photo} alt={m.name} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${m.color}44` }} /><OnlineDot online={m.online} size={10} /></div>
-                        <div><span style={{ fontFamily: "var(--font-playfair)", fontSize: "15px", fontWeight: 700, color: "var(--text)" }}>{m.fullName}</span><span style={{ fontSize: "11px", color: m.color, marginLeft: "8px" }}>{m.role}</span></div>
+                        <div><span style={{ fontFamily: "var(--font-playfair)", fontSize: "15px", fontWeight: 700, color: "var(--text)" }}>{m.fullName}{m.name === memberName && <span style={{ fontSize: "11px", color: "var(--text-secondary)", fontWeight: 400, marginLeft: "6px" }}>(dig)</span>}</span><span style={{ fontSize: "11px", color: m.color, marginLeft: "8px" }}>{m.role}</span></div>
                         <span style={{ marginLeft: "auto", fontSize: "11px", color: "var(--text-secondary)", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px", padding: "2px 8px" }}>{apts.length} aftaler</span>
                       </div>
                       {apts.length === 0 ? <div style={{ padding: "14px 18px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}><p style={{ fontSize: "12px", color: "var(--text-secondary)", margin: 0 }}>Ingen aftaler i dag.</p></div>
