@@ -620,8 +620,29 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
   const [cancelTarget, setCancelTarget] = useState<Swap | null>(null);
   const [schedule, setSchedule] = useState<Appt[]>(SCHEDULE_BASE);
   const [showSettings, setShowSettings] = useState(false);
-  const [toast, setToast] = useState("");
+  const [toast, setToast] = useState<{ text: string; type: "success"|"error"|"info" } | null>(null);
   const member = MEMBER[memberName as MemberName]!;
+
+  function playNotifSound(accepted: boolean) {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      gain.gain.value = 0.15;
+      if (accepted) {
+        osc.frequency.value = 880; osc.type = "sine"; osc.start(); osc.stop(ctx.currentTime + 0.1);
+        setTimeout(() => { const o2 = ctx.createOscillator(); const g2 = ctx.createGain(); o2.connect(g2); g2.connect(ctx.destination); g2.gain.value = 0.15; o2.frequency.value = 1174; o2.type = "sine"; o2.start(); o2.stop(ctx.currentTime + 0.15); }, 120);
+      } else {
+        osc.frequency.value = 440; osc.type = "sine"; osc.start(); osc.stop(ctx.currentTime + 0.15);
+        setTimeout(() => { const o2 = ctx.createOscillator(); const g2 = ctx.createGain(); o2.connect(g2); g2.connect(ctx.destination); g2.gain.value = 0.15; o2.frequency.value = 330; o2.type = "sine"; o2.start(); o2.stop(ctx.currentTime + 0.2); }, 180);
+      }
+    } catch {}
+  }
+
+  function showToast(text: string, type: "success"|"error"|"info" = "info") {
+    setToast({ text, type }); setTimeout(() => setToast(null), 5000);
+  }
 
   useEffect(() => { setSwaps([]); }, []);
 
@@ -635,23 +656,29 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
     const s: Swap = { id: uid(), barber: memberName, apptId: appt.id, time: appt.time, service: appt.service, client: appt.client, duration: appt.duration, note, ts: Date.now(), mode, targetBarber: target || undefined };
     const updated = [...swaps, s]; setSwaps(updated);  setSwapTarget(null);
 
-    // Simulate acceptance after 3-5 seconds
+    // Simulate response after 3-6 seconds (80% accept, 20% reject)
     const acceptor = mode === "ask" ? target! : TEAM.filter(t => t.name !== memberName)[Math.floor(Math.random() * (TEAM.length - 1))].name;
+    const willAccept = Math.random() > 0.2;
     setTimeout(() => {
-      setSwaps(prev => {
-        const u = prev.map(sw => sw.id === s.id ? { ...sw, claimedBy: acceptor } : sw);
-        
-        return u;
-      });
-      setToast(`${acceptor} har accepteret at overtage din vagt (${appt.service} kl. ${appt.time})`);
-      setTimeout(() => setToast(""), 4000);
-    }, 3000 + Math.random() * 2000);
+      if (willAccept) {
+        setSwaps(prev => {
+          const u = prev.map(sw => sw.id === s.id ? { ...sw, claimedBy: acceptor } : sw);
+          return u;
+        });
+        playNotifSound(true);
+        showToast(`${acceptor} har accepteret at overtage din vagt (${appt.service} kl. ${appt.time})`, "success");
+      } else {
+        setSwaps(prev => prev.filter(sw => sw.id !== s.id));
+        playNotifSound(false);
+        showToast(`${acceptor} har afvist din vagtforespørgsel (${appt.service} kl. ${appt.time})`, "error");
+      }
+    }, 3000 + Math.random() * 3000);
   }
 
   function cancelSwap(swapId: string) {
     const updated = swaps.filter(s => s.id !== swapId);
     setSwaps(updated);  setCancelTarget(null);
-    setToast("Vagtbytte annulleret"); setTimeout(() => setToast(""), 2500);
+    showToast("Vagtbytte annulleret", "info");
   }
 
   function claimSwap(swapId: string) {
@@ -910,7 +937,23 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
       {swapTarget && <SwapModal appt={swapTarget} myName={memberName} onClose={() => setSwapTarget(null)} onConfirm={(mode, target, note) => offerSwap(swapTarget, mode, target, note)} />}
       {cancelTarget && <CancelConfirm swap={cancelTarget} onConfirm={() => cancelSwap(cancelTarget.id)} onClose={() => setCancelTarget(null)} />}
       {showSettings && <SettingsPanel myName={memberName} onClose={() => setShowSettings(false)} />}
-      {toast && <div style={{ position: "fixed", bottom: "24px", left: "50%", transform: "translateX(-50%)", background: "#4ade80", color: "#0A0A0A", padding: "12px 24px", borderRadius: "8px", fontSize: "13px", fontWeight: 600, zIndex: 300, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>{toast}</div>}
+      {toast && (
+        <div style={{
+          position: "fixed", bottom: "28px", left: "50%", transform: "translateX(-50%)",
+          background: toast.type === "success" ? "#0A0A0A" : toast.type === "error" ? "#0A0A0A" : "#0A0A0A",
+          border: `1px solid ${toast.type === "success" ? "#4ade80" : toast.type === "error" ? "#ef4444" : "var(--border)"}`,
+          padding: "16px 24px", borderRadius: "12px", fontSize: "14px", fontWeight: 600, zIndex: 300,
+          boxShadow: "0 12px 48px rgba(0,0,0,0.6)", display: "flex", alignItems: "center", gap: "12px",
+          maxWidth: "500px", minWidth: "300px",
+          color: toast.type === "success" ? "#4ade80" : toast.type === "error" ? "#ef4444" : "var(--text)",
+          animation: "slideUp 0.3s ease",
+        }}>
+          {toast.type === "success" && <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11.5 14.5 16 9.5"/></svg>}
+          {toast.type === "error" && <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>}
+          <span>{toast.text}</span>
+        </div>
+      )}
+      <style>{`@keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } } @media (max-width: 768px) { .nk-sidebar { display: none !important; } .nk-mobile-topbar { display: flex !important; } .nk-mobile-nav { display: flex !important; } }`}</style>
 
       <nav className="nk-mobile-nav" style={{ display: "none", position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(14,12,9,0.97)", backdropFilter: "blur(14px)", borderTop: "1px solid var(--border)", height: "60px", zIndex: 100, alignItems: "center", justifyContent: "space-around", padding: "0 8px" }}>
         {tabs.slice(0, 4).map(t => {
@@ -924,7 +967,6 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
         })}
       </nav>
 
-      <style>{`@media (max-width: 768px) { .nk-sidebar { display: none !important; } .nk-mobile-topbar { display: flex !important; } .nk-mobile-nav { display: flex !important; } }`}</style>
     </div>
   );
 }
