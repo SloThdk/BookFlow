@@ -247,7 +247,7 @@ function ApptRow({ appt, myName, isPast, onOfferSwap, swapOffered, onCancelSwap 
           <span style={{ fontSize: "11px", fontWeight: 600, color: isMe ? mc : "var(--text-secondary)" }}>{appt.barber}</span>
         </div>
         {isMe && !isPast && onOfferSwap && (
-          <button onClick={e => { e.stopPropagation(); onOfferSwap(); }} style={{ margin: "8px 12px 8px 0", background: swapOffered ? "rgba(74,222,128,0.1)" : "var(--surface)", border: `1px solid ${swapOffered ? "rgba(74,222,128,0.35)" : "var(--border)"}`, borderRadius: "6px", padding: "5px 10px", fontSize: "10px", fontWeight: 600, color: swapOffered ? "#4ade80" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>{swapOffered ? "Vagt tilbudt" : "Afgiv vagt"}</button>
+          <button onClick={e => { e.stopPropagation(); onOfferSwap(); }} style={{ margin: "8px 12px 8px 0", background: swapOffered ? "rgba(74,222,128,0.1)" : "var(--surface)", border: `1px solid ${swapOffered ? "rgba(74,222,128,0.35)" : "var(--border)"}`, borderRadius: "6px", padding: "5px 10px", fontSize: "10px", fontWeight: 600, color: swapOffered ? "#4ade80" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>{swapOffered ? "Vagt tilbudt" : "Tilbyd vagt"}</button>
         )}
         {swapOffered && onCancelSwap && (
           <button onClick={e => { e.stopPropagation(); onCancelSwap(); }} style={{ margin: "8px 12px 8px 0", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: "6px", padding: "5px 8px", fontSize: "10px", fontWeight: 600, color: "#ef4444", cursor: "pointer", whiteSpace: "nowrap" }}>Annuller</button>
@@ -328,7 +328,7 @@ function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { app
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", width: "100%", maxWidth: "480px", padding: "28px", boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}>
-        <div style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Afgiv vagt</div>
+        <div style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Afgiv vagt til kollega</div>
         <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "20px" }}>{appt.service} · {appt.time} · {appt.client}</div>
 
         {/* Mode toggle — only show if both modes available */}
@@ -761,13 +761,13 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
     { key: "team", label: "Dagens vagtplan", icon: <IconTeam /> },
     { key: "chat", label: "Chat", icon: <IconChat />, badge: chatUnread },
     { key: "timer", label: "Mine Arbejdstider", icon: <IconClock /> },
-    { key: "vagtbyt", label: "Afgiv vagt", icon: <IconSwap />, badge: offeredToMe.length },
+    { key: "vagtbyt", label: "Vagtfordeling", icon: <IconSwap />, badge: offeredToMe.length },
   ];
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex" }}>
       {/* ── Sidebar ── */}
-      <aside className="nk-sidebar" style={{ width: "220px", flexShrink: 0, background: "var(--surface)", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", position: "sticky", top: 0, height: "100vh" }}>
+      <aside className="nk-sidebar" style={{ width: "220px", flexShrink: 0, background: "var(--surface)", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, height: "100vh", zIndex: 50 }}>
         <div style={{ padding: "20px 16px", borderBottom: "1px solid var(--border)", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
           <span style={{ fontFamily: "var(--font-playfair)", fontSize: "20px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
           <button onClick={() => setShowSettings(true)} style={{ background: "transparent", border: "none", cursor: "pointer", position: "relative", padding: 0 }} title="Indstillinger">
@@ -802,7 +802,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
       </aside>
 
       {/* ── Main ── */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, marginLeft: "220px" }}>
         <div className="nk-mobile-topbar" style={{ display: "none", position: "sticky", top: 0, zIndex: 100, background: "rgba(14,12,9,0.97)", backdropFilter: "blur(14px)", borderBottom: "1px solid var(--border)", height: "56px", alignItems: "center", padding: "0 16px", justifyContent: "space-between" }}>
           <span style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
           <button onClick={() => setShowSettings(true)} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0, position: "relative" }}><img src={member.photo} alt={memberName} style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${member.color}` }} /></button>
@@ -928,7 +928,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             {/* ── VAGTBYTTE ── */}
             {tab === "vagtbyt" && (
               <div>
-                <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Afgiv vagt</h1>
+                <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Vagtfordeling</h1>
                 <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>Sæt vagter til salg for alle, eller spørg en kollega direkte.</p>
 
                 {offeredToMe.length > 0 && (
@@ -955,7 +955,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: `${member.color}08`, border: `1px solid ${member.color}22`, borderRadius: "10px", marginBottom: "8px" }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time} — {s.client}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Til salg for alle" : `Sendt til ${s.targetBarber}`}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Til salg for alle" : `Sendt til ${s.targetBarber}`}{s.date ? ` · ${fmtDate(s.date)}` : ""}</div>
                         </div>
                         <span style={{ fontSize: "11px", color: "var(--gold)", fontWeight: 600, padding: "4px 10px", background: `${member.color}14`, borderRadius: "4px" }}>Afventer</span>
                         <button onClick={() => setCancelTarget(s)} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "6px", padding: "6px 12px", fontSize: "11px", fontWeight: 600, color: "#ef4444", cursor: "pointer", flexShrink: 0 }}>Annuller</button>
@@ -966,14 +966,19 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
                 {swaps.filter(s => s.claimedBy).length > 0 && (
                   <div style={{ marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte bytter</h3>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte overdragelser</h3>
                     {swaps.filter(s => s.claimedBy).map(s => (
-                      <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px", opacity: 0.6 }}>
+                      <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px" }}>
+                        <img src={MEMBER[s.claimedBy as MemberName]?.photo} alt={s.claimedBy || ""} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)" }} />
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time}{s.date ? ` — ${fmtDate(s.date)}` : ""}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.barber} → {s.claimedBy}</div>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} · kl. {s.time}{s.date ? ` · ${fmtDate(s.date)}` : ""}</div>
+                          <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{s.client}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Afgivet af <strong style={{ color: "var(--text)" }}>{s.barber}</strong> → overtaget af <strong style={{ color: "#4ade80" }}>{s.claimedBy}</strong></div>
                         </div>
-                        <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600 }}>Gennemført</span>
+                        <div style={{ textAlign: "right", flexShrink: 0 }}>
+                          <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600, display: "block" }}>Gennemført</span>
+                          <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>{new Date(s.ts).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</span>
+                        </div>
                       </div>
                     ))}
                   </div>
