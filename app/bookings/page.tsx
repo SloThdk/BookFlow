@@ -22,9 +22,9 @@ const INITIAL_DEMO: Booking[] = [
 ];
 
 const STAFF_PHOTOS: Record<string, string> = {
-  "Marcus Holst": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=face",
-  "Emil Strand":  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face",
-  "Sofia Krag":   "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&fit=crop&crop=face",
+  "Marcus Holst": "https://images.pexels.com/photos/30004312/pexels-photo-30004312.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face",
+  "Emil Strand":  "https://images.pexels.com/photos/30004318/pexels-photo-30004318.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face",
+  "Sofia Krag":   "https://images.pexels.com/photos/30004322/pexels-photo-30004322.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face",
 };
 
 function BookingCard({ booking, isNew = false, onCancel, onViewContract }: {

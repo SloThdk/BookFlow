@@ -30,9 +30,9 @@ const SVC_COLOR: Record<string, string> = {
 };
 
 const BARBER_PHOTOS: Record<string, string> = {
-  "Marcus": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=48&h=48&fit=crop&crop=face",
-  "Emil":   "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=48&h=48&fit=crop&crop=face",
-  "Sofia":  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=48&h=48&fit=crop&crop=face",
+  "Marcus": "https://images.pexels.com/photos/30004312/pexels-photo-30004312.jpeg?auto=compress&cs=tinysrgb&w=48&h=48&fit=crop&crop=face",
+  "Emil":   "https://images.pexels.com/photos/30004318/pexels-photo-30004318.jpeg?auto=compress&cs=tinysrgb&w=48&h=48&fit=crop&crop=face",
+  "Sofia":  "https://images.pexels.com/photos/30004322/pexels-photo-30004322.jpeg?auto=compress&cs=tinysrgb&w=48&h=48&fit=crop&crop=face",
 };
 
 const BARBERS = ["Marcus", "Emil", "Sofia"];

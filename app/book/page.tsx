@@ -77,7 +77,7 @@ const STAFF: StaffMember[] = [
     story: "Marcus voksede op med at se sin far få sin ugentlige barbering på den lokale barberforretning. Det ritual satte sig fast i ham. Han begyndte at feje gulv som 18-årig og forlod aldrig branchen. Hans specialitet er det klassiske — rene linjer, tætte fadere, klip der stadig sidder rigtigt efter to uger.",
     tags: ["Taper Fades", "Classic Cuts", "Lige barberblad"],
     initials: "MH",
-    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=320&h=320&fit=crop&crop=face",
+    photo: "https://images.pexels.com/photos/30004312/pexels-photo-30004312.jpeg?auto=compress&cs=tinysrgb&w=320&h=320&fit=crop&crop=face",
   },
   {
     id: "emil",
@@ -87,7 +87,7 @@ const STAFF: StaffMember[] = [
     story: "Emil kom til barberfaget fra den kreative side — han tilbragte år i Københavns designverden, inden han besluttede sig for at lave noget med sine hænder. Uddannet i byen, tiltrukket af moderne struktur og tekstur. Hans klip har en kant uden at prøve for hårdt.",
     tags: ["Teksturerede klip", "Nordiske blends", "Skin fades"],
     initials: "ES",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=320&h=320&fit=crop&crop=face",
+    photo: "https://images.pexels.com/photos/30004318/pexels-photo-30004318.jpeg?auto=compress&cs=tinysrgb&w=320&h=320&fit=crop&crop=face",
   },
   {
     id: "sofia",
@@ -97,7 +97,7 @@ const STAFF: StaffMember[] = [
     story: "Sofia uddannede sig inden for damestyling, før hun gik over til barberfaget. Den baggrund giver hende noget de fleste barberer ikke har — hun forstår farveteorien på et teknisk niveau. Hun er den eneste hos Nordklip der er kvalificeret til farvninger, og hendes præcisionsklip er blandt de skarpeste i salonnen.",
     tags: ["Præcisionsklip", "Highlights", "Farvning"],
     initials: "SK",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=320&h=320&fit=crop&crop=face",
+    photo: "https://images.pexels.com/photos/30004322/pexels-photo-30004322.jpeg?auto=compress&cs=tinysrgb&w=320&h=320&fit=crop&crop=face",
   },
   {
     id: "any",
@@ -381,8 +381,8 @@ return (
         </div>
         {UPCOMING.map((row, i) => {
           const staffPhoto: Record<string, string> = {
-            "Marcus Holst": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&crop=face",
-            "Emil Strand":  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face",
+            "Marcus Holst": "https://images.pexels.com/photos/30004312/pexels-photo-30004312.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop&crop=face",
+            "Emil Strand":  "https://images.pexels.com/photos/30004318/pexels-photo-30004318.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop&crop=face",
             "Sofia Krag":   "https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop",
           };
           const photo = staffPhoto[row.barber];

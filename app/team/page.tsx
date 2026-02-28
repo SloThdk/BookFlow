@@ -11,15 +11,15 @@ interface Swap  { id: string; barber: string; apptId: string; time: string; serv
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const TEAM = [
   { name: "Marcus", fullName: "Marcus Holst",   role: "Senior Barber",           color: "#B8985A",
-    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=face" },
+    photo: "https://images.pexels.com/photos/30004312/pexels-photo-30004312.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face" },
   { name: "Emil",   fullName: "Emil Strand",    role: "Barber",                  color: "#7BA3C4",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face" },
+    photo: "https://images.pexels.com/photos/30004318/pexels-photo-30004318.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face" },
   { name: "Sofia",  fullName: "Sofia Krag",     role: "Barber & Farvespecialist", color: "#C49BBF",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&fit=crop&crop=face" },
+    photo: "https://images.pexels.com/photos/30004322/pexels-photo-30004322.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face" },
 ] as const;
 
 const MANAGER = { name: "Manager", fullName: "Nordklip — Ejeren", role: "Ejer", color: "#B8985A",
-  photo: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=120&h=120&fit=crop&crop=face" };
+  photo: "https://images.pexels.com/photos/35129364/pexels-photo-35129364.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face" };
 
 type MemberName = "Marcus" | "Emil" | "Sofia";
 const MEMBER = Object.fromEntries(TEAM.map(m => [m.name, m])) as Record<MemberName, typeof TEAM[number]>;
@@ -246,7 +246,7 @@ function ChatPanel({ myName }: { myName: string }) {
 
   const contacts: { id: Contact; label: string; sublabel: string; color: string; photo?: string }[] = [
     { id:"all", label:"Alle", sublabel:"Hele teamet", color:"#4ade80",
-      photo:"https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=120&h=120&fit=crop" },
+      photo:"https://images.pexels.com/photos/30004320/pexels-photo-30004320.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&fit=crop&crop=face" },
     ...TEAM.filter(m=>m.name!==myName).map(m=>({ id:m.name as Contact, label:m.name, sublabel:m.role, color:m.color, photo:m.photo })),
     { id:"Manager", label:"Manager", sublabel:"Nordklip — Ejeren", color:MANAGER.color, photo:MANAGER.photo },
   ];
