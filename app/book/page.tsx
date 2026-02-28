@@ -315,21 +315,26 @@ function ConfirmScreen({ service, staffMember, date, time, clientName, clientEma
   service: Service; staffMember: StaffMember; date: Date; time: string;
   clientName: string; clientEmail: string; onBookAgain: () => void;
 }) {
-    // Store contract data for /kontrakt page
-  const refNr = 'NK-' + Math.random().toString(36).slice(2,8).toUpperCase();
-  const _contractData = {
-    refNr,
-    clientName,
-    clientEmail,
-    serviceName: service.name,
-    servicePrice: service.price,
-    serviceDuration: service.duration,
-    barber: staffMember.name,
-    date: fmtDate(date),
-    time,
-    bookedAt: new Date().toLocaleDateString('da-DK', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
-  };
-  try { sessionStorage.setItem('nordklip_pending_contract', JSON.stringify(_contractData)); } catch {}
+  const kontraktRouter = useRouter();
+  const bookingRef = useMemo(() => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    return 'NK-' + Array.from({length:6}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+  }, []);
+
+  function handleDownloadContract() {
+    try {
+      sessionStorage.setItem('bf_pending_contract', JSON.stringify({
+        clientName,
+        clientEmail,
+        service: { name: service.name, price: service.price, duration: service.duration },
+        staffMember: { name: staffMember.name },
+        dateStr: fmtDate(date),
+        time,
+        bookingRef,
+      }));
+    } catch {}
+    kontraktRouter.push('/kontrakt');
+  }
 
 return (
     <div>
@@ -409,10 +414,10 @@ return (
         <button onClick={onBookAgain} style={{ background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text)", borderRadius: "6px", padding: "11px 22px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
           Book igen
         </button>
-        <Link href="/kontrakt" style={{ background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-secondary)", borderRadius: "6px", padding: "11px 22px", fontSize: "14px", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
+        <button onClick={handleDownloadContract} style={{ background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-secondary)", borderRadius: "6px", padding: "11px 22px", fontSize: "14px", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          Download kontrakt
-        </Link>
+          Download servicekontrakt
+        </button>
         <Link href="/bookings" style={{ background: "var(--gold)", color: "#0E0C09", borderRadius: "6px", padding: "11px 22px", fontSize: "14px", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "6px", textDecoration: "none" }}>
           Mine bookinger
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H6M11 3V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
