@@ -197,7 +197,7 @@ export default function AdminPage() {
       <OwnerSidebar onLogout={handleLogout}/>
 
       {/* Main column */}
-      <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, overflow: "auto", marginLeft: "220px", display: "flex", flexDirection: "column" }}>
 
         {/* Sticky header */}
         <div style={{

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
@@ -560,7 +560,7 @@ export default function KunderPage() {
     <div className="sidebar-wrapper" style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
       <OwnerSidebar onLogout={handleLogout}/>
 
-      <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, overflow: "auto", marginLeft: "220px", display: "flex", flexDirection: "column" }}>
         {/* Header */}
         <div style={{
           position: "sticky", top: 0, zIndex: 50,

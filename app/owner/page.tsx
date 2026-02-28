@@ -262,12 +262,12 @@ export default function OwnerPage() {
     <div className="sidebar-wrapper" style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
       <OwnerSidebar onLogout={handleLogout}/>
 
-      <div style={{ flex: 1, overflow: "auto" }}>
+      <div style={{ flex: 1, overflow: "auto", marginLeft: "220px" }}>
         {/* Header */}
         <div style={{
           padding: "20px 28px", borderBottom: "1px solid var(--border)",
           background: "rgba(14,12,9,0.8)", backdropFilter: "blur(12px)",
-          position: "sticky", top: 0, zIndex: 50,
+          position: "sticky", top: 0, zIndex: 40,
         }}>
           <h1 className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>Ejeroversigt</h1>
           <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Søndag, 23. marts 2026</p>

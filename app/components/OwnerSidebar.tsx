@@ -84,10 +84,11 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
       borderRight: "1px solid var(--border)",
       display: "flex",
       flexDirection: "column",
-      position: "sticky",
+      position: "fixed",
       top: 0,
       height: "100vh",
       overflow: "hidden",
+      zIndex: 50,
     }}>
       {/* Logo */}
       <div className="sidebar-logo" style={{ padding: "28px 20px 20px", borderBottom: "1px solid var(--border)" }}>
@@ -154,8 +155,8 @@ export function OwnerSidebar({ onLogout }: OwnerSidebarProps) {
         </div>
         <button onClick={onLogout} style={{
           width: "100%", background: "transparent",
-          border: "1px solid var(--border-strong)", borderRadius: "7px",
-          color: "var(--text-muted)", fontSize: "12px", fontWeight: 500,
+          border: "1px solid rgba(239,68,68,0.25)", borderRadius: "7px",
+          color: "#ef4444", fontSize: "12px", fontWeight: 600,
           padding: "8px 12px", cursor: "pointer", textAlign: "left",
           display: "flex", alignItems: "center", gap: "8px",
         }}>

@@ -99,7 +99,7 @@ export default function EmployeeContractPage() {
         <div className="contract">
           <div className="contract-header">
             <span className="logo-name">Nordklip Barbershop</span>
-            <div className="contract-title">Ansaettelseskontrakt</div>
+            <div className="contract-title">Ansættelseskontrakt</div>
             <div className="contract-meta">
               Udstedt: <span>{today}</span>
             </div>
@@ -142,7 +142,7 @@ export default function EmployeeContractPage() {
                   <p>{data.role}</p>
                 </div>
                 <div className="info-item">
-                  <label>Ansaettelsestype</label>
+                  <label>Ansættelsestype</label>
                   <p>{data.contractType}</p>
                 </div>
               </div>
@@ -151,7 +151,7 @@ export default function EmployeeContractPage() {
             <div className="section">
               <div className="section-heading">
                 <span className="section-num">3.</span>
-                <span className="section-title">Ansaettelsesforhold</span>
+                <span className="section-title">Ansættelsesforhold</span>
               </div>
               <div className="section-body">
                 <p style={{ marginBottom: '8px' }}>Tiltraedelsesdato: <strong>{data.startDate}</strong></p>
