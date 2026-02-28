@@ -109,9 +109,9 @@ function BookingCard({ booking, isNew = false, onCancel, onViewContract }: {
             <span style={{ fontSize: "11px", color: "var(--text-secondary)", whiteSpace: "nowrap" }}>Annuller aftale?</span>
             <div style={{ display: "flex", gap: "6px" }}>
               <button onClick={() => setConfirming(false)} style={{
-                background: "transparent", border: "1px solid var(--border-strong)",
-                color: "var(--text-muted)", borderRadius: "5px", padding: "5px 10px",
-                fontSize: "11px", fontWeight: 600, cursor: "pointer",
+                background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)",
+                color: "#4ade80", borderRadius: "5px", padding: "5px 10px",
+                fontSize: "11px", fontWeight: 700, cursor: "pointer",
               }}>Behold</button>
               <button onClick={onCancel} style={{
                 background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)",
@@ -142,16 +142,14 @@ function BookingCard({ booking, isNew = false, onCancel, onViewContract }: {
             )}
             {onCancel && (
               <button onClick={() => setConfirming(true)}
-                onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)"; }}
-                onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}
                 style={{
-                  background: "none", border: "none", padding: "2px 0",
-                  cursor: "pointer", color: "var(--text-muted)",
-                  fontSize: "11px", fontWeight: 500,
-                  textDecoration: "underline", textUnderlineOffset: "3px",
-                  transition: "color 0.15s", marginTop: "4px",
+                  background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)",
+                  padding: "4px 10px", borderRadius: "5px",
+                  cursor: "pointer", color: "#f87171",
+                  fontSize: "11px", fontWeight: 600,
+                  transition: "all 0.15s", marginTop: "4px",
                 }}
-              >Annuller</button>
+              >Annuller tid</button>
             )}
           </>
         )}
@@ -237,11 +235,11 @@ export default function BookingsPage() {
         <a href="https://nordklip.pages.dev" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
           <span className="serif" style={{ fontSize: "20px", fontWeight: 700, color: "var(--gold)" }}>Nordklip</span>
         </a>
-        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-          <Link href="/book" style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 500, textDecoration: "none" }}>Book</Link>
-          <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{session.name}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Link href="/book" style={{ fontSize: "13px", color: "#0E0C09", fontWeight: 700, textDecoration: "none", padding: "7px 18px", background: "var(--gold)", borderRadius: "6px" }}>Book en tid</Link>
+          <span style={{ fontSize: "13px", color: "var(--text-secondary)", fontWeight: 500 }}>{session.name}</span>
           <button onClick={() => { try { sessionStorage.clear(); } catch {} window.location.href = "https://nordklip.pages.dev"; }} style={{
-            background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-muted)",
+            background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#f87171",
             borderRadius: "5px", padding: "5px 12px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
           }}>Log ud</button>
         </div>

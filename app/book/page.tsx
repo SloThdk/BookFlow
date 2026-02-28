@@ -508,11 +508,11 @@ export default function BookPage() {
           <span className="serif" style={{ fontSize: "18px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.01em" }}>Nordklip</span>
           <span style={{ fontSize: "11px", color: "var(--text-muted)", borderLeft: "1px solid var(--border)", paddingLeft: "10px" }}>Book</span>
         </a>
-        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-          <Link href="/bookings" style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 500, textDecoration: "none" }}>Mine bookinger</Link>
-          <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>{session.name}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Link href="/bookings" style={{ fontSize: "13px", color: "var(--gold)", fontWeight: 600, textDecoration: "none", padding: "6px 14px", border: "1px solid var(--gold-border)", borderRadius: "6px", background: "var(--gold-dim)" }}>Mine bookinger</Link>
+          <span style={{ fontSize: "13px", color: "var(--text-secondary)", fontWeight: 500 }}>{session.name}</span>
           <button onClick={() => { try { sessionStorage.clear(); } catch {} window.location.href = "https://nordklip.pages.dev"; }} style={{
-            background: "transparent", border: "1px solid var(--border-strong)", color: "var(--text-secondary)",
+            background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#f87171",
             borderRadius: "5px", padding: "5px 12px", fontSize: "12px", fontWeight: 600, cursor: "pointer",
           }}>Log ud</button>
         </div>
