@@ -323,7 +323,7 @@ function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { app
   const [note, setNote] = useState("");
   const today = new Date(); const minDate = today.toISOString().split("T")[0];
   const maxD = new Date(today); maxD.setDate(maxD.getDate() + 60);
-  const [shiftDate, setShiftDate] = useState(minDate);
+  const [shiftDate, setShiftDate] = useState(appt.date || minDate);
   const others = TEAM.filter(m => m.name !== myName);
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
@@ -366,8 +366,14 @@ function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { app
           </div>
         )}
 
-        {/* Shift date picker - only work days */}
-        <ShiftDatePicker barber={myName} selected={shiftDate} onSelect={setShiftDate} />
+        {/* Selected date display */}
+        <div style={{ marginBottom: "18px", padding: "12px 14px", background: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: "8px", display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#4ade80" }} />
+          <div>
+            <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{appt.date ? fmtDate(appt.date) : "I dag"}</div>
+            <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Vagt: {appt.time}</div>
+          </div>
+        </div>
 
         <div style={{ marginBottom: "18px" }}>
           <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "8px" }}>Besked (valgfri)</label>
@@ -569,7 +575,7 @@ function ChatPanel({ myName, onNewMessage }: { myName: string; onNewMessage?: ()
 }
 
 /* ─── Calendar Component ───────────────────────────────────────────────────── */
-function ShiftCalendar({ barber, memberColor }: { barber: string; memberColor: string }) {
+function ShiftCalendar({ barber, memberColor, onSelectWorkDay }: { barber: string; memberColor: string; onSelectWorkDay?: (date: string) => void }) {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -623,7 +629,7 @@ function ShiftCalendar({ barber, memberColor }: { barber: string; memberColor: s
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDate;
           return (
-            <button key={dateStr} onClick={() => setSelectedDate(isSelected ? null : dateStr)} style={{
+            <button key={dateStr} onClick={() => { setSelectedDate(isSelected ? null : dateStr); if (!isSelected && info?.type === "work" && onSelectWorkDay) onSelectWorkDay(dateStr); }} style={{
               padding: "10px 4px", borderRadius: "8px", cursor: "pointer", textAlign: "center",
               background: isSelected ? `${memberColor}22` : isVacation ? "rgba(251,191,36,0.08)" : hasShift ? "rgba(74,222,128,0.06)" : "transparent",
               border: `1px solid ${isSelected ? memberColor : isToday ? memberColor + "55" : isVacation ? "rgba(251,191,36,0.2)" : hasShift ? "rgba(74,222,128,0.15)" : "transparent"}`,
@@ -714,8 +720,8 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
     setSchedule(SCHEDULE_BASE.map(a => { const c = claimed.find(s => s.apptId === a.id); return c ? { ...a, barber: c.claimedBy! } : a; }));
   }, [swaps]);
 
-  function offerSwap(appt: Appt, mode: "ask"|"sell", target: string | null, note: string) {
-    const s: Swap = { id: uid(), barber: memberName, apptId: appt.id, time: appt.time, service: appt.service, client: appt.client, duration: appt.duration, note, ts: Date.now(), mode, targetBarber: target || undefined };
+  function offerSwap(appt: Appt & { date?: string }, mode: "ask"|"sell", target: string | null, note: string) {
+    const s: Swap = { id: uid(), barber: memberName, apptId: appt.id, time: appt.time, service: appt.service, client: appt.client, duration: appt.duration, note, ts: Date.now(), mode, targetBarber: target || undefined, date: appt.date };
     const updated = [...swaps, s]; setSwaps(updated);  setSwapTarget(null);
 
     // Simulate response: alternating accept/reject for quick demo testing
@@ -849,7 +855,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                 )}
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {myDay.length === 0 ? <div style={{ padding: "48px", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px" }}><p style={{ color: "var(--text-secondary)" }}>Ingen aftaler i dag.</p></div>
-                    : myDay.map(a => <ApptRow key={a.id} appt={a} myName={memberName} isPast={isPast(a.time)} onOfferSwap={() => setSwapTarget(a)} swapOffered={myOffered.some(s => s.apptId === a.id)} onCancelSwap={myOffered.find(s => s.apptId === a.id) ? () => setCancelTarget(myOffered.find(s => s.apptId === a.id)!) : undefined} />)
+                    : myDay.map(a => <ApptRow key={a.id} appt={a} myName={memberName} isPast={isPast(a.time)} />)
                   }
                 </div>
               </div>
@@ -929,17 +935,33 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             {tab === "vagtbyt" && (
               <div>
                 <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Vagtfordeling</h1>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>Sæt vagter til salg for alle, eller spørg en kollega direkte.</p>
+                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "24px" }}>Vælg en dato fra din vagtplan og afgiv den til en kollega eller sæt den til salg.</p>
 
+                {/* Your shift calendar for picking a date */}
+                <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", padding: "24px", marginBottom: "24px" }}>
+                  <ShiftCalendar barber={memberName} memberColor={member.color} onSelectWorkDay={(date) => {
+                    const hours = WORK_HOURS[memberName];
+                    if (!hours) return;
+                    const dt = new Date(date + "T12:00:00");
+                    const dow = dt.getDay();
+                    const dayKey = DAY_KEYS[dow === 0 ? 6 : dow - 1];
+                    const h = hours[dayKey];
+                    if (h && h !== "Fri") {
+                      setSwapTarget({ id: "vagt-" + date, time: h, client: "Hele vagten", service: dayKey + " vagt", barber: memberName, duration: 0, date } as Appt);
+                    }
+                  }} />
+                </div>
+
+                {/* Offered to me */}
                 {offeredToMe.length > 0 && (
                   <div style={{ marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Tilgængelige vagter</h3>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "#4ade80", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "10px" }}>Tilgængelige vagter</h3>
                     {offeredToMe.map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.22)", borderRadius: "10px", marginBottom: "8px" }}>
                         <img src={MEMBER[s.barber as MemberName]?.photo} alt={s.barber} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover" }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.barber} — {s.service} kl. {s.time}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Sat til salg" : "Direkte forespørgsel"} · {s.client}</div>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.barber} — {s.date ? fmtDate(s.date) : ""} kl. {s.time}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Sat til salg" : "Direkte forespørgsel"}</div>
                           {s.note && <div style={{ fontSize: "11px", color: "var(--text-secondary)", fontStyle: "italic", marginTop: "2px" }}>{s.note}</div>}
                         </div>
                         <button onClick={() => claimSwap(s.id)} style={{ background: "#4ade8020", border: "1px solid rgba(74,222,128,0.3)", borderRadius: "7px", padding: "8px 16px", fontSize: "12px", fontWeight: 700, color: "#4ade80", cursor: "pointer" }}>Overtag vagt</button>
@@ -947,6 +969,52 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                     ))}
                   </div>
                 )}
+
+                {/* My active offers */}
+                {myOffered.length > 0 && (
+                  <div style={{ marginBottom: "24px" }}>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--gold)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "10px" }}>Dine aktive forespørgsler</h3>
+                    {myOffered.map(s => (
+                      <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: member.color + "08", border: "1px solid " + member.color + "22", borderRadius: "10px", marginBottom: "8px" }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.date ? fmtDate(s.date) : ""} · kl. {s.time}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Til salg for alle" : "Sendt til " + s.targetBarber}{s.date ? " · " + fmtDate(s.date) : ""}</div>
+                        </div>
+                        <span style={{ fontSize: "11px", color: "var(--gold)", fontWeight: 600, padding: "4px 10px", background: member.color + "14", borderRadius: "4px" }}>Afventer</span>
+                        <button onClick={() => setCancelTarget(s)} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "6px", padding: "6px 12px", fontSize: "11px", fontWeight: 600, color: "#ef4444", cursor: "pointer", flexShrink: 0 }}>Annuller</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Completed */}
+                {swaps.filter(s => s.claimedBy).length > 0 && (
+                  <div style={{ marginBottom: "24px" }}>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte overdragelser</h3>
+                    {swaps.filter(s => s.claimedBy).map(s => (
+                      <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px" }}>
+                        <img src={MEMBER[s.claimedBy as MemberName]?.photo} alt={s.claimedBy || ""} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)" }} />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.date ? fmtDate(s.date) : ""} · kl. {s.time}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Afgivet af <strong style={{ color: "var(--text)" }}>{s.barber}</strong> → overtaget af <strong style={{ color: "#4ade80" }}>{s.claimedBy}</strong></div>
+                        </div>
+                        <div style={{ textAlign: "right", flexShrink: 0 }}>
+                          <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600, display: "block" }}>Gennemført</span>
+                          <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>{new Date(s.ts).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {swaps.length === 0 && offeredToMe.length === 0 && (
+                  <div style={{ padding: "48px", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px" }}>
+                    <p style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen aktive forespørgsler.</p>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Vælg en grøn vagtdag i kalenderen ovenfor for at afgive den.</p>
+                  </div>
+                )}
+              </div>
+            )}
 
                 {myOffered.length > 0 && (
                   <div style={{ marginBottom: "24px" }}>
@@ -984,14 +1052,6 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                   </div>
                 )}
 
-                {swaps.length === 0 && offeredToMe.length === 0 && (
-                  <div style={{ padding: "48px", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px" }}>
-                    <p style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen aktive forespørgsler.</p>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Gå til Dagsoversigt og klik "Tilbyd vagt" på en aftale for at starte.</p>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         )}
 
