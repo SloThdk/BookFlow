@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface ContractData {
   clientName: string;
@@ -28,7 +27,6 @@ function todayDanish() {
 }
 
 export default function KontraktPage() {
-  const router = useRouter();
   const [data, setData] = useState<ContractData | null>(null);
 
   useEffect(() => {
@@ -92,19 +90,6 @@ export default function KontraktPage() {
         }
 
         .btn-download:hover { background: #A5853E; }
-
-        .btn-close {
-          background: transparent;
-          color: #555;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          padding: 11px 22px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .btn-close:hover { border-color: #999; color: #222; }
 
         .contract {
           background: #FFFFFF;
@@ -346,9 +331,6 @@ export default function KontraktPage() {
         <div className="action-bar">
           <button className="btn-download" onClick={() => window.print()}>
             Download PDF
-          </button>
-          <button className="btn-close" onClick={() => router.back()}>
-            Luk
           </button>
         </div>
 

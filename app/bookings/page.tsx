@@ -9,6 +9,11 @@ interface Booking {
   name: string; price: number; createdAt: number;
 }
 
+const SERVICE_DURATIONS: Record<string, number> = {
+  "Classic Cut": 45, "Beard Sculpt": 30, "Cut & Beard": 70,
+  "Hot Towel Shave": 40, "Junior Cut": 30, "Farve & Stil": 90,
+};
+
 const INITIAL_DEMO: Booking[] = [
   { service: "Classic Cut",     staff: "Marcus Holst", date: "I morgen",   time: "11:00", name: "", price: 260, createdAt: 0 },
   { service: "Beard Sculpt",    staff: "Emil Strand",  date: "Tor 20 mar", time: "14:00", name: "", price: 180, createdAt: 0 },
@@ -22,8 +27,8 @@ const STAFF_PHOTOS: Record<string, string> = {
   "Sofia Krag":   "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&fit=crop&crop=face",
 };
 
-function BookingCard({ booking, isNew = false, onCancel }: {
-  booking: Booking; isNew?: boolean; onCancel?: () => void;
+function BookingCard({ booking, isNew = false, onCancel, onViewContract }: {
+  booking: Booking; isNew?: boolean; onCancel?: () => void; onViewContract?: () => void;
 }) {
   const [confirming, setConfirming] = useState(false);
   const photo = STAFF_PHOTOS[booking.staff];
@@ -125,6 +130,16 @@ function BookingCard({ booking, isNew = false, onCancel }: {
               border: `1px solid ${isNew ? "rgba(245,239,228,0.18)" : "var(--gold-border)"}`,
               borderRadius: "4px", padding: "3px 9px",
             }}>{isNew ? "Ny" : "Bekræftet"}</span>
+            {onViewContract && (
+              <button onClick={onViewContract}
+                style={{
+                  background: "none", border: "1px solid var(--gold-border)",
+                  color: "var(--gold)", borderRadius: "5px", padding: "4px 10px",
+                  fontSize: "11px", fontWeight: 600, cursor: "pointer",
+                  letterSpacing: "0.03em", whiteSpace: "nowrap",
+                }}
+              >Se kontrakt</button>
+            )}
             {onCancel && (
               <button onClick={() => setConfirming(true)}
                 onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)"; }}
@@ -188,6 +203,22 @@ export default function BookingsPage() {
     setDemoBookings(d => d.filter((_, idx) => idx !== i));
   }
 
+  function viewContract(booking: Booking) {
+    if (!session) return;
+    const ref = "NK-" + Math.abs(booking.service.split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0)).toString(36).toUpperCase().slice(0, 4) + booking.time.replace(":", "");
+    const contractData = {
+      clientName: session.name,
+      clientEmail: session.email,
+      service: { name: booking.service, price: booking.price, duration: SERVICE_DURATIONS[booking.service] ?? 45 },
+      staffMember: { name: booking.staff },
+      dateStr: booking.date,
+      time: booking.time,
+      bookingRef: ref,
+    };
+    try { sessionStorage.setItem("bf_pending_contract", JSON.stringify(contractData)); } catch {}
+    window.open("/kontrakt", "_blank");
+  }
+
   const all = [...myBookings, ...demoBookings];
 
   if (!session) return null;
@@ -240,10 +271,10 @@ export default function BookingsPage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {myBookings.map((b, i) => (
-              <BookingCard key={`mine-${i}`} booking={b} isNew={i === 0} onCancel={() => cancelMine(i)}/>
+              <BookingCard key={`mine-${i}`} booking={b} isNew={i === 0} onCancel={() => cancelMine(i)} onViewContract={() => viewContract(b)}/>
             ))}
             {demoBookings.map((b, i) => (
-              <BookingCard key={`demo-${i}`} booking={b} onCancel={() => cancelDemo(i)}/>
+              <BookingCard key={`demo-${i}`} booking={b} onCancel={() => cancelDemo(i)} onViewContract={() => viewContract(b)}/>
             ))}
           </div>
         )}
