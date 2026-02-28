@@ -82,7 +82,7 @@ function getSeedMessages(myName: string): Record<string, Msg[]> {
   const now = Date.now();
   const seeds: Record<string, Msg[]> = {};
   seeds["bf_chat_all"] = [
-    { id:"seed1", sender:"Manager", text:"Hej alle \u2014 vi har fået nye Wahl Legend clippers ind. De ligger i skuffen under station 2. Husk at rengøre bladene efter hver kunde. Derudover: vi lukker en time tidligere næste fredag pga. maling af facaden. God arbejdslyst!", ts: now - 3600000 },
+    { id:"seed1", sender:"Manager", text:"Hej alle — vi har fået nye Wahl Legend clippers ind. De ligger i skuffen under station 2. Husk at rengøre bladene efter hver kunde. Derudover: vi lukker en time tidligere næste fredag pga. maling af facaden. God arbejdslyst!", ts: now - 3600000 },
     { id:"seed2", sender:"Marcus", text:"Fedt, de gamle var ved at være slidte. Tak for opdateringen.", ts: now - 3200000 },
     { id:"seed3", sender:"Sofia", text:"Noteret med fredagen. Skal jeg flytte mine sene aftaler?", ts: now - 2800000 },
   ];
@@ -93,7 +93,7 @@ function getSeedMessages(myName: string): Record<string, Msg[]> {
     else if (m.name === "Emil") seeds[k] = [{ id:"seede1", sender:"Emil", text:"Er der nogen der har en ekstra kappe? Min er i vask og jeg har en kunde om 20 min.", ts: now - 900000 }];
     else if (m.name === "Sofia") seeds[k] = [{ id:"seeds1", sender:"Sofia", text:"Kan en af jer tage min 15:30? Jeg har en tandlægetid jeg glemte at aflyse.", ts: now - 1200000 }];
   });
-  seeds[chatKeyFn(myName, "Manager")] = [{ id:"seedmgr1", sender:"Manager", text:"Hej " + myName + " \u2014 husk at opdatere din profil med det nye foto når du får tid. Vi opdaterer hjemmesiden snart.", ts: now - 7200000 }];
+  seeds[chatKeyFn(myName, "Manager")] = [{ id:"seedmgr1", sender:"Manager", text:"Hej " + myName + " — husk at opdatere din profil med det nye foto når du får tid. Vi opdaterer hjemmesiden snart.", ts: now - 7200000 }];
   return seeds;
 }
 
@@ -143,7 +143,7 @@ function DemoBadge() {
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "20px", padding: "8px 14px", background: "rgba(184,152,90,0.06)", border: "1px solid rgba(184,152,90,0.15)", borderRadius: "8px" }}>
       <span style={{ background: "var(--gold)", color: "var(--bg)", fontSize: "9px", fontWeight: 700, padding: "2px 7px", borderRadius: "100px", letterSpacing: "0.06em" }}>DEMO</span>
-      <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Demonstrationsmiljø \u2014 data er simuleret og nulstilles ved lukning</span>
+      <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Demonstrationsmiljø — data er simuleret og nulstilles ved lukning</span>
     </div>
   );
 }
@@ -196,7 +196,7 @@ function TeamLogin({ onLogin }: { onLogin: (n: string) => void }) {
           </form>
           <div style={{ marginTop: "14px", padding: "10px 12px", background: "rgba(184,152,90,0.05)", border: "1px solid rgba(184,152,90,0.12)", borderRadius: "8px" }}>
             <p style={{ fontSize: "11px", color: "var(--text-secondary)", margin: 0, lineHeight: 1.55 }}>
-              <span style={{ color: "var(--gold)", fontWeight: 600 }}>Demo \u2014 </span>vælg et navn og skriv en vilkårlig pinkode.
+              <span style={{ color: "var(--gold)", fontWeight: 600 }}>Demo — </span>vælg et navn og skriv en vilkårlig pinkode.
             </p>
           </div>
         </div>
@@ -249,8 +249,8 @@ function ApptRow({ appt, myName, isPast, onOfferSwap, swapOffered, onCancelSwap 
 }
 
 /* ─── Swap Modal (Ask or Sell) ─────────────────────────────────────────────── */
-function SwapModal({ appt, myName, onClose, onConfirm }: { appt: Appt; myName: string; onClose: () => void; onConfirm: (mode: "ask"|"sell", target: string | null, note: string) => void; }) {
-  const [mode, setMode] = useState<"ask"|"sell">("ask");
+function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { appt: Appt; myName: string; onClose: () => void; onConfirm: (mode: "ask"|"sell", target: string | null, note: string) => void; allowSell?: boolean; }) {
+  const [mode, setMode] = useState<"ask"|"sell">(allowSell ? "sell" : "ask");
   const [target, setTarget] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const others = TEAM.filter(m => m.name !== myName);
@@ -258,10 +258,10 @@ function SwapModal({ appt, myName, onClose, onConfirm }: { appt: Appt; myName: s
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", width: "100%", maxWidth: "480px", padding: "28px", boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}>
         <div style={{ fontFamily: "var(--font-playfair)", fontSize: "17px", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>Tilbyd vagtbytte</div>
-        <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "20px" }}>{appt.service} \u00b7 {appt.time} \u00b7 {appt.client}</div>
+        <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "20px" }}>{appt.service} · {appt.time} · {appt.client}</div>
 
-        {/* Mode toggle */}
-        <div style={{ display: "flex", gap: "8px", marginBottom: "20px" }}>
+        {/* Mode toggle — only show if both modes available */}
+        {allowSell && <div style={{ display: "flex", gap: "8px", marginBottom: "20px" }}>
           <button onClick={() => setMode("ask")} style={{ flex: 1, padding: "12px", borderRadius: "8px", cursor: "pointer", background: mode === "ask" ? "rgba(184,152,90,0.12)" : "var(--surface)", border: `1px solid ${mode === "ask" ? "var(--gold)" : "var(--border)"}`, textAlign: "center" }}>
             <div style={{ fontSize: "13px", fontWeight: 700, color: mode === "ask" ? "var(--gold)" : "var(--text-secondary)", marginBottom: "2px" }}>Spørg kollega</div>
             <div style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Bed en bestemt person overtage</div>
@@ -270,7 +270,7 @@ function SwapModal({ appt, myName, onClose, onConfirm }: { appt: Appt; myName: s
             <div style={{ fontSize: "13px", fontWeight: 700, color: mode === "sell" ? "#4ade80" : "var(--text-secondary)", marginBottom: "2px" }}>Sælg vagt</div>
             <div style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Sæt vagten til salg for alle</div>
           </button>
-        </div>
+        </div>}
 
         {mode === "ask" && (
           <div style={{ marginBottom: "18px" }}>
@@ -381,11 +381,8 @@ function ChatPanel({ myName }: { myName: string }) {
   useEffect(() => {
     if (seededRef.current) return;
     seededRef.current = true;
-    const existing = loadSS<Record<string, Msg[]>>("bf_chat_msgs", {});
-    if (Object.keys(existing).length === 0) {
-      const seeds = getSeedMessages(myName);
-      setAllMsgs(seeds); saveSS("bf_chat_msgs", seeds);
-    } else { setAllMsgs(existing); }
+    const seeds = getSeedMessages(myName);
+    setAllMsgs(seeds);
   }, [myName]);
 
   const key = chatKeyFn(myName, contact === "all" ? "all" : contact);
@@ -396,7 +393,7 @@ function ChatPanel({ myName }: { myName: string }) {
     if (!input.trim()) return;
     const m: Msg = { id: uid(), sender: myName, text: input.trim(), ts: Date.now() };
     const updated = { ...allMsgs, [key]: [...(allMsgs[key] || []), m] };
-    setAllMsgs(updated); saveSS("bf_chat_msgs", updated); setInput("");
+    setAllMsgs(updated);  setInput("");
     const responder = contact === "all" ? TEAM.filter(t => t.name !== myName)[Math.floor(Math.random() * (TEAM.length - 1))]?.name : contact === "Manager" ? "Manager" : contact;
     if (responder) {
       setTyping(responder);
@@ -404,7 +401,7 @@ function ChatPanel({ myName }: { myName: string }) {
       setTimeout(() => {
         setTyping(null);
         const rm: Msg = { id: uid(), sender: responder, text: replies[Math.floor(Math.random() * replies.length)], ts: Date.now() };
-        setAllMsgs(prev => { const n = { ...prev, [key]: [...(prev[key] || []), rm] }; saveSS("bf_chat_msgs", n); return n; });
+        setAllMsgs(prev => { const n = { ...prev, [key]: [...(prev[key] || []), rm] };  return n; });
       }, 1500 + Math.random() * 1500);
     }
   }, [input, allMsgs, key, myName, contact]);
@@ -415,7 +412,7 @@ function ChatPanel({ myName }: { myName: string }) {
     const isImg = f.endsWith(".jpg");
     const m: Msg = { id: uid(), sender: myName, text: "", ts: Date.now(), attachment: { name: f, size: isImg ? "2.4 MB" : "156 KB", type: isImg ? "image" : "file" } };
     const updated = { ...allMsgs, [key]: [...(allMsgs[key] || []), m] };
-    setAllMsgs(updated); saveSS("bf_chat_msgs", updated);
+    setAllMsgs(updated); 
     setAttachToast(`Fil vedhæftet: ${f}`); setTimeout(() => setAttachToast(""), 2000);
   }
 
@@ -470,7 +467,7 @@ function ChatPanel({ myName }: { myName: string }) {
               <div key={m.id} style={{ display: "flex", gap: "8px", alignItems: "flex-end", flexDirection: isMe ? "row-reverse" : "row" }}>
                 <img src={getSenderPhoto(m.sender)} alt={m.sender} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
                 <div style={{ maxWidth: "72%" }}>
-                  {!isMe && <div style={{ fontSize: "10px", color: "var(--text-secondary)", marginBottom: "3px", fontWeight: 600 }}>{m.sender} \u00b7 {timeFmt(m.ts)}</div>}
+                  {!isMe && <div style={{ fontSize: "10px", color: "var(--text-secondary)", marginBottom: "3px", fontWeight: 600 }}>{m.sender} · {timeFmt(m.ts)}</div>}
                   {m.attachment ? (
                     <div style={{ padding: "10px 13px", borderRadius: "12px", background: isMe ? `${member.color}1A` : "var(--surface)", border: `1px solid ${isMe ? member.color + "44" : "var(--border)"}`, display: "flex", alignItems: "center", gap: "10px", borderBottomRightRadius: isMe ? "4px" : "12px", borderBottomLeftRadius: isMe ? "12px" : "4px" }}>
                       <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: m.attachment.type === "image" ? "#C49BBF22" : "rgba(184,152,90,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: m.attachment.type === "image" ? "#C49BBF" : "var(--gold)" }}>{m.attachment.type === "image" ? <IconImage /> : <IconFile />}</div>
@@ -572,7 +569,7 @@ function ShiftCalendar({ barber, memberColor }: { barber: string; memberColor: s
               <span style={{ fontSize: "14px", color: "var(--text)" }}>{selectedShift}</span>
             </div>
           ) : (
-            <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Fri \u2014 ingen vagt denne dag</span>
+            <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Fri — ingen vagt denne dag</span>
           )}
         </div>
       )}
@@ -598,7 +595,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
   const [toast, setToast] = useState("");
   const member = MEMBER[memberName as MemberName]!;
 
-  useEffect(() => { setSwaps(loadSS<Swap[]>("bf_team_swaps", [])); }, []);
+  useEffect(() => { setSwaps([]); }, []);
 
   useEffect(() => {
     const claimed = swaps.filter(s => s.claimedBy);
@@ -608,14 +605,14 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
   function offerSwap(appt: Appt, mode: "ask"|"sell", target: string | null, note: string) {
     const s: Swap = { id: uid(), barber: memberName, apptId: appt.id, time: appt.time, service: appt.service, client: appt.client, duration: appt.duration, note, ts: Date.now(), mode, targetBarber: target || undefined };
-    const updated = [...swaps, s]; setSwaps(updated); saveSS("bf_team_swaps", updated); setSwapTarget(null);
+    const updated = [...swaps, s]; setSwaps(updated);  setSwapTarget(null);
 
     // Simulate acceptance after 3-5 seconds
     const acceptor = mode === "ask" ? target! : TEAM.filter(t => t.name !== memberName)[Math.floor(Math.random() * (TEAM.length - 1))].name;
     setTimeout(() => {
       setSwaps(prev => {
         const u = prev.map(sw => sw.id === s.id ? { ...sw, claimedBy: acceptor } : sw);
-        saveSS("bf_team_swaps", u);
+        
         return u;
       });
       setToast(`${acceptor} har accepteret at overtage din vagt (${appt.service} kl. ${appt.time})`);
@@ -625,13 +622,13 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
   function cancelSwap(swapId: string) {
     const updated = swaps.filter(s => s.id !== swapId);
-    setSwaps(updated); saveSS("bf_team_swaps", updated); setCancelTarget(null);
+    setSwaps(updated);  setCancelTarget(null);
     setToast("Vagtbytte annulleret"); setTimeout(() => setToast(""), 2500);
   }
 
   function claimSwap(swapId: string) {
     const updated = swaps.map(s => s.id === swapId ? { ...s, claimedBy: memberName } : s);
-    setSwaps(updated); saveSS("bf_team_swaps", updated);
+    setSwaps(updated); 
   }
 
   const now = getNow();
@@ -712,8 +709,8 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                   {myNext && (
                     <div style={{ flex: 2, minWidth: "180px", background: `${member.color}0D`, border: `1px solid ${member.color}33`, borderRadius: "10px", padding: "16px 18px" }}>
                       <div style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.07em", marginBottom: "4px" }}>Næste aftale</div>
-                      <div style={{ fontFamily: "var(--font-playfair)", fontSize: "16px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{myNext.time} \u00b7 {myNext.client}</div>
-                      <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{myNext.service} \u00b7 {myNext.duration} min</div>
+                      <div style={{ fontFamily: "var(--font-playfair)", fontSize: "16px", fontWeight: 700, color: "var(--text)", marginBottom: "2px" }}>{myNext.time} · {myNext.client}</div>
+                      <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{myNext.service} · {myNext.duration} min</div>
                     </div>
                   )}
                 </div>
@@ -724,8 +721,8 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 0", borderBottom: "1px solid rgba(74,222,128,0.1)" }}>
                         <img src={MEMBER[s.barber as MemberName]?.photo} alt={s.barber} style={{ width: "30px", height: "30px", borderRadius: "50%", objectFit: "cover" }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.barber} \u2014 {s.service} kl. {s.time}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Sat til salg" : `Spørger dig direkte`} \u00b7 {s.client}</div>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.barber} — {s.service} kl. {s.time}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Sat til salg" : `Spørger dig direkte`} · {s.client}</div>
                         </div>
                         <button onClick={() => claimSwap(s.id)} style={{ background: "#4ade8020", border: "1px solid rgba(74,222,128,0.3)", borderRadius: "7px", padding: "8px 14px", fontSize: "12px", fontWeight: 700, color: "#4ade80", cursor: "pointer", flexShrink: 0 }}>Accepter</button>
                       </div>
@@ -744,7 +741,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             {tab === "team" && (
               <div>
                 <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Hele teamet</h1>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>{getToday()} \u00b7 {schedule.length} aftaler i alt</p>
+                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "22px" }}>{getToday()} · {schedule.length} aftaler i alt</p>
                 {TEAM.map(m => {
                   const apts = schedule.filter(a => a.barber === m.name).sort((a, b) => a.time.localeCompare(b.time));
                   return (
@@ -766,7 +763,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
             {tab === "timer" && (
               <div>
                 <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "24px", fontWeight: 700, color: "var(--text)", marginBottom: "3px" }}>Mine Arbejdstider</h1>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "28px" }}>{member.fullName} \u00b7 {member.role}</p>
+                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "28px" }}>{member.fullName} · {member.role}</p>
 
                 {/* Main calendar */}
                 <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", padding: "28px", marginBottom: "28px" }}>
@@ -823,8 +820,8 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.22)", borderRadius: "10px", marginBottom: "8px" }}>
                         <img src={MEMBER[s.barber as MemberName]?.photo} alt={s.barber} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover" }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.barber} \u2014 {s.service} kl. {s.time}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Sat til salg" : "Direkte forespørgsel"} \u00b7 {s.client}</div>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.barber} — {s.service} kl. {s.time}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Sat til salg" : "Direkte forespørgsel"} · {s.client}</div>
                           {s.note && <div style={{ fontSize: "11px", color: "var(--text-secondary)", fontStyle: "italic", marginTop: "2px" }}>{s.note}</div>}
                         </div>
                         <button onClick={() => claimSwap(s.id)} style={{ background: "#4ade8020", border: "1px solid rgba(74,222,128,0.3)", borderRadius: "7px", padding: "8px 16px", fontSize: "12px", fontWeight: 700, color: "#4ade80", cursor: "pointer" }}>Overtag vagt</button>
@@ -839,7 +836,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                     {myOffered.map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: `${member.color}08`, border: `1px solid ${member.color}22`, borderRadius: "10px", marginBottom: "8px" }}>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time} \u2014 {s.client}</div>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time} — {s.client}</div>
                           <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Til salg for alle" : `Sendt til ${s.targetBarber}`}</div>
                         </div>
                         <span style={{ fontSize: "11px", color: "var(--gold)", fontWeight: 600, padding: "4px 10px", background: `${member.color}14`, borderRadius: "4px" }}>Afventer</span>
@@ -856,7 +853,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px", opacity: 0.6 }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.barber} \u2192 {s.claimedBy}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.barber} → {s.claimedBy}</div>
                         </div>
                         <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600 }}>Gennemført</span>
                       </div>
