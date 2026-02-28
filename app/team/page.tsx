@@ -267,6 +267,9 @@ function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { app
   const [mode, setMode] = useState<"ask"|"sell">(allowSell ? "sell" : "ask");
   const [target, setTarget] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const today = new Date(); const minDate = today.toISOString().split("T")[0];
+  const maxD = new Date(today); maxD.setDate(maxD.getDate() + 60);
+  const [shiftDate, setShiftDate] = useState(minDate);
   const others = TEAM.filter(m => m.name !== myName);
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
@@ -308,6 +311,12 @@ function SwapModal({ appt, myName, onClose, onConfirm, allowSell = true }: { app
             <p style={{ fontSize: "12px", color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>Vagten bliver synlig for alle kolleger. Den første der accepterer, overtager vagten.</p>
           </div>
         )}
+
+        {/* Date picker */}
+        <div style={{ marginBottom: "18px" }}>
+          <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "8px" }}>Dato for vagten</label>
+          <input type="date" value={shiftDate} min={minDate} max={maxD.toISOString().split("T")[0]} onChange={e => setShiftDate(e.target.value)} style={{ width: "100%", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text)", fontSize: "14px", padding: "10px 14px", boxSizing: "border-box" as const, outline: "none", colorScheme: "dark" }} />
+        </div>
 
         <div style={{ marginBottom: "18px" }}>
           <label style={{ display: "block", fontSize: "10px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "8px" }}>Besked (valgfri)</label>
