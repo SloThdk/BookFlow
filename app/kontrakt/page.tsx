@@ -91,6 +91,24 @@ export default function KontraktPage() {
 
         .btn-download:hover { background: #A5853E; }
 
+        .btn-back {
+          background: transparent;
+          color: #1A1A1A;
+          border: 1px solid #D0C9BE;
+          border-radius: 6px;
+          padding: 11px 24px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          letter-spacing: 0.03em;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          text-decoration: none;
+        }
+
+        .btn-back:hover { background: #EDE9E2; }
+
         .contract {
           background: #FFFFFF;
           width: 100%;
@@ -329,6 +347,10 @@ export default function KontraktPage() {
 
       <div className="page-wrapper">
         <div className="action-bar">
+          <button className="btn-back" onClick={() => window.history.back()}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Tilbage til side
+          </button>
           <button className="btn-download" onClick={() => window.print()}>
             Download PDF
           </button>
