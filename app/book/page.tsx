@@ -118,7 +118,7 @@ const TIME_SLOTS = ["10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:
 const MORNING_SLOTS  = TIME_SLOTS.slice(0, 6);
 const AFTERNOON_SLOTS = TIME_SLOTS.slice(6, 12);
 const EVENING_SLOTS  = TIME_SLOTS.slice(12);
-const STEP_LABELS = ["Ydelse", "Barber", "Dato", "Tid", "Oplysninger"];
+const STEP_LABELS = ["Ydelse", "Barber", "Dato", "Tid", "Oplysninger", "Betaling"];
 
 const UPCOMING = (() => {
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -495,6 +495,15 @@ export default function BookPage() {
   const [clientPhone, setClientPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+  const [cardNum,     setCardNum]     = useState("");
+  const [cardExpiry,  setCardExpiry]  = useState("");
+  const [cardCvc,     setCardCvc]     = useState("");
+  const [cardName,    setCardName]    = useState("");
+  const [cardLoading, setCardLoading] = useState(false);
+  const [cardErrors,  setCardErrors]  = useState<{ num?: string; expiry?: string; cvc?: string; name?: string }>({});
+
+  const formatCard   = (v: string) => v.replace(/\D/g,"").slice(0,16).replace(/(.{4})(?=\d)/g,"$1 ");
+  const formatExpiry = (v: string) => { const d = v.replace(/\D/g,"").slice(0,4); return d.length >= 3 ? d.slice(0,2)+"/"+d.slice(2) : d; };
 
   useEffect(() => {
     try {
@@ -522,27 +531,46 @@ export default function BookPage() {
 
   function handleNext() {
     if (step < 5) { setStep(s => s + 1); return; }
-    const newErrors: { name?: string; phone?: string } = {};
-    if (!clientName.trim()) newErrors.name = "Feltet er påkrævet";
-    if (clientPhone.trim()) {
-      const digits = clientPhone.replace(/[\s\-+()]/g, "");
-      if (!/^\d{8,}$/.test(digits)) newErrors.phone = "Ugyldigt telefonnummer";
+    if (step === 5) {
+      const newErrors: { name?: string; phone?: string } = {};
+      if (!clientName.trim()) newErrors.name = "Feltet er påkrævet";
+      if (clientPhone.trim()) {
+        const digits = clientPhone.replace(/[\s\-+()]/g, "");
+        if (!/^\d{8,}$/.test(digits)) newErrors.phone = "Ugyldigt telefonnummer";
+      }
+      if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
+      setErrors({});
+      setStep(6);
+      if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
-    if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
-    setErrors({});
-    try {
-      const booking = { service: service!.name, staff: staffMember!.name, date: fmtDate(date!), time: time!, name: clientName, price: service!.price, createdAt: Date.now() };
-      const existing = JSON.parse(sessionStorage.getItem("bf_bookings") ?? "[]");
-      sessionStorage.setItem("bf_bookings", JSON.stringify([booking, ...existing]));
-    } catch {}
-    setConfirmed(true);
-    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+    // Step 6 — card payment
+    const cerrs: { num?: string; expiry?: string; cvc?: string; name?: string } = {};
+    if (cardNum.replace(/\s/g,"").length < 13) cerrs.num = "Ugyldigt kortnummer";
+    if (cardExpiry.replace(/\D/g,"").length < 4) cerrs.expiry = "Ugyldig udløbsdato";
+    if (cardCvc.length < 3) cerrs.cvc = "Ugyldig CVC";
+    if (!cardName.trim()) cerrs.name = "Feltet er påkrævet";
+    if (Object.keys(cerrs).length) { setCardErrors(cerrs); return; }
+    setCardErrors({});
+    setCardLoading(true);
+    setTimeout(() => {
+      try {
+        const booking = { service: service!.name, staff: staffMember!.name, date: fmtDate(date!), time: time!, name: clientName, price: service!.price, createdAt: Date.now() };
+        const existing = JSON.parse(sessionStorage.getItem("bf_bookings") ?? "[]");
+        sessionStorage.setItem("bf_bookings", JSON.stringify([booking, ...existing]));
+      } catch {}
+      setCardLoading(false);
+      setConfirmed(true);
+      if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 1800);
   }
 
   function resetFlow() {
     setStep(1); setConfirmed(false);
     setService(null); setStaffMember(null); setDate(null); setTime(null);
     setClientName(session?.name ?? ""); setClientPhone(""); setNotes("");
+    setCardNum(""); setCardExpiry(""); setCardCvc(""); setCardName("");
+    setCardErrors({}); setCardLoading(false);
   }
 
   if (!session) return null;
@@ -852,6 +880,109 @@ export default function BookPage() {
                         </div>
                       </>
                     )}
+
+                    {/* ── STEP 6 — Betaling ─────────────────────── */}
+                    {step === 6 && (
+                      <>
+                        <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Betaling</h2>
+                        <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "20px" }}>Bekræft og betal din booking sikkert.</p>
+
+                        {/* Order summary */}
+                        <div style={{ background: "var(--surface-2)", border: "1px solid var(--border-strong)", borderLeft: "3px solid var(--gold)", borderRadius: "8px", overflow: "hidden", marginBottom: "20px" }}>
+                          <div style={{ padding: "10px 16px", borderBottom: "1px solid var(--border)", background: "rgba(184,152,90,0.04)" }}>
+                            <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "var(--text-muted)" }}>Din booking</span>
+                          </div>
+                          {[["Ydelse", service?.name ?? ""], ["Barber", staffMember?.name ?? ""], ["Dato", date ? fmtDate(date) : ""], ["Tidspunkt", time ?? ""]].map(([l, v]) => (
+                            <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 16px", borderBottom: "1px solid var(--border)" }}>
+                              <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{l}</span>
+                              <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{v}</span>
+                            </div>
+                          ))}
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px" }}>
+                            <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>Total</span>
+                            <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--gold)" }}>{service?.price ? `${service.price} kr.` : ""}</span>
+                          </div>
+                        </div>
+
+                        {/* Card form */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                          {/* Demo autofill banner */}
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(184,152,90,0.07)", border: "1px solid rgba(184,152,90,0.22)", borderRadius: "8px", padding: "10px 14px" }}>
+                            <div>
+                              <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.06em" }}>DEMO</span>
+                              <span style={{ fontSize: "12px", color: "var(--text-secondary)", marginLeft: "8px" }}>Udfyld med testkortnummer</span>
+                            </div>
+                            <button type="button" onClick={() => { setCardNum("4242 4242 4242 4242"); setCardExpiry("12/26"); setCardCvc("123"); setCardName("Demo Bruger"); setCardErrors({}); }} style={{ background: "var(--gold)", color: "#0E0C09", border: "none", borderRadius: "6px", padding: "5px 12px", fontSize: "12px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
+                              Udfyld automatisk
+                            </button>
+                          </div>
+
+                          {/* Card number */}
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Kortnummer</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              placeholder="1234 5678 9012 3456"
+                              value={cardNum}
+                              onChange={e => { setCardNum(formatCard(e.target.value)); setCardErrors(p => ({ ...p, num: undefined })); }}
+                              maxLength={19}
+                              style={{ fontFamily: "monospace", letterSpacing: "0.08em", ...(cardErrors.num ? { borderColor: "var(--red)" } : {}) }}
+                            />
+                            {cardErrors.num && <p style={{ fontSize: "12px", color: "var(--red)", marginTop: "4px" }}>{cardErrors.num}</p>}
+                          </div>
+
+                          {/* Expiry + CVC */}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                            <div>
+                              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Udløbsdato</label>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                placeholder="MM/ÅÅ"
+                                value={cardExpiry}
+                                onChange={e => { setCardExpiry(formatExpiry(e.target.value)); setCardErrors(p => ({ ...p, expiry: undefined })); }}
+                                maxLength={5}
+                                style={cardErrors.expiry ? { borderColor: "var(--red)" } : {}}
+                              />
+                              {cardErrors.expiry && <p style={{ fontSize: "12px", color: "var(--red)", marginTop: "4px" }}>{cardErrors.expiry}</p>}
+                            </div>
+                            <div>
+                              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>CVC</label>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                placeholder="123"
+                                value={cardCvc}
+                                onChange={e => { setCardCvc(e.target.value.replace(/\D/g,"").slice(0,3)); setCardErrors(p => ({ ...p, cvc: undefined })); }}
+                                maxLength={3}
+                                style={cardErrors.cvc ? { borderColor: "var(--red)" } : {}}
+                              />
+                              {cardErrors.cvc && <p style={{ fontSize: "12px", color: "var(--red)", marginTop: "4px" }}>{cardErrors.cvc}</p>}
+                            </div>
+                          </div>
+
+                          {/* Name on card */}
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>Navn på kortet</label>
+                            <input
+                              type="text"
+                              placeholder="Fulde navn"
+                              value={cardName}
+                              onChange={e => { setCardName(e.target.value); setCardErrors(p => ({ ...p, name: undefined })); }}
+                              style={cardErrors.name ? { borderColor: "var(--red)" } : {}}
+                            />
+                            {cardErrors.name && <p style={{ fontSize: "12px", color: "var(--red)", marginTop: "4px" }}>{cardErrors.name}</p>}
+                          </div>
+
+                          {/* SSL note */}
+                          <div style={{ display: "flex", alignItems: "center", gap: "7px", fontSize: "12px", color: "var(--text-muted)" }}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            256-bit SSL krypteret · Demo – ingen rigtig betaling gennemføres
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Nav buttons */}
@@ -861,15 +992,17 @@ export default function BookPage() {
                       borderRadius: "6px", padding: "10px 20px", fontSize: "14px", fontWeight: 600,
                       cursor: step === 1 ? "default" : "pointer", opacity: step === 1 ? 0.3 : 1,
                     }}>Tilbage</button>
-                    <span style={{ fontSize: "11px", color: "var(--text-muted)", letterSpacing: "0.04em" }}>Trin {step} af 5</span>
-                    <button onClick={handleNext} disabled={!canProceed()} style={{
-                      background: canProceed() ? "var(--gold)" : "var(--surface-2)",
-                      border: "none", color: canProceed() ? "#0E0C09" : "var(--text-muted)",
+                    <span style={{ fontSize: "11px", color: "var(--text-muted)", letterSpacing: "0.04em" }}>Trin {step} af 6</span>
+                    <button onClick={handleNext} disabled={!canProceed() || cardLoading} style={{
+                      background: (canProceed() && !cardLoading) ? "var(--gold)" : "var(--surface-2)",
+                      border: "none", color: (canProceed() && !cardLoading) ? "#0E0C09" : "var(--text-muted)",
                       borderRadius: "6px", padding: "10px 26px", fontSize: "14px", fontWeight: 700,
-                      cursor: canProceed() ? "pointer" : "default", transition: "all 0.15s",
-                      boxShadow: canProceed() ? "0 4px 20px var(--gold-glow)" : "none",
+                      cursor: (canProceed() && !cardLoading) ? "pointer" : "default", transition: "all 0.15s",
+                      boxShadow: (canProceed() && !cardLoading) ? "0 4px 20px var(--gold-glow)" : "none",
+                      display: "flex", alignItems: "center", gap: "8px",
                     }}>
-                      {step === 5 ? "Bekræft booking" : "Fortsæt"}
+                      {cardLoading && <span style={{ display: "inline-block", width: "13px", height: "13px", border: "2px solid rgba(14,12,9,0.3)", borderTopColor: "#0E0C09", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />}
+                      {step === 6 ? (cardLoading ? "Behandler..." : `Betal ${service?.price ?? ""} kr.`) : step === 5 ? "Fortsæt til betaling" : "Fortsæt"}
                     </button>
                   </div>
                 </>
