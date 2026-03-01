@@ -575,7 +575,13 @@ function ChatPanel({ myName, onNewMessage }: { myName: string; onNewMessage?: ()
 }
 
 /* ─── Calendar Component ───────────────────────────────────────────────────── */
-function ShiftCalendar({ barber, memberColor, onSelectWorkDay }: { barber: string; memberColor: string; onSelectWorkDay?: (date: string) => void }) {
+function ShiftCalendar({ barber, memberColor, onSelectWorkDay, givenAwayDates, pendingOfferedDates }: {
+  barber: string;
+  memberColor: string;
+  onSelectWorkDay?: (date: string) => void;
+  givenAwayDates?: Set<string>;
+  pendingOfferedDates?: Set<string>;
+}) {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -623,16 +629,20 @@ function ShiftCalendar({ barber, memberColor, onSelectWorkDay }: { barber: strin
           if (day === null) return <div key={`e${i}`} />;
           const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
           const info = shiftMap[dateStr];
-          const hasShift = info?.type === "work";
+          const isGivenAway = givenAwayDates?.has(dateStr) ?? false;
+          const isPending = pendingOfferedDates?.has(dateStr) ?? false;
+          // Given-away dates are no longer your shift — hide work styling
+          const hasShift = info?.type === "work" && !isGivenAway;
           const isVacation = info?.type === "vacation";
           const isOff = info?.type === "off";
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDate;
           return (
-            <button key={dateStr} onClick={() => { setSelectedDate(isSelected ? null : dateStr); if (!isSelected && info?.type === "work" && onSelectWorkDay) onSelectWorkDay(dateStr); }} style={{
-              padding: "10px 4px", borderRadius: "8px", cursor: "pointer", textAlign: "center",
-              background: isSelected ? `${memberColor}22` : isVacation ? "rgba(251,191,36,0.08)" : hasShift ? "rgba(74,222,128,0.06)" : "transparent",
-              border: `1px solid ${isSelected ? memberColor : isToday ? memberColor + "55" : isVacation ? "rgba(251,191,36,0.2)" : hasShift ? "rgba(74,222,128,0.15)" : "transparent"}`,
+            <button key={dateStr} onClick={() => { setSelectedDate(isSelected ? null : dateStr); if (!isSelected && hasShift && onSelectWorkDay) onSelectWorkDay(dateStr); }} style={{
+              padding: "10px 4px", borderRadius: "8px", cursor: isGivenAway ? "default" : "pointer", textAlign: "center",
+              background: isSelected ? `${memberColor}22` : isGivenAway ? "transparent" : isPending ? "rgba(251,191,36,0.06)" : isVacation ? "rgba(251,191,36,0.08)" : hasShift ? "rgba(74,222,128,0.06)" : "transparent",
+              border: `1px solid ${isSelected ? memberColor : isToday ? memberColor + "55" : isGivenAway ? "transparent" : isPending ? "rgba(251,191,36,0.25)" : isVacation ? "rgba(251,191,36,0.2)" : hasShift ? "rgba(74,222,128,0.15)" : "transparent"}`,
+              opacity: isGivenAway ? 0.35 : 1,
               position: "relative", transition: "all 0.1s",
             }}>
               <div style={{ fontSize: "14px", fontWeight: isToday || hasShift ? 700 : 400, color: isToday ? memberColor : isVacation ? "#fbbf24" : hasShift ? "#4ade80" : isOff ? "#ef4444" : "var(--text-secondary)" }}>{day}</div>
@@ -763,6 +773,14 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
   const myNext = myDay.find(a => !isPast(a.time));
   const offeredToMe = swaps.filter(s => (s.targetBarber === memberName || (s.mode === "sell" && s.barber !== memberName)) && !s.claimedBy);
   const myOffered = swaps.filter(s => s.barber === memberName && !s.claimedBy);
+  // Dates where YOUR shift was accepted by a colleague — remove from calendar
+  const givenAwayDates = new Set(
+    swaps.filter(s => s.claimedBy && s.barber === memberName && s.date).map(s => s.date as string)
+  );
+  // Dates you've offered but not yet accepted — show as pending in calendar
+  const pendingOfferedDates = new Set(
+    swaps.filter(s => !s.claimedBy && s.barber === memberName && s.date).map(s => s.date as string)
+  );
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { key: "dag", label: "Dagsoversigt", icon: <IconCalendar /> },
@@ -941,7 +959,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
 
                 {/* Your shift calendar for picking a date */}
                 <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "14px", padding: "24px", marginBottom: "24px" }}>
-                  <ShiftCalendar barber={memberName} memberColor={member.color} onSelectWorkDay={(date) => {
+                  <ShiftCalendar barber={memberName} memberColor={member.color} givenAwayDates={givenAwayDates} pendingOfferedDates={pendingOfferedDates} onSelectWorkDay={(date) => {
                     const hours = WORK_HOURS[memberName];
                     if (!hours) return;
                     const dt = new Date(date + "T12:00:00");
