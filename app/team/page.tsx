@@ -1015,7 +1015,7 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                 )}
 
                 {swaps.filter(s => s.claimedBy).length > 0 && (
-                  <div style={{ marginBottom: "24px" }}>
+                  <div style={{ marginTop: "32px", marginBottom: "24px" }}>
                     <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte overdragelser</h3>
                     {swaps.filter(s => s.claimedBy).map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px" }}>
