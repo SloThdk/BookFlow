@@ -989,26 +989,6 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                   </div>
                 )}
 
-                {/* Completed */}
-                {swaps.filter(s => s.claimedBy).length > 0 && (
-                  <div style={{ marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte overdragelser</h3>
-                    {swaps.filter(s => s.claimedBy).map(s => (
-                      <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px" }}>
-                        <img src={MEMBER[s.claimedBy as MemberName]?.photo} alt={s.claimedBy || ""} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} />
-                        <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.date ? fmtDate(s.date) : ""} · kl. {s.time}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Afgivet af <strong style={{ color: "var(--text)" }}>{s.barber}</strong> → overtaget af <strong style={{ color: "#4ade80" }}>{s.claimedBy}</strong></div>
-                        </div>
-                        <div style={{ textAlign: "right", flexShrink: 0 }}>
-                          <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600, display: "block" }}>Gennemført</span>
-                          <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>{new Date(s.ts).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
                 {swaps.length === 0 && offeredToMe.length === 0 && (
                   <div style={{ padding: "48px", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px" }}>
                     <p style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Ingen aktive forespørgsler.</p>
