@@ -120,12 +120,27 @@ const AFTERNOON_SLOTS = TIME_SLOTS.slice(6, 12);
 const EVENING_SLOTS  = TIME_SLOTS.slice(12);
 const STEP_LABELS = ["Ydelse", "Barber", "Dato", "Tid", "Oplysninger"];
 
-const UPCOMING = [
-  { name: "Jakob Møller",  service: "Classic Cut",     date: "I morgen",   time: "11:00", barber: "Marcus Holst" },
-  { name: "Rasmus Berg",   service: "Beard Sculpt",    date: "Tor 20 mar", time: "14:00", barber: "Emil Strand"  },
-  { name: "Laura Winther", service: "Farve & Stil",    date: "Fre 21 mar", time: "11:00", barber: "Sofia Krag"   },
-  { name: "Daniel Westh",  service: "Hot Towel Shave", date: "Lør 22 mar", time: "13:30", barber: "Marcus Holst" },
-];
+const UPCOMING = (() => {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  function relLabel(d: Date) {
+    const diff = Math.round((d.getTime() - today.getTime()) / 86400000);
+    if (diff === 0) return "I dag";
+    if (diff === 1) return "I morgen";
+    return d.toLocaleDateString("da-DK", { weekday: "short", day: "numeric", month: "short" });
+  }
+  const days: Date[] = [];
+  for (let offset = 0; days.length < 4 && offset <= 14; offset++) {
+    const d = new Date(today); d.setDate(today.getDate() + offset);
+    if (d.getDay() !== 0) days.push(d);
+  }
+  const people = [
+    { name: "Jakob Møller",  service: "Classic Cut",     time: "11:00", barber: "Marcus Holst" },
+    { name: "Rasmus Berg",   service: "Beard Sculpt",    time: "14:00", barber: "Emil Strand"  },
+    { name: "Laura Winther", service: "Farve & Stil",    time: "11:00", barber: "Sofia Krag"   },
+    { name: "Daniel Westh",  service: "Hot Towel Shave", time: "13:30", barber: "Marcus Holst" },
+  ];
+  return days.map((d, i) => ({ ...people[i], date: relLabel(d) }));
+})();
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function fmtDate(d: Date) {
@@ -399,11 +414,24 @@ return (
           <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>Kommende hos Nordklip</span>
           <Link href="/bookings" style={{ fontSize: "12px", color: "var(--gold)", fontWeight: 600, textDecoration: "none" }}>Se alle</Link>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: "10px", padding: "12px 18px", borderBottom: "1px solid var(--border)", background: "rgba(184,152,90,0.05)" }}>
-          <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", fontFamily: "var(--font-playfair)" }}>{clientName}</span>
-          <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{service.name}</span>
-          <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{fmtDate(date)}, {time}</span>
-          <span style={{ fontSize: "10px", fontWeight: 700, color: "#FBBF24", textTransform: "uppercase", letterSpacing: "0.05em", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)", borderRadius: "3px", padding: "2px 6px", whiteSpace: "nowrap" }}>Ny</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", padding: "14px 18px", borderBottom: "1px solid var(--border)", background: "rgba(34,197,94,0.03)" }}>
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            {staffMember.photo ? (
+              <img src={staffMember.photo} alt={staffMember.name} style={{ width: "44px", height: "44px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(34,197,94,0.5)" }}/>
+            ) : (
+              <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "var(--surface)", border: "2px solid rgba(34,197,94,0.5)", flexShrink: 0 }}/>
+            )}
+            <div style={{ position: "absolute", bottom: 0, right: 0, width: "11px", height: "11px", borderRadius: "50%", background: "#22c55e", border: "2px solid var(--surface-2)", boxShadow: "0 0 6px rgba(34,197,94,0.6)" }}/>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="serif" style={{ fontSize: "15px", fontWeight: 600, color: "var(--text)", marginBottom: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{service.name}</div>
+            <div style={{ fontSize: "12px", color: "var(--gold)" }}>{staffMember.name} · {clientName}</div>
+          </div>
+          <div style={{ textAlign: "right", flexShrink: 0 }}>
+            <div style={{ fontSize: "12px", color: "#22c55e", fontWeight: 600, marginBottom: "2px" }}>{fmtDate(date)}</div>
+            <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{time}</div>
+          </div>
+          <span style={{ fontSize: "10px", fontWeight: 700, color: "#22c55e", textTransform: "uppercase", letterSpacing: "0.05em", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "3px", padding: "2px 7px", whiteSpace: "nowrap", flexShrink: 0 }}>Ny</span>
         </div>
         {UPCOMING.map((row, i) => {
           const staffPhoto: Record<string, string> = {
