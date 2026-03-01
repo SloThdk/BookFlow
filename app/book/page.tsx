@@ -131,15 +131,18 @@ const UPCOMING = [
 function fmtDate(d: Date) {
   return d.toLocaleDateString("da-DK", { weekday: "short", day: "numeric", month: "short" });
 }
-function getAvailDates() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const dates: Date[] = [];
-  for (let i = 1; i <= 30; i++) {
-    const d = new Date(today); d.setDate(today.getDate() + i);
-    if (d.getDay() !== 0) dates.push(d);
-    if (dates.length === 14) break;
-  }
-  return dates;
+function getDayStatus(date: Date): 'past' | 'closed' | 'full' | 'limited' | 'available' {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  if (date < today) return 'past';
+  if (date.getDay() === 0) return 'closed';
+  const seed = date.getFullYear() * 366 + (date.getMonth() + 1) * 31 + date.getDate();
+  const hash = ((seed * 1103515245 + 12345) >>> 0) % 100;
+  const dow = date.getDay();
+  if (dow === 6) { if (hash < 55) return 'full'; if (hash < 80) return 'limited'; return 'available'; }
+  if (dow === 5) { if (hash < 30) return 'full'; if (hash < 65) return 'limited'; return 'available'; }
+  if (hash < 8) return 'full';
+  if (hash < 30) return 'limited';
+  return 'available';
 }
 
 // ─── Service Icons ────────────────────────────────────────────────────────────
@@ -204,36 +207,43 @@ function Steps({ current }: { current: number }) {
 
 // ─── Calendar Picker ──────────────────────────────────────────────────────────
 function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelect: (d: Date) => void }) {
-  const dates = useMemo(() => getAvailDates(), []);
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const t = new Date(); return new Date(t.getFullYear(), t.getMonth(), 1);
+  });
+  const today = useMemo(() => { const t = new Date(); t.setHours(0, 0, 0, 0); return t; }, []);
+  const initMonth = useMemo(() => new Date(today.getFullYear(), today.getMonth(), 1), [today]);
 
-  const { weeks, monthLabel } = useMemo(() => {
-    if (!dates.length) return { weeks: [], monthLabel: "" };
-    const availSet = new Set(dates.map(d => d.getTime()));
-    const first = dates[0];
-    const last  = dates[dates.length - 1];
-    const start = new Date(first);
-    const dow = start.getDay();
-    start.setDate(start.getDate() - (dow === 0 ? 6 : dow - 1));
-    const weeksArr: { date: Date; avail: boolean }[][] = [];
-    const cursor = new Date(start);
-    while (cursor <= last) {
-      const week: { date: Date; avail: boolean }[] = [];
+  const weeks = useMemo(() => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDow = firstDay.getDay();
+    const offset = startDow === 0 ? 6 : startDow - 1;
+    const cursor = new Date(firstDay);
+    cursor.setDate(firstDay.getDate() - offset);
+    const weeksArr: { date: Date; inMonth: boolean; status: ReturnType<typeof getDayStatus> }[][] = [];
+    while (cursor <= lastDay) {
+      const week: { date: Date; inMonth: boolean; status: ReturnType<typeof getDayStatus> }[] = [];
       for (let d = 0; d < 6; d++) {
-        const day = new Date(cursor);
-        day.setDate(cursor.getDate() + d);
-        week.push({ date: day, avail: availSet.has(day.getTime()) });
+        const day = new Date(cursor); day.setDate(cursor.getDate() + d);
+        week.push({ date: day, inMonth: day.getMonth() === month, status: getDayStatus(day) });
       }
       weeksArr.push(week);
       cursor.setDate(cursor.getDate() + 7);
     }
-    return { weeks: weeksArr, monthLabel: first.toLocaleDateString("da-DK", { month: "long", year: "numeric" }) };
-  }, [dates]);
+    return weeksArr;
+  }, [currentMonth]);
+
+  const monthLabel = currentMonth.toLocaleDateString("da-DK", { month: "long", year: "numeric" });
+  const canGoPrev = currentMonth.getTime() > initMonth.getTime();
 
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-        <span className="serif" style={{ fontSize: "16px", fontWeight: 700, color: "var(--text)" }}>{monthLabel}</span>
-        <span style={{ fontSize: "11px", color: "var(--text-muted)", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "4px", padding: "3px 8px" }}>Lukket søndage</span>
+        <button onClick={() => canGoPrev && setCurrentMonth(m => new Date(m.getFullYear(), m.getMonth() - 1, 1))} disabled={!canGoPrev} style={{ background: "none", border: "1px solid var(--border-strong)", cursor: canGoPrev ? "pointer" : "default", opacity: canGoPrev ? 1 : 0.2, color: "var(--text)", padding: "4px 12px", borderRadius: "6px", fontSize: "18px", lineHeight: 1, transition: "all 0.12s" }}>‹</button>
+        <span className="serif" style={{ fontSize: "16px", fontWeight: 700, color: "var(--text)", textTransform: "capitalize" }}>{monthLabel}</span>
+        <button onClick={() => setCurrentMonth(m => new Date(m.getFullYear(), m.getMonth() + 1, 1))} style={{ background: "none", border: "1px solid var(--border-strong)", cursor: "pointer", color: "var(--text)", padding: "4px 12px", borderRadius: "6px", fontSize: "18px", lineHeight: 1, transition: "all 0.12s" }}>›</button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "4px", marginBottom: "8px" }}>
         {["Man","Tir","Ons","Tor","Fre","Lør"].map(h => (
@@ -243,28 +253,44 @@ function CalendarPicker({ selected, onSelect }: { selected: Date | null; onSelec
       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         {weeks.map((week, wi) => (
           <div key={wi} style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "4px" }}>
-            {week.map(({ date: d, avail }, di) => {
-              const isSel = selected?.getTime() === d.getTime();
+            {week.map(({ date: d, inMonth, status }, di) => {
+              const isSel = selected?.toDateString() === d.toDateString();
+              const isToday = d.toDateString() === today.toDateString();
+              const clickable = inMonth && (status === "available" || status === "limited");
               return (
-                <button key={di} onClick={() => avail && onSelect(d)} disabled={!avail} style={{
+                <button key={di} onClick={() => clickable && onSelect(d)} disabled={!clickable} style={{
                   aspectRatio: "1", borderRadius: "7px",
-                  border: `1px solid ${isSel ? "var(--gold)" : avail ? "var(--border-strong)" : "transparent"}`,
-                  background: isSel ? "var(--gold-dim)" : avail ? "var(--surface-2)" : "transparent",
-                  cursor: avail ? "pointer" : "default",
+                  border: `1px solid ${isSel ? "var(--gold)" : isToday && inMonth ? "rgba(184,152,90,0.4)" : clickable ? "var(--border-strong)" : "transparent"}`,
+                  background: isSel ? "var(--gold-dim)" : inMonth && clickable ? "var(--surface-2)" : "transparent",
+                  cursor: clickable ? "pointer" : "default",
                   display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  padding: "4px 2px", transition: "all 0.12s", opacity: avail ? 1 : 0.18,
+                  padding: "4px 2px", transition: "all 0.12s", position: "relative",
+                  opacity: !inMonth ? 0.08 : status === "past" ? 0.15 : status === "full" ? 0.32 : 1,
                   boxShadow: isSel ? "0 0 14px var(--gold-glow)" : "none",
                 }}>
-                  <span style={{ fontSize: "15px", fontWeight: isSel ? 700 : 500, lineHeight: 1.1, color: isSel ? "var(--gold)" : "var(--text)" }}>{d.getDate()}</span>
-                  <span style={{ fontSize: "9px", color: isSel ? "rgba(184,152,90,0.65)" : "var(--text-muted)", marginTop: "1px" }}>{d.toLocaleDateString("da-DK", { month: "short" })}</span>
+                  <span style={{ fontSize: "15px", fontWeight: isSel ? 700 : 500, lineHeight: 1.1, color: isSel ? "var(--gold)" : status === "full" && inMonth ? "var(--text-muted)" : "var(--text)", textDecoration: status === "full" && inMonth ? "line-through" : "none" }}>{d.getDate()}</span>
+                  {inMonth && !isSel && status === "limited" && <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#d4a843", marginTop: "2px" }}/>}
+                  {inMonth && !isSel && status === "available" && <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "rgba(255,255,255,0.12)", marginTop: "2px" }}/>}
+                  {inMonth && status === "full" && <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "rgba(200,60,60,0.45)", marginTop: "2px" }}/>}
                 </button>
               );
             })}
           </div>
         ))}
       </div>
+      <div style={{ display: "flex", gap: "14px", marginTop: "14px", flexWrap: "wrap" }}>
+        {([["rgba(255,255,255,0.12)", "Ledig"], ["#d4a843", "Få tider"], ["rgba(200,60,60,0.5)", "Fuldt booket"]] as [string,string][]).map(([clr, lbl]) => (
+          <div key={lbl} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: clr }}/>
+            <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>{lbl}</span>
+          </div>
+        ))}
+        <div style={{ display: "flex", alignItems: "center", gap: "5px", marginLeft: "auto" }}>
+          <span style={{ fontSize: "10px", color: "var(--text-muted)", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "4px", padding: "2px 7px" }}>Lukket søndage</span>
+        </div>
+      </div>
       {selected && (
-        <div style={{ marginTop: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
           <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--gold)", boxShadow: "0 0 8px var(--gold-glow)" }}/>
           <p style={{ fontSize: "13px", color: "var(--gold)", fontWeight: 600 }}>{fmtDate(selected)} valgt</p>
         </div>
