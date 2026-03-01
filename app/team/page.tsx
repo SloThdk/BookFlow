@@ -998,22 +998,6 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
               </div>
             )}
 
-                {myOffered.length > 0 && (
-                  <div style={{ marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--gold)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Dine aktive forespørgsler</h3>
-                    {myOffered.map(s => (
-                      <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: `${member.color}08`, border: `1px solid ${member.color}22`, borderRadius: "10px", marginBottom: "8px" }}>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} kl. {s.time} — {s.client}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{s.mode === "sell" ? "Til salg for alle" : `Sendt til ${s.targetBarber}`}{s.date ? ` · ${fmtDate(s.date)}` : ""}</div>
-                        </div>
-                        <span style={{ fontSize: "11px", color: "var(--gold)", fontWeight: 600, padding: "4px 10px", background: `${member.color}14`, borderRadius: "4px" }}>Afventer</span>
-                        <button onClick={() => setCancelTarget(s)} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "6px", padding: "6px 12px", fontSize: "11px", fontWeight: 600, color: "#ef4444", cursor: "pointer", flexShrink: 0 }}>Annuller</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
                 {swaps.filter(s => s.claimedBy).length > 0 && (
                   <div style={{ marginTop: "32px", marginBottom: "24px" }}>
                     <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte overdragelser</h3>
