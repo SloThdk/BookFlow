@@ -995,10 +995,10 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                     <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte overdragelser</h3>
                     {swaps.filter(s => s.claimedBy).map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px" }}>
-                        <img src={MEMBER[s.claimedBy as MemberName]?.photo} alt={s.claimedBy || ""} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)" }} />
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.date ? fmtDate(s.date) : ""} · kl. {s.time}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Afgivet af <strong style={{ color: "var(--text)" }}>{s.barber}</strong> → overtaget af <strong style={{ color: "#4ade80" }}>{s.claimedBy}</strong></div>
+                        <img src={MEMBER[s.claimedBy as MemberName]?.photo} alt={s.claimedBy || ""} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} />
+                        <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.date ? fmtDate(s.date) : ""} · kl. {s.time}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Afgivet af <strong style={{ color: "var(--text)" }}>{s.barber}</strong> → overtaget af <strong style={{ color: "#4ade80" }}>{s.claimedBy}</strong></div>
                         </div>
                         <div style={{ textAlign: "right", flexShrink: 0 }}>
                           <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600, display: "block" }}>Gennemført</span>
@@ -1039,11 +1039,11 @@ function TeamDashboard({ memberName, onLogout }: { memberName: string; onLogout:
                     <h3 style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: "10px" }}>Gennemførte overdragelser</h3>
                     {swaps.filter(s => s.claimedBy).map(s => (
                       <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", marginBottom: "8px" }}>
-                        <img src={MEMBER[s.claimedBy as MemberName]?.photo} alt={s.claimedBy || ""} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)" }} />
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>{s.service} · kl. {s.time}{s.date ? ` · ${fmtDate(s.date)}` : ""}</div>
-                          <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{s.client}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>Afgivet af <strong style={{ color: "var(--text)" }}>{s.barber}</strong> → overtaget af <strong style={{ color: "#4ade80" }}>{s.claimedBy}</strong></div>
+                        <img src={MEMBER[s.claimedBy as MemberName]?.photo} alt={s.claimedBy || ""} style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} />
+                        <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.service} · kl. {s.time}{s.date ? ` · ${fmtDate(s.date)}` : ""}</div>
+                          <div style={{ fontSize: "12px", color: "var(--text-secondary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.client}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Afgivet af <strong style={{ color: "var(--text)" }}>{s.barber}</strong> → overtaget af <strong style={{ color: "#4ade80" }}>{s.claimedBy}</strong></div>
                         </div>
                         <div style={{ textAlign: "right", flexShrink: 0 }}>
                           <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600, display: "block" }}>Gennemført</span>
