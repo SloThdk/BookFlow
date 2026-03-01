@@ -801,7 +801,17 @@ export default function BookPage() {
                     {step === 5 && (
                       <>
                         <h2 className="serif" style={{ fontSize: "20px", fontWeight: 700, marginBottom: "4px" }}>Dine oplysninger</h2>
-                        <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "24px" }}>Næsten færdig. Bekræft blot dine kontaktoplysninger.</p>
+                        <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "16px" }}>Næsten færdig. Bekræft blot dine kontaktoplysninger.</p>
+                        {/* Demo autofill */}
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(184,152,90,0.07)", border: "1px solid rgba(184,152,90,0.22)", borderRadius: "8px", padding: "10px 14px", marginBottom: "16px" }}>
+                          <div>
+                            <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--gold)", letterSpacing: "0.06em" }}>DEMO</span>
+                            <span style={{ fontSize: "12px", color: "var(--text-secondary)", marginLeft: "8px" }}>Udfyld med testdata</span>
+                          </div>
+                          <button type="button" onClick={() => { setClientName("Demo Bruger"); setClientPhone("+45 12 34 56 78"); setErrors({}); }} style={{ background: "var(--gold)", color: "var(--bg)", border: "none", borderRadius: "6px", padding: "5px 12px", fontSize: "12px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
+                            Udfyld automatisk
+                          </button>
+                        </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "24px" }}>
                           <div>
                             <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "7px", letterSpacing: "0.07em", textTransform: "uppercase" as const }}>
